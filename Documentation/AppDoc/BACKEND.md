@@ -8,7 +8,13 @@ Jamie
 ## technology 
 - Dotnet backend, hosted on azure
 
-
+## setup
+```bash
+dotnet new webapi -o datadons-backend
+cd datadons-backend
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+code -r ../datadons-backend
+```
 ## Requirements
 - users
 	- Classic user backend requirements
