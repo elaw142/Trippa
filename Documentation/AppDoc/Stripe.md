@@ -3,7 +3,7 @@ https://stripe.com/docs
 Video Tutorial 
 https://www.youtube.com/watch?v=e-whXipfRvg
 3 different js files with React Stripe.js
-
+-Not too hard to implement with plenty of resources out there teaching you how to use Stripe
 -payment
 -Completion form
 -Checkout form
