@@ -15,7 +15,7 @@ namespace Models{
         public Review[]? IncomingReviews { get; set; }
 
 
-        public Driver driver { get; set; }
+        public Driver? driver { get; set; }
 
  
 
