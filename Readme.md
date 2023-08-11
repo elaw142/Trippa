@@ -16,3 +16,6 @@ npm run {ios or android}
 
 ## General Info  
 - documentation taken in OBSIDIAN
+
+## branch naming convention
+```#{ticket}-{issue-name}```
