@@ -1,9 +1,13 @@
 namespace Models{
     public class User{
+        [Key]
         public long Id { get; set; }
+        [Required]
         public required string Username { get; set; }
+        [Required]
         public required string Password { get; set; }
         public string? Email { get; set; }
+        [Required]
         public long? Phone { get; set; }
         public string? Address { get; set; }
 
@@ -21,23 +25,28 @@ namespace Models{
 
     }
     public class Driver{
+        [Key]
         public long Id { get; set; }
+        [Required]
         public required string LicenseNumber { get; set; }
         // TODO: Add license image
         // public string? LicenseImage { get; set; }
-        public Car[]? Cars { get; set; }
+        [Required]
+        public required Car[] Cars { get; set; }
     }
 
     public class Car{
+        [Key]
         public long Id { get; set; }
+        [Required]
         public required Make Make { get; set; }
-
+        [Required]
         public required CarType Type { get; set; }
-
+        [Required]
         public required string Model { get; set; }
-
+        [Required]
         public required string Color { get; set; }
-
+        [Required]
         public required string LicensePlate { get; set; }
     }
 
@@ -74,16 +83,21 @@ namespace Models{
     }
 
     public class Review{
+        [Key]
         public long Id { get; set; }
+        [Required]
         public long UserId { get; set; }
+        [Required]
         public long ReviewerId { get; set; }
         public string? ReviewText { get; set; }
         public int? Rating { get; set; }
     }
 
     public class Preference{
+        [Key]
         public long Id { get; set; }
         // TODO: can make enum for certain preferences
+        [Required]
         public required Category category { get; set; }
         public string? Description { get; set; }
     }
