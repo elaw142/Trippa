@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Models{
     public class User{
         [Key]
@@ -21,8 +23,6 @@ namespace Models{
 
         public Driver? driver { get; set; }
 
- 
-
     }
     public class Driver{
         [Key]
@@ -38,6 +38,8 @@ namespace Models{
     public class Car{
         [Key]
         public long Id { get; set; }
+        [Required]
+        public Driver Driver { get; set; }
         [Required]
         public required Make Make { get; set; }
         [Required]
@@ -86,20 +88,22 @@ namespace Models{
         [Key]
         public long Id { get; set; }
         [Required]
-        public long UserId { get; set; }
+        public User User { get; set; }
         [Required]
-        public long ReviewerId { get; set; }
+        public User Reviewer { get; set; }
         public string? ReviewText { get; set; }
         public int? Rating { get; set; }
     }
 
     public class Preference{
+
         [Key]
         public long Id { get; set; }
         // TODO: can make enum for certain preferences
         [Required]
         public required Category category { get; set; }
         public string? Description { get; set; }
+        public User User { get; set; }
     }
 
     public enum Category{
