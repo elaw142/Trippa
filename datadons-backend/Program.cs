@@ -10,7 +10,7 @@ public class Program
         Console.WriteLine("Setting up builder");
 
 
-        // Add services to the container.
+// Add services to the container.
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,23 +24,22 @@ public class Program
         builder.Services.AddDbContext<DonsDbContext>(options => options.UseSqlite(builder.Configuration["DbConnectionString"]));
 
 
-        var app = builder.Build();
+    var app = builder.Build();
 
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        Console.WriteLine("\n\n\n\nDevelopment environment is up and running!\n\n\n");
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            Console.WriteLine("\n\n\n\nDevelopment environment is up and running!\n\n\n");
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+    app.UseHttpsRedirection();
 
-        app.UseHttpsRedirection();
+    app.UseAuthorization();
 
-        app.UseAuthorization();
+    app.MapControllers();
 
-        app.MapControllers();
-
-        app.Run();
+    app.Run();
     }
 }
