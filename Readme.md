@@ -1,10 +1,9 @@
 # WELCOME!
 
 
-## Frontend
+# Frontend
 frontend is a react-native-expo application.
 ### Setup
-- install dotnet
 ```bash
 cd datadons-app
 npm install
@@ -12,6 +11,13 @@ npm install
 ### Running
 ```bash
 npm run {ios or android}
+```
+
+# Backend
+- install dotnet
+```bash
+cd datadons-backend
+dotnet run
 ```
 
 ## General Info  
