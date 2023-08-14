@@ -1,11 +1,21 @@
 Documentation:
 https://stripe.com/docs
-
+Video Tutorial 
+https://www.youtube.com/watch?v=e-whXipfRvg
+3 different js files with React Stripe.js
+-Not too hard to implement with plenty of resources out there teaching you how to use Stripe
+-payment
+-Completion form
+-Checkout form
 
 ## Usage...
 
 - Csharp
 ```cs
+// imports for payment.js file 
+import {loadStripe} from "@stripe/stripe.js";
+
+
 StripeConfiguration.ApiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
 
 // Create a payment intent to start a purchase flow.
@@ -25,3 +35,4 @@ var confirmOptions = new PaymentIntentConfirmOptions
 };
 service.Confirm(paymentIntent.Id, confirmOptions);
 ```
+
