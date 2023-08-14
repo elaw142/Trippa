@@ -7,6 +7,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        Console.WriteLine("Setting up builder");
+
 
         // Add services to the container.
 
@@ -15,18 +17,11 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddScoped<DonsDbContext>(provider =>
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<DonsDbContext>()
-                .UseInMemoryDatabase("Data Source=village.db");
-            return new DonsDbContext(optionsBuilder.Options);
-        });
+        builder.Services.AddScoped<IRepo, Repo>();
 
         // TODO: convert to local sqllite db... 
-        // builder.Services.AddDbContext<DonsDbContext>(options => options.UseSqlite(builder.Configuration["WebAPIConnection"]));
-
-
-
+        Console.WriteLine("Setting up DB");
+        builder.Services.AddDbContext<DonsDbContext>(options => options.UseSqlite(builder.Configuration["DbConnectionString"]));
 
 
         var app = builder.Build();
