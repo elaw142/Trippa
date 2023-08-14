@@ -19,6 +19,8 @@ npm run {ios or android}
 cd datadons-backend
 dotnet run
 ```
+find the swagger documentation at localhost:5000/swagger
+- you can then utilize the endpoints
 
 ## General Info  
 - documentation taken in OBSIDIAN
