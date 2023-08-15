@@ -30,10 +30,12 @@ namespace Models
 
         [Required]
         public GPS? EndPoint { get; set; }
+        public double DetourRange { get; set; }
     }
 
     public class GPS
     {
+        public int Id { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }

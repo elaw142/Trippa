@@ -1,7 +1,9 @@
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
-namespace Data{
+namespace Data
+{
     public class DonsDbContext : DbContext
     {
         public DonsDbContext(DbContextOptions options) : base(options)
@@ -13,8 +15,10 @@ namespace Data{
         public DbSet<Car> Cars { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Preference> Preferences { get; set; }
+        public DbSet<Trip> Trips { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder){
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             // User - IncomingReviews (one-to-many)
             modelBuilder.Entity<User>()
                 .HasMany(u => u.IncomingReviews)
@@ -27,7 +31,7 @@ namespace Data{
                 .HasMany(u => u.OutgoingReviews)
                 .WithOne()
                 .HasForeignKey(r => r.ReviewerId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             // User - Preferences (one-to-many)
             modelBuilder.Entity<User>()
@@ -42,7 +46,7 @@ namespace Data{
                 .WithOne(d => d.User)
                 .HasForeignKey<Driver>(d => d.UserId)
                 .IsRequired(false) // Optional: User is not required to have a driver
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Driver - Cars (one-to-many)
             modelBuilder.Entity<Driver>()
@@ -61,21 +65,38 @@ namespace Data{
                 .HasOne(r => r.User)
                 .WithMany(u => u.IncomingReviews)
                 .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Review - Reviewer (many-to-one)
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Reviewer)
                 .WithMany()
                 .HasForeignKey(r => r.ReviewerId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Preference - User (many-to-one)
             modelBuilder.Entity<Preference>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Preferences)
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Trip - CurrentRiders (many-to-many)
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.CurrentRiders)
+                .WithMany(u => u.RiddenTrips)
+                .UsingEntity(j => j.ToTable("TripRiders"));
+
+
+            // Trip - DriverId (many-to-one)
+            modelBuilder.Entity<Trip>()
+                .HasOne<User>()
+                .WithMany(d => d.DrivenTrips)
+                .HasForeignKey(t => t.DriverID);
+
+            // GPS (owned by Trip)
+            modelBuilder.Entity<GPS>()
+                .HasKey(g => g.Id);
 
             base.OnModelCreating(modelBuilder);
         }

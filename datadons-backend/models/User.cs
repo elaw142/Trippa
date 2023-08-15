@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Models{
-    public class User{
+namespace Models
+{
+    public class User
+    {
         [Key]
         public long Id { get; set; }
         [Required]
@@ -23,10 +25,13 @@ namespace Models{
         public Review[]? IncomingReviews { get; set; }
 
         public Driver? Driver { get; set; }
+        public List<Trip> RiddenTrips { get; set; } = new List<Trip>();
+        public List<Trip> DrivenTrips { get; set; } = new List<Trip>();
 
     }
 
-    public class Review{
+    public class Review
+    {
         [Key]
         public long Id { get; set; }
 
@@ -43,7 +48,8 @@ namespace Models{
         public int? Rating { get; set; }
     }
 
-    public class Driver{
+    public class Driver
+    {
         [Key]
         public long Id { get; set; }
         [Required]
@@ -58,7 +64,8 @@ namespace Models{
         public required Car[] Cars { get; set; }
     }
 
-    public class Car{
+    public class Car
+    {
         [Key]
         public long Id { get; set; }
         [Required]
@@ -76,7 +83,8 @@ namespace Models{
         public required string LicensePlate { get; set; }
     }
 
-    public class Preference{
+    public class Preference
+    {
 
         [Key]
         public long Id { get; set; }
@@ -88,7 +96,8 @@ namespace Models{
         public User User { get; set; }
     }
 
-    public enum CarType{
+    public enum CarType
+    {
         sedan,
         coupe,
         hatchback,
@@ -100,7 +109,8 @@ namespace Models{
         other
     }
 
-    public enum Make {
+    public enum Make
+    {
         mazda,
         toyota,
         honda,
@@ -120,7 +130,8 @@ namespace Models{
         other
     }
 
-    public enum Category{
+    public enum Category
+    {
         // TODO: add more categories
         smoking,
         pets,
