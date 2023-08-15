@@ -1,10 +1,9 @@
 # WELCOME!
 
 
-## Frontend
+# Frontend
 frontend is a react-native-expo application.
 ### Setup
-- install dotnet
 ```bash
 cd datadons-app
 npm install
@@ -13,6 +12,15 @@ npm install
 ```bash
 npm run {ios or android}
 ```
+
+# Backend
+- install dotnet
+```bash
+cd datadons-backend
+dotnet run
+```
+find the swagger documentation at localhost:5000/swagger
+- you can then utilize the endpoints
 
 ## General Info  
 - documentation taken in OBSIDIAN
