@@ -39,5 +39,18 @@ namespace Controllers{
             return _repo.GetAllUsers();
         }
            
+        // GET api/GetTrip
+        [HttpGet("GetTrip/{id}")]
+        public Trip GetTrip(long id){
+            return _repo.GetTrip(id);
+        }
+
+        // GET api/GetAllTrips
+        [HttpGet("GetAllTrips")]
+        public Trip[] GetAllTrips(){
+            return _repo.GetAllTrips();
+        }
+
+        // POST api/AddTrip
     }
 }
