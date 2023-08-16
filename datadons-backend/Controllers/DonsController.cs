@@ -93,9 +93,10 @@ namespace Controllers
 
         // GET api/Trips/search - Retrieve trips based on certain criterias like start and end GPS locations, whether the trip is full, date and time range, etc.
         [HttpGet("Trips/search")]
-        public Trip[] SearchTrips([FromQuery] string startLocation, [FromQuery] string endLocation, [FromQuery] string date, [FromQuery] string time, [FromQuery] int seats)
+        public Trip[] SearchTrips([FromQuery] double? startLatitude, [FromQuery] double? startLongitude, [FromQuery] double? endLatitude, [FromQuery] double? endLongitude, [FromQuery] string date, [FromQuery] string time, [FromQuery] int seats)
         {
-            return _repo.SearchTrips(startLocation, endLocation, date, time, seats);
+            return _repo.SearchTrips(startLatitude, startLongitude, endLatitude, endLongitude, date, time, seats);
         }
+
     }
 }

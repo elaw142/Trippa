@@ -9,7 +9,7 @@ namespace Data
         User[] GetAllUsers();
         Trip GetTrip(long id);
         Trip[] GetAllTrips();
-        Trip[] SearchTrips(string startLocation, string endLocation, string date, string time, int seats);
+        Trip[] SearchTrips(double? startLatitude, double? startLongitude, double? endLatitude, double? endLongitude, string date, string time, int seats);
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
         void UpdateTrip(Trip trip);
