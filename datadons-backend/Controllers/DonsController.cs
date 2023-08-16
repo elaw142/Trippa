@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+
+
 
 namespace Controllers
 {
@@ -17,12 +18,18 @@ namespace Controllers
             _repo = repo;
         }
 
+        //* General Endpoints
+
         // GET api/GetVersion
         [HttpGet("GetVersion")]
         public string GetVersion()
         {
             return "0.0.2 (TESTING PHASE)";
         }
+
+
+
+        //* User Endpoints
 
         // POST api/AddUser
         [HttpPost("AddUser")]
@@ -45,6 +52,45 @@ namespace Controllers
         {
             return _repo.GetAllUsers();
         }
+
+        // POST api/{id}/AddDriver
+        [HttpPost("{userId}/add-driver")]
+        public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
+        {
+            if (driver == null)
+            {
+                return new BadRequestObjectResult("Driver object is null");
+            }
+
+            try
+            {
+                _repo.AddDriverToUser(userId, driver);
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return new BadRequestObjectResult(ex.Message);            
+            }
+        }
+        // DELETE api/users/{userId}/driver
+        [HttpDelete("{userId}/driver")]
+        public IActionResult RemoveDriverFromUser(int userId)
+        {
+            try
+            {
+                _repo.RemoveDriverFromUser(userId);
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return new BadRequestObjectResult(ex.Message);            
+            }
+        }
+
+
+        //* Trip Endpoints
 
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]

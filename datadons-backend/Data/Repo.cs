@@ -15,6 +15,7 @@ namespace Data
             _repo = repo;
         }
 
+        //* Users Methods
         public string AddUser(User user)
         {
             _repo.Users.Add(user);
@@ -32,6 +33,31 @@ namespace Data
             User[] c = _repo.Users.ToArray();
             return c;
         }
+        public User AddDriverToUser(long userId, Driver driver)
+        {
+            var user = _repo.Users.Include(u => u.Driver).FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                user.Driver = driver;
+                _repo.SaveChanges();
+            }
+            return user;
+        }
+
+        public User RemoveDriverFromUser(long userId)
+        {
+            var user = _repo.Users.Include(u => u.Driver).FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                user.Driver = null;
+                _repo.SaveChanges();
+            }
+            return user;
+        }
+
+
+
+        //* Trips Methods
         public Trip GetTrip(long id)
         {
             return _repo.Trips.FirstOrDefault(t => t.TripID == id);
@@ -40,6 +66,7 @@ namespace Data
         {
             return _repo.Trips.ToArray();
         }
+
         // public Trip[] SearchTrips(string startLocation, string endLocation, string startDate, string endDate, int maxRiders)
         // {
         //     IQueryable<Trip> query = _repo.Trips.Include(t => t.StartPoint).Include(t => t.EndPoint);
