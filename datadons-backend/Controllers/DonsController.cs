@@ -88,9 +88,29 @@ namespace Controllers
                 return new BadRequestObjectResult(ex.Message);            
             }
         }
+        // GET api/users/{userId}/setAsDriver
+        [HttpPost("{userId}/setAsDriver")]
+        public ActionResult<User> SetUserAsDriver(int userId, Driver driver){
+            if(driver == null){
+                return new BadRequestObjectResult("Driver is required");
+            }
+            try {
+                var user = _repo.GetUser(userId);
+                if(user == null){
+                    return new NotFoundObjectResult("User is not found");
+                }
+                _repo.SetUserAsDriver(userId, driver);
+                return new OkResult();
+            } catch (Exception e){
+                return new BadRequestObjectResult("");
+            }
+        }
 
 
-        //* Trip Endpoints
+        /////////////////////////////////////// 
+        //// Trip Endpoints //////////////////
+        
+        
 
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]
