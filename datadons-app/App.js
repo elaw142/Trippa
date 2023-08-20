@@ -2,10 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import HomeScreen from './HomeScreen'; // Import the screen components
+import HomeScreen from './HomeScreen';
 import AccountScreen from './AccountScreen';
 import AddTripScreen from './AddTripScreen';
-import { Text, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,11 +26,12 @@ export default function App() {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
+          tabBarActiveTintColor: '#357A48', // Set the active tab color
+          tabBarInactiveTintColor: 'black', // Set the inactive tab color
+          tabBarStyle: {
+            display: 'flex', // Add any additional tabBar styles here
+          },
         })}
-        tabBarOptions={{
-          activeTintColor: '#357A48',
-          inactiveTintColor: 'black',
-        }}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="AddTrip" component={AddTripScreen} />
