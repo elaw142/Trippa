@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './HomeScreen';
 import AccountScreen from './AccountScreen';
 import AddTripScreen from './AddTripScreen';
-
-const Tab = createBottomTabNavigator();
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useEffect, useState } from "react";
 import { Stylesheet, Text, View, MaskedViewIOS, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
+
+const Tab = createBottomTabNavigator();
+
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -56,9 +56,11 @@ export default function App() {
 
   return (
       <View
-        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      // This is how we render the loaded state...
+        style={{ flex: 1}}
         onLayout={onLayoutRootView}
       >
+  
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -87,9 +89,6 @@ export default function App() {
         <Tab.Screen name="Account" component={AccountScreen} />
       </Tab.Navigator>
     </NavigationContainer>
-
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text>(The splash screen is here, woohoo!)</Text>
     </View>
   );
 }
