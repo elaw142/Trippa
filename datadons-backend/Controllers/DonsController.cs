@@ -74,7 +74,7 @@ namespace Controllers
             }
         }
         // DELETE api/users/{userId}/driver
-        [HttpDelete("{userId}/driver")]
+        [HttpDelete("users/{userId}/driver")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
             try
@@ -89,7 +89,7 @@ namespace Controllers
             }
         }
         // GET api/users/{userId}/setAsDriver
-        [HttpPost("{userId}/setAsDriver")]
+        [HttpPost("users/{userId}/setAsDriver")]
         public ActionResult<User> SetUserAsDriver(int userId, Driver driver){
             if(driver == null){
                 return new BadRequestObjectResult("Driver is required");
@@ -106,9 +106,18 @@ namespace Controllers
             }
         }
 
+        // DEL /api/users/removeDriver/{id}
+        [HttpDelete("users/removeDriver{id}")]
+        public IActionResult RemoveDriver(long id)
+        {
+            _repo.RemoveDriverFromUser(id);
+            return new OkResult();
+        }
 
-        /////////////////////////////////////// 
-        //// Trip Endpoints //////////////////
+
+ 
+
+        //* Trip Endpoints
         
         
 

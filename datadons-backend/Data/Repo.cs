@@ -76,6 +76,9 @@ namespace Data
             _repo.SaveChanges();
         }
 
+
+
+
         //* Trips Methods
         public Trip GetTrip(long id)
         {
