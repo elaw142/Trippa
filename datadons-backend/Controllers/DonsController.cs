@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using Models;
+using Dtos;
 
 
 
@@ -10,7 +11,7 @@ namespace Controllers
     // localHost:8080/api
     [Route("api")]
     [ApiController]
-    public class DonsController
+    public class DonsController : ControllerBase
     {
         private readonly IRepo _repo;
         public DonsController(IRepo repo)
@@ -70,7 +71,7 @@ namespace Controllers
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return new BadRequestObjectResult(ex.Message);
             }
         }
         // DELETE api/users/{userId}/driver
@@ -85,23 +86,29 @@ namespace Controllers
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return new BadRequestObjectResult(ex.Message);
             }
         }
         // GET api/users/{userId}/setAsDriver
         [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, Driver driver){
-            if(driver == null){
+        public ActionResult<User> SetUserAsDriver(int userId, Driver driver)
+        {
+            if (driver == null)
+            {
                 return new BadRequestObjectResult("Driver is required");
             }
-            try {
+            try
+            {
                 var user = _repo.GetUser(userId);
-                if(user == null){
+                if (user == null)
+                {
                     return new NotFoundObjectResult("User is not found");
                 }
                 _repo.SetUserAsDriver(userId, driver);
                 return new OkResult();
-            } catch (Exception e){
+            }
+            catch (Exception e)
+            {
                 return new BadRequestObjectResult("");
             }
         }
@@ -115,11 +122,11 @@ namespace Controllers
         }
 
 
- 
+
 
         //* Trip Endpoints
-        
-        
+
+
 
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]
@@ -137,11 +144,17 @@ namespace Controllers
 
         // POST api/AddTrip - create a new trip
         [HttpPost("AddTrip")]
-        public IActionResult AddTrip(Trip trip)
+        public IActionResult AddTrip(TripDto tripDto)
         {
-            long id = _repo.AddTrip(trip);
-            return new CreatedResult($"/api/GetTrip/{id}", trip);
+            if (tripDto == null)
+            {
+                return BadRequest("Trip data is null.");
+            }
+
+            long id = _repo.AddTrip(tripDto);
+            return CreatedAtAction(nameof(GetTrip), new { id }, tripDto);  // Assuming you have a GetTrip method in your controller.
         }
+
 
         // PUT api/UpdateTrip - update a trip
         [HttpPut("UpdateTrip")]
