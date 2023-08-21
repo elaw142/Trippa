@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './HomeScreen';
 import AccountScreen from './AccountScreen';
 import AddTripScreen from './AddTripScreen';
-import { StatusBar } from "expo-status-bar";
+
 import { Stylesheet, Text, View, MaskedViewIOS, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
@@ -84,9 +84,9 @@ export default function App() {
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="AddTrip" component={AddTripScreen} />
-        <Tab.Screen name="Account" component={AccountScreen} />
+        <Tab.Screen name="Home" component={HomeScreen}options={{headerShown:false}} />
+        <Tab.Screen name="AddTrip" component={AddTripScreen}options={{headerShown:false}} />
+        <Tab.Screen name="Account" component={AccountScreen}options={{headerShown:false}} />
       </Tab.Navigator>
     </NavigationContainer>
     </View>
