@@ -1,5 +1,3 @@
-using System;
-
 namespace Dtos
 {
     public class TripDto
