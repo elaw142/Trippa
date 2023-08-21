@@ -152,7 +152,7 @@ namespace Controllers
             }
 
             long id = _repo.AddTrip(tripDto);
-            return CreatedAtAction(nameof(GetTrip), new { id }, tripDto);  // Assuming you have a GetTrip method in your controller.
+            return CreatedAtAction(nameof(GetTrip), new { id }, tripDto);
         }
 
 
