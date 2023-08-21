@@ -56,6 +56,7 @@ namespace Controllers
         // POST api/{id}/AddDriver
         [HttpPost("{userId}/add-driver")]
         public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
+        // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
         {
             if (driver == null)
             {
