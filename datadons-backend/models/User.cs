@@ -50,6 +50,17 @@ namespace Models
 
     public class Driver
     {
+        public Driver(User user, string licenseNumber, string Model, string Color, string Make, string Type, string plateNumber)
+        {
+            UserId = user.Id;
+            User = user;
+            LicenseNumber = licenseNumber;
+            Cars = new Car[]
+            {
+                new Car(this, Model, Color, Make, Type, plateNumber)
+            };
+        }
+
         [Key]
         public long Id { get; set; }
         [Required]
@@ -60,21 +71,36 @@ namespace Models
         public required string LicenseNumber { get; set; }
         // TODO: Add license image
         // public string? LicenseImage { get; set; }
-        [Required]
-        public required Car[] Cars { get; set; }
+        public Car[]? Cars { get; set; }
     }
 
     public class Car
     {
+        public Car()
+        {
+        }
+
+        public Car(Driver driver, string model, string color, string make, string type,string PlateNumber)
+        {
+            DriverId = driver.Id;
+            Driver = driver;
+            Model = model;
+            Color = color;
+            Make = make;
+            Type = type;
+            LicensePlate = PlateNumber;
+        }
+   
+
         [Key]
         public long Id { get; set; }
         [Required]
         public long DriverId { get; set; }
         public Driver Driver { get; set; }
         [Required]
-        public required Make Make { get; set; }
+        public required string Make { get; set; }
         [Required]
-        public required CarType Type { get; set; }
+        public required string Type { get; set; }
         [Required]
         public required string Model { get; set; }
         [Required]

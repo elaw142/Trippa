@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using Models;
-
+using Dtos;
 
 
 namespace Controllers
@@ -91,16 +91,27 @@ namespace Controllers
         }
         // GET api/users/{userId}/setAsDriver
         [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, Driver driver){
-            if(driver == null){
+        public ActionResult<User> SetUserAsDriver(int userId, DriverDto driverDto){
+            if(driverDto == null){
                 return new BadRequestObjectResult("Driver is required");
             }
             try {
-                var user = _repo.GetUser(userId);
+                User user = _repo.GetUser(userId);
                 if(user == null){
                     return new NotFoundObjectResult("User is not found");
                 }
-                _repo.SetUserAsDriver(userId, driver);
+                
+                Driver driverObj = new Driver(
+                    user,
+                    driverDto.LicenseNumber,
+                    driverDto.CarModel,
+                    driverDto.CarColor,
+                    driverDto.CarMake,
+                    driverDto.CarType,
+                    driverDto.PlateNumber
+                );
+
+                _repo.SetUserAsDriver(userId, driverObj);
                 return new OkResult();
             } catch (Exception e){
                 return new BadRequestObjectResult("");
