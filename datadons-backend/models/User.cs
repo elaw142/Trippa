@@ -50,16 +50,6 @@ namespace Models
 
     public class Driver
     {
-        public Driver(User user, string licenseNumber, string Model, string Color, string Make, string Type, string plateNumber)
-        {
-            UserId = user.Id;
-            User = user;
-            LicenseNumber = licenseNumber;
-            Cars = new Car[]
-            {
-                new Car(this, Model, Color, Make, Type, plateNumber)
-            };
-        }
 
         [Key]
         public long Id { get; set; }
@@ -76,22 +66,6 @@ namespace Models
 
     public class Car
     {
-        public Car()
-        {
-        }
-
-        public Car(Driver driver, string model, string color, string make, string type,string PlateNumber)
-        {
-            DriverId = driver.Id;
-            Driver = driver;
-            Model = model;
-            Color = color;
-            Make = make;
-            Type = type;
-            LicensePlate = PlateNumber;
-        }
-   
-
         [Key]
         public long Id { get; set; }
         [Required]

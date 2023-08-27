@@ -100,18 +100,8 @@ namespace Controllers
                 if(user == null){
                     return new NotFoundObjectResult("User is not found");
                 }
-                
-                Driver driverObj = new Driver(
-                    user,
-                    driverDto.LicenseNumber,
-                    driverDto.CarModel,
-                    driverDto.CarColor,
-                    driverDto.CarMake,
-                    driverDto.CarType,
-                    driverDto.PlateNumber
-                );
 
-                _repo.SetUserAsDriver(userId, driverObj);
+
                 return new OkResult();
             } catch (Exception e){
                 return new BadRequestObjectResult("");
