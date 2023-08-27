@@ -10,7 +10,7 @@ namespace Controllers
     // localHost:8080/api
     [Route("api")]
     [ApiController]
-    public class DonsController
+    public class DonsController : Controller
     {
         private readonly IRepo _repo;
         public DonsController(IRepo repo)
@@ -22,9 +22,9 @@ namespace Controllers
 
         // GET api/GetVersion
         [HttpGet("GetVersion")]
-        public string GetVersion()
+        public ActionResult<string> GetVersion()
         {
-            return "0.0.2 (TESTING PHASE)";
+            return Ok("0.0.2 (TESTING PHASE)");
         }
 
 
@@ -41,28 +41,26 @@ namespace Controllers
 
         // GET api/GetUser
         [HttpGet("GetUser/{id}")]
-        public User GetUser(long id)
+        public ActionResult<User> GetUser(long id)
         {
-            return _repo.GetUser(id);
+            return Ok(_repo.GetUser(id));
         }
 
         // GET api/GetAllUsers
         [HttpGet("GetAllUsers")]
-        public User[] GetAllUsers()
+        public ActionResult<User[]> GetAllUsers()
         {
-            return _repo.GetAllUsers();
+            return Ok(_repo.GetAllUsers());
         }
 
         // POST api/users/AddDriver/{id}
         [HttpPost("users/AddDriver/{userId}")]
         public IActionResult AddDriverToUser(int userId,  DriverDto driverDto)
-        // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
         {
             User u = _repo.GetUser(userId);
             if(u==null){
-                return new BadRequestObjectResult("UserId does not exist");
+                return BadRequest("UserId does not exist");
             }
-
 
             Driver d = new Driver{
                 UserId = userId,
@@ -79,19 +77,18 @@ namespace Controllers
 
             if (driverDto == null)
             {
-                return new BadRequestObjectResult("Driver object is null");
+                return BadRequest("Driver object is null");
             }
 
             try
             {
-
                 _repo.AddDriverToUser(userId, d);
-                return new OkResult();
+                return Ok($"Driver added to user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return BadRequest(ex.Message);            
             }
         }
 
@@ -99,15 +96,19 @@ namespace Controllers
         [HttpDelete("users/driver/{userId}")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
+            User u = _repo.GetUser(userId);
+            if(u==null){
+                return BadRequest("UserId does not exist");
+            }
             try
             {
                 _repo.RemoveDriverFromUser(userId);
-                return new OkResult();
+                return Ok($"Driver removed from user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return BadRequest(ex.Message);            
             }
         }
 
