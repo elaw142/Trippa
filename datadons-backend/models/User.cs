@@ -61,7 +61,7 @@ namespace Models
         public required string LicenseNumber { get; set; }
         // TODO: Add license image
         // public string? LicenseImage { get; set; }
-        public Car[]? Cars { get; set; }
+        public Car? Car { get; set; }
     }
 
     public class Car
@@ -71,6 +71,14 @@ namespace Models
         [Required]
         public long DriverId { get; set; }
         public Driver Driver { get; set; }
+        
+        [Required]
+        public required string LicensePlate { get; set; }
+
+
+
+        // TODO: review what we need for cars... 
+        // will have to change in the DTO too
         [Required]
         public required string Make { get; set; }
         [Required]
@@ -79,8 +87,6 @@ namespace Models
         public required string Model { get; set; }
         [Required]
         public required string Color { get; set; }
-        [Required]
-        public required string LicensePlate { get; set; }
     }
 
     public class Preference

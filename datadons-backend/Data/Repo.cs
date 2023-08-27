@@ -33,6 +33,7 @@ namespace Data
             User[] c = _repo.Users.ToArray();
             return c;
         }
+
         public User AddDriverToUser(long userId, Driver driver)
         {
             var user = _repo.Users.Include(u => u.Driver).FirstOrDefault(u => u.Id == userId);
@@ -54,27 +55,8 @@ namespace Data
             }
             return user;
         }
-        // Added method for SetUserAsDriver 
-        public void SetUserAsDriver(long userId, Driver driver)
-        {
-            var user = _repo.Users.Find(userId);
-            if (user == null)
-            {
-                throw new Exception("User with id " + userId + " not found");
-            }
-            var existingDriver = _repo.Drivers.FirstOrDefault(d => d.UserId == userId); // check if user is already a driver
-            if (existingDriver != null)
-            {
-                existingDriver.LicenseNumber = driver.LicenseNumber;
-                existingDriver.Cars = driver.Cars;
-            }
-            else
-            {
-                driver.UserId = userId;
-                _repo.Drivers.Add(driver);
-            }
-            _repo.SaveChanges();
-        }
+
+
 
 
 

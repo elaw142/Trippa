@@ -48,12 +48,12 @@ namespace Data
                 .IsRequired(false) // Optional: User is not required to have a driver
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Driver - Cars (one-to-many)
-            modelBuilder.Entity<Driver>()
-                .HasMany(d => d.Cars)
-                .WithOne(c => c.Driver)
-                .HasForeignKey(c => c.DriverId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // // Driver - Cars (one-to-many)
+            // modelBuilder.Entity<Driver>()
+            //     .HasMany(d => d.Cars)
+            //     .WithOne(c => c.Driver)
+            //     .HasForeignKey(c => c.DriverId)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
             // Car - Make (enum as string)
             modelBuilder.Entity<Car>()

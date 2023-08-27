@@ -53,19 +53,39 @@ namespace Controllers
             return _repo.GetAllUsers();
         }
 
-        // POST api/{id}/AddDriver
-        [HttpPost("{userId}/add-driver")]
-        public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
+        // POST api/users/AddDriver/{id}
+        [HttpPost("users/AddDriver/{userId}")]
+        public IActionResult AddDriverToUser(int userId,  DriverDto driverDto)
         // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
         {
-            if (driver == null)
+            User u = _repo.GetUser(userId);
+            if(u==null){
+                return new BadRequestObjectResult("UserId does not exist");
+            }
+
+
+            Driver d = new Driver{
+                UserId = userId,
+                User = u,
+                LicenseNumber = driverDto.LicenseNumber,
+                Car = new Car{
+                    Make = driverDto.CarMake,
+                    Type = driverDto.CarType,
+                    Model = driverDto.CarModel,
+                    Color = driverDto.CarColor,
+                    LicensePlate = driverDto.PlateNumber
+                }
+            };
+
+            if (driverDto == null)
             {
                 return new BadRequestObjectResult("Driver object is null");
             }
 
             try
             {
-                _repo.AddDriverToUser(userId, driver);
+
+                _repo.AddDriverToUser(userId, d);
                 return new OkResult();
             }
             catch (Exception ex)
@@ -74,8 +94,9 @@ namespace Controllers
                 return new BadRequestObjectResult(ex.Message);            
             }
         }
-        // DELETE api/users/{userId}/driver
-        [HttpDelete("users/{userId}/driver")]
+
+        // DELETE api/users/driver/{userId}
+        [HttpDelete("users/driver/{userId}")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
             try
@@ -88,32 +109,6 @@ namespace Controllers
                 // Handle exception and return an error response
                 return new BadRequestObjectResult(ex.Message);            
             }
-        }
-        // GET api/users/{userId}/setAsDriver
-        [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, DriverDto driverDto){
-            if(driverDto == null){
-                return new BadRequestObjectResult("Driver is required");
-            }
-            try {
-                User user = _repo.GetUser(userId);
-                if(user == null){
-                    return new NotFoundObjectResult("User is not found");
-                }
-
-
-                return new OkResult();
-            } catch (Exception e){
-                return new BadRequestObjectResult("");
-            }
-        }
-
-        // DEL /api/users/removeDriver/{id}
-        [HttpDelete("users/removeDriver{id}")]
-        public IActionResult RemoveDriver(long id)
-        {
-            _repo.RemoveDriverFromUser(id);
-            return new OkResult();
         }
 
 
