@@ -13,7 +13,7 @@ namespace Data
         // Methods to remove and add a driver to a user
         User AddDriverToUser(long userId, Driver driver);
         User RemoveDriverFromUser(long userId);
-        void SetUserAsDriver(long userId, Driver driver);
+
 
 
         //* Trips Methods 

@@ -3,6 +3,7 @@ using Data;
 using Models;
 using Dtos;
 
+
 namespace Controllers
 {
     // TODO: beautify endpoints, eg error handling, better return values
@@ -21,9 +22,9 @@ namespace Controllers
 
         // GET api/GetVersion
         [HttpGet("GetVersion")]
-        public string GetVersion()
+        public ActionResult<string> GetVersion()
         {
-            return "0.0.2 (TESTING PHASE)";
+            return Ok("0.0.2 (TESTING PHASE)");
         }
 
 
@@ -40,89 +41,83 @@ namespace Controllers
 
         // GET api/GetUser
         [HttpGet("GetUser/{id}")]
-        public User GetUser(long id)
+        public ActionResult<User> GetUser(long id)
         {
-            return _repo.GetUser(id);
+            return Ok(_repo.GetUser(id));
         }
 
         // GET api/GetAllUsers
         [HttpGet("GetAllUsers")]
-        public User[] GetAllUsers()
+        public ActionResult<User[]> GetAllUsers()
         {
-            return _repo.GetAllUsers();
+            return Ok(_repo.GetAllUsers());
         }
 
-        // POST api/{id}/AddDriver
-        [HttpPost("{userId}/add-driver")]
-        public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
-        // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
+        // POST api/users/AddDriver/{id}
+        [HttpPost("users/AddDriver/{userId}")]
+        public IActionResult AddDriverToUser(int userId,  DriverDto driverDto)
         {
-            if (driver == null)
+            User u = _repo.GetUser(userId);
+            if(u==null){
+                return BadRequest("UserId does not exist");
+            }
+
+            Driver d = new Driver{
+                UserId = userId,
+                User = u,
+                LicenseNumber = driverDto.LicenseNumber,
+                Car = new Car{
+                    Make = driverDto.CarMake,
+                    Type = driverDto.CarType,
+                    Model = driverDto.CarModel,
+                    Color = driverDto.CarColor,
+                    LicensePlate = driverDto.PlateNumber
+                }
+            };
+
+            if (driverDto == null)
             {
-                return new BadRequestObjectResult("Driver object is null");
+                return BadRequest("Driver object is null");
             }
 
             try
             {
-                _repo.AddDriverToUser(userId, driver);
-                return new OkResult();
+                _repo.AddDriverToUser(userId, d);
+                return Ok($"Driver added to user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);
+                return BadRequest(ex.Message);            
             }
         }
-        // DELETE api/users/{userId}/driver
-        [HttpDelete("users/{userId}/driver")]
+
+        // DELETE api/users/driver/{userId}
+        [HttpDelete("users/driver/{userId}")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
+            User u = _repo.GetUser(userId);
+            if(u==null){
+                return BadRequest("UserId does not exist");
+            }
             try
             {
                 _repo.RemoveDriverFromUser(userId);
-                return new OkResult();
+                return Ok($"Driver removed from user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);
-            }
-        }
-        // GET api/users/{userId}/setAsDriver
-        [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, DriverDto driverDto){
-            if(driverDto == null){
-                return new BadRequestObjectResult("Driver is required");
-            }
-            try {
-                User user = _repo.GetUser(userId);
-                if(user == null){
-                    return new NotFoundObjectResult("User is not found");
-                }
-
-
-                return new OkResult();
-            }
-            catch (Exception e)
-            {
-                return new BadRequestObjectResult("");
+                return BadRequest(ex.Message);            
             }
         }
 
-        // DEL /api/users/removeDriver/{id}
-        [HttpDelete("users/removeDriver{id}")]
-        public IActionResult RemoveDriver(long id)
-        {
-            _repo.RemoveDriverFromUser(id);
-            return new OkResult();
-        }
 
-
-
+ 
 
         //* Trip Endpoints
-
-
+        
+        
 
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]
@@ -140,17 +135,11 @@ namespace Controllers
 
         // POST api/AddTrip - create a new trip
         [HttpPost("AddTrip")]
-        public IActionResult AddTrip(TripDto tripDto)
+        public IActionResult AddTrip(Trip trip)
         {
-            if (tripDto == null)
-            {
-                return BadRequest("Trip data is null.");
-            }
-
-            long id = _repo.AddTrip(tripDto);
-            return CreatedAtAction(nameof(GetTrip), new { id }, tripDto);
+            long id = _repo.AddTrip(trip);
+            return new CreatedResult($"/api/GetTrip/{id}", trip);
         }
-
 
         // PUT api/UpdateTrip - update a trip
         [HttpPut("UpdateTrip")]
