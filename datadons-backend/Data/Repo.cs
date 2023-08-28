@@ -3,6 +3,7 @@ using Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
+using Dtos;
 
 namespace Data
 {
@@ -215,11 +216,30 @@ namespace Data
             _repo.Trips.Update(trip);
             _repo.SaveChanges();
         }
-        public long AddTrip(Trip trip)
+        public long AddTrip(TripDto tripDto)
         {
-            _repo.Trips.Add(trip);
+            Trip newTrip = new Trip
+            {
+                DriverID = tripDto.DriverID,
+                DateTime = tripDto.DateTime,
+                MaxRiders = tripDto.MaxRiders,
+                Price = tripDto.Price,
+                StartPoint = new GPS
+                {
+                    Latitude = tripDto.StartLatitude,
+                    Longitude = tripDto.StartLongitude
+                },
+                EndPoint = new GPS
+                {
+                    Latitude = tripDto.EndLatitude,
+                    Longitude = tripDto.EndLongitude
+                },
+                DetourRange = tripDto.DetourRange
+            };
+            _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
-            return trip.TripID;
+            return newTrip.TripID;
         }
+
     }
 }
