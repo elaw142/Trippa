@@ -96,7 +96,7 @@ namespace Controllers
         }
 
         // DELETE api/users/driver/{userId}
-        [HttpDelete("users/driver/{userId}")]
+        [HttpDelete("users/deleteDriver/{userId}")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
             User u = _repo.GetUser(userId);
@@ -143,7 +143,7 @@ namespace Controllers
             IEnumerable<Trip> trips = _repo.GetAllTrips();
             if (trips == null)
             {
-                return BadRequest("No trips exist");
+                return Ok("No trips exist");
             }
             return Ok(trips);
         }
@@ -193,9 +193,6 @@ namespace Controllers
         }
 
         // PUT api/UpdateTrip - update a trip
-        // nothing to actually ensure that the trip exists 
-        // nothing to also check if the driver is the same as the one who created the trip
-        // TODO - add a check for the above
         [HttpPut("UpdateTrip")]
         public ActionResult UpdateTrip(UpdateTripDto trip)
         {
@@ -203,14 +200,24 @@ namespace Controllers
             {
                 return BadRequest("Trip object is null");
             }
-
+            var tripId = trip.TripID;
+            Trip oldtrip = _repo.GetTrip(tripId);
+            if (oldtrip == null)
+            {
+                return BadRequest($"Trip with id {tripId} does not exist");
+            }
+            var driverId = trip.DriverID;
+            Driver driver = _repo.GetDriver(driverId);
+            if (driver == null)
+            {
+                return BadRequest($"Driver with id {driverId} does not exist");
+            }
             _repo.UpdateTrip(trip);
             return Ok();
         }
 
         // DELETE api/DeleteTrip - delete a trip
-        // TODO - add a check to ensure that the driver is the same as the one who created the trip
-        // TODO - add a check to ensure that the user is the same as the one who is on the actual trip
+        // TODO - I think we should also check if the person trying to delete the trip is the driver
         [HttpDelete("DeleteTrip/{id}")]
         public ActionResult DeleteTrip(long id)
         {

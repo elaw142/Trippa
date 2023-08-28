@@ -24,5 +24,6 @@ namespace Data
         void DeleteTrip(long id);
         void UpdateTrip(UpdateTripDto trip);
         void AddTrip(TripDto tripDto);
+        public Driver GetDriver(long driverId);
     }
 }

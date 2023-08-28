@@ -175,6 +175,9 @@ namespace Data
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
         }
+        public Driver GetDriver(long driverId){
+            return _repo.Drivers.FirstOrDefault(d => d.Id == driverId);
+        }
 
     }
 }
