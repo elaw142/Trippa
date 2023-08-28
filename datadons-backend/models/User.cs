@@ -37,11 +37,11 @@ namespace Models
 
         [Required]
         public long UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [Required]
         public long ReviewerId { get; set; }
-        public User Reviewer { get; set; }
+        public User? Reviewer { get; set; }
 
 
         public string? ReviewText { get; set; }
@@ -55,13 +55,13 @@ namespace Models
         public long Id { get; set; }
         [Required]
         public long UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [Required]
         public required string LicenseNumber { get; set; }
         // TODO: Add license image
         // public string? LicenseImage { get; set; }
-        public Car[]? Cars { get; set; }
+        public Car? Car { get; set; }
     }
 
     public class Car
@@ -70,7 +70,15 @@ namespace Models
         public long Id { get; set; }
         [Required]
         public long DriverId { get; set; }
-        public Driver Driver { get; set; }
+        public Driver? Driver { get; set; }
+
+        [Required]
+        public required string LicensePlate { get; set; }
+
+
+
+        // TODO: review what we need for cars... 
+        // will have to change in the DTO too
         [Required]
         public required string Make { get; set; }
         [Required]
@@ -79,8 +87,6 @@ namespace Models
         public required string Model { get; set; }
         [Required]
         public required string Color { get; set; }
-        [Required]
-        public required string LicensePlate { get; set; }
     }
 
     public class Preference
@@ -93,7 +99,7 @@ namespace Models
         public required Category category { get; set; }
         public string? Description { get; set; }
         public long UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 
     public enum CarType
