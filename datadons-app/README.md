@@ -6,6 +6,20 @@ npm run ios
 ```
 
 
+
+## install packages
+```npm install```
+or if that fails
+```npm install --legacy-peer-deps```
+
+```npm start```
+or 
+```npx expo run ```
+
+
+
+
+
 # Windows Fix 
 ## clean npm cache
 ```npm cache clean --force```
@@ -20,15 +34,3 @@ del package-lock.json
 
 ## clean npm cache
 ```npm cache clean --force```
-
-## install packages
-```npm install```
-
-## open command prompt as admin 
-
-## cd to the datadons-app 
-
-## start it up and it will give you a QR code
-```npm start```
-or 
-```npx expo run ```
