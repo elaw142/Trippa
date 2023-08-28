@@ -1,3 +1,4 @@
+using Dtos;
 using Models;
 
 namespace Data
@@ -22,6 +23,6 @@ namespace Data
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
         void UpdateTrip(Trip trip);
-        long AddTrip(Trip trip);
+        long AddTrip(TripDto tripDto);
     }
 }
