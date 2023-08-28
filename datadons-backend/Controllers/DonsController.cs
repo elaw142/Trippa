@@ -43,6 +43,10 @@ namespace Controllers
         [HttpGet("GetUser/{id}")]
         public ActionResult<User> GetUser(long id)
         {
+            if (_repo.GetUser(id) == null)
+            {
+                return BadRequest($"User with id {id} does not exist");
+            }
             return Ok(_repo.GetUser(id));
         }
 
@@ -50,6 +54,10 @@ namespace Controllers
         [HttpGet("GetAllUsers")]
         public ActionResult<User[]> GetAllUsers()
         {
+            if (_repo.GetAllUsers().Length == 0)
+            {
+                return BadRequest("No users exist");
+            }
             return Ok(_repo.GetAllUsers());
         }
 
@@ -116,14 +124,8 @@ namespace Controllers
             }
         }
 
-
-
-
         //* Trip Endpoints
 
-
-
-        // GET api/GetTrip - get trip by id
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]
         public ActionResult<Trip> GetTrip(long id)
