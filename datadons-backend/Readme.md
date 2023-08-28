@@ -30,9 +30,9 @@ this changes the database to match the new models and contexts.
 -[ ] /api/{userId}/add-driver
 -[ ] /api/{userId}/driver
 -[ ] /api/{userId}/setAsDriver
--[ ] /api/GetTrip/{id} - returned 404 as there are no trips yet
--[ ] /api/GetAllTrips
+-[x] /api/GetTrip/{id}
+-[x] /api/GetAllTrips
 -[x] /api/AddTrip
--[ ] /api/UpdateTrip
--[ ] /api/GetAllTripsBy/{driverID}
+-[x] /api/UpdateTrip
+-[x] /api/GetAllTripsBy/{driverID}
 -[ ] /api/Trips/search

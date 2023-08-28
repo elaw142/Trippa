@@ -22,7 +22,7 @@ namespace Data
         Trip[] SearchTrips(double? startLatitude, double? startLongitude, double? endLatitude, double? endLongitude, string date, string time, int seats);
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
-        void UpdateTrip(Trip trip);
-        long AddTrip(TripDto tripDto);
+        void UpdateTrip(UpdateTripDto trip);
+        void AddTrip(TripDto tripDto);
     }
 }
