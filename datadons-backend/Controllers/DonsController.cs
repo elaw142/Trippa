@@ -3,15 +3,13 @@ using Data;
 using Models;
 using Dtos;
 
-
-
 namespace Controllers
 {
     // TODO: beautify endpoints, eg error handling, better return values
     // localHost:8080/api
     [Route("api")]
     [ApiController]
-    public class DonsController : ControllerBase
+    public class DonsController : Controller
     {
         private readonly IRepo _repo;
         public DonsController(IRepo repo)
@@ -57,6 +55,7 @@ namespace Controllers
         // POST api/{id}/AddDriver
         [HttpPost("{userId}/add-driver")]
         public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
+        // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
         {
             if (driver == null)
             {
@@ -91,20 +90,17 @@ namespace Controllers
         }
         // GET api/users/{userId}/setAsDriver
         [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, Driver driver)
-        {
-            if (driver == null)
-            {
+        public ActionResult<User> SetUserAsDriver(int userId, DriverDto driverDto){
+            if(driverDto == null){
                 return new BadRequestObjectResult("Driver is required");
             }
-            try
-            {
-                var user = _repo.GetUser(userId);
-                if (user == null)
-                {
+            try {
+                User user = _repo.GetUser(userId);
+                if(user == null){
                     return new NotFoundObjectResult("User is not found");
                 }
-                _repo.SetUserAsDriver(userId, driver);
+
+
                 return new OkResult();
             }
             catch (Exception e)

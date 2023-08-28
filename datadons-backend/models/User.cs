@@ -50,6 +50,7 @@ namespace Models
 
     public class Driver
     {
+
         [Key]
         public long Id { get; set; }
         [Required]
@@ -60,8 +61,7 @@ namespace Models
         public required string LicenseNumber { get; set; }
         // TODO: Add license image
         // public string? LicenseImage { get; set; }
-        [Required]
-        public required Car[] Cars { get; set; }
+        public Car[]? Cars { get; set; }
     }
 
     public class Car
@@ -72,9 +72,9 @@ namespace Models
         public long DriverId { get; set; }
         public Driver Driver { get; set; }
         [Required]
-        public required Make Make { get; set; }
+        public required string Make { get; set; }
         [Required]
-        public required CarType Type { get; set; }
+        public required string Type { get; set; }
         [Required]
         public required string Model { get; set; }
         [Required]
