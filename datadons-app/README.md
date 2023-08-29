@@ -1,36 +1,46 @@
 ## to install app run
 ```bash
 cd datadons-app
-npm install
+npm install --legacy-peer-deps
 npm run ios
 ```
 
-
+## Helpfull stuff for dev
+link for icons : [ICONS](https://icons.expo.fyi/Index/FontAwesome/close)
 
 ## install packages
-```npm install```
-or if that fails
-```npm install --legacy-peer-deps```
+
+``` bash
+cd datadons-app
+npm install --legacy-peer-deps
+```
+```--legacy-peer-deps``` is required due to dependency issues
 
 ```npm start```
 or 
 ```npx expo run ```
 
 
-
+# Fix watchman
+- step 1: 
+```watchman watch-del-all```
+- step 2:
+```watchman shutdown-server```
 
 
 # Windows Fix 
-## clean npm cache
+- clean npm cache
 ```npm cache clean --force```
 
-## (Windows) delete node_modules and package-lock.json
+- (Windows) delete node_modules and package-lock.json
 ```
 rd /s /q "node_modules"
 del package-lock.json
 ```
-## update your npm version
+- update your npm version
 ```npm install -g npm@latest --force```
 
-## clean npm cache
+- clean npm cache
 ```npm cache clean --force```
+
+
