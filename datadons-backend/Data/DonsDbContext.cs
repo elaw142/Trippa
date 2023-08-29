@@ -90,8 +90,15 @@ namespace Data
 
             // Trip - DriverId (many-to-one)
             modelBuilder.Entity<Trip>()
-                .HasOne<User>()
-                .WithMany(d => d.DrivenTrips)
+                .HasOne<Driver>()
+                .WithMany()
+                .HasForeignKey(t => t.DriverID)
+                .HasPrincipalKey(d => d.UserId);
+
+            // User - DrivenTrips (one-to-many)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.DrivenTrips)
+                .WithOne()
                 .HasForeignKey(t => t.DriverID);
 
             // GPS (owned by Trip)
