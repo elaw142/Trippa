@@ -7,6 +7,7 @@ import {
 	Platform,
 	Modal,
 	TouchableOpacity,
+	Image,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -14,15 +15,22 @@ import MapView, { Marker } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
 
 
-const highlight_color = '#357A48';
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
-	const formattedTime = `${dateTimeString.slice(9, 11)}:${dateTimeString.slice(11, 13)}`;
+	const formattedTime = `${dateTimeString.slice(9, 11)}${dateTimeString.slice(11, 13)}`;
 	
 	const day = dateTimeString.slice(6, 8);
 	const formattedDate = `${day}${getDaySuffix(Number(day))}`;
-	return `${formattedTime} ${formattedDate}`;
+	return `${format12HourTime(formattedTime)}`;
+}
+
+function format12HourTime(dateTimeString) {
+	const hour = Number(dateTimeString.slice(0, 2));
+	const minute = dateTimeString.slice(2, 5);
+	const ampm = hour >= 12 ? 'PM' : 'AM';
+	const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+	return `${formattedHour}:${minute}${ampm}`;
 }
 
 // Helper function to get the day suffix (e.g., "st", "nd", "rd", "th")
@@ -64,8 +72,10 @@ function MyMapComponent({ startLocation, endLocation }) {
 			}}
 			zoomEnabled={false} // Disable zooming
 			scrollEnabled={false} // Disable panning
+			mapType="standard" // standard, satellite, hybrid, terrain
+			// TODO: in settings we can store a user cookie for settings,
+			//. we could change this value easily depending on the cookie
 		>
-			{/* Markers for start and end locations */}
 			<Marker
 				coordinate={{ latitude: startLat, longitude: startLng }}
 				title="Start Location"
@@ -86,7 +96,7 @@ function HomeScreen() {
 			driverName: 'John Doe',
 			startLocation: 'Auckland Central',
 			endLocation: 'Auckland Airport',
-			price: '5',
+			price: '5.00',
 			time: '20230829T100000Z',
 			maxRiders: 4,
 			currentRiders: 2,
@@ -100,10 +110,10 @@ function HomeScreen() {
 			driverName: 'Jane Smith',
 			startLocation: 'Queen St',
 			endLocation: 'Whangarei Heads',
-			price: '2',
+			price: '2.23',
 			time: '20230829T113000Z',
 			maxRiders: 3,
-			currentRiders: 3,
+			currentRiders: 0,
 			startLat: -36.847222,
 			startLng: 174.764167,
 			endLat: -35.731111,
@@ -114,7 +124,7 @@ function HomeScreen() {
 			driverName: 'David Johnson',
 			startLocation: 'Rotorua',
 			endLocation: 'Taupo',
-			price: '10',
+			price: '10.53',
 			time: '20230829T130000Z',
 			maxRiders: 5,
 			currentRiders: 1,
@@ -128,7 +138,7 @@ function HomeScreen() {
 			driverName: 'Sarah Wilson',
 			startLocation: 'Wellington',
 			endLocation: 'Napier',
-			price: '8',
+			price: '8.99',
 			time: '20230829T144500Z',
 			maxRiders: 2,
 			currentRiders: 2,
@@ -142,7 +152,7 @@ function HomeScreen() {
 			driverName: 'Michael Brown',
 			startLocation: 'Christchurch',
 			endLocation: 'Dunedin',
-			price: '15',
+			price: '15.00',
 			time: '20230829T163000Z',
 			maxRiders: 6,
 			currentRiders: 4,
@@ -156,21 +166,21 @@ function HomeScreen() {
 			driverName: 'Emily Davis',
 			startLocation: 'Nelson',
 			endLocation: 'Picton',
-			price: '6',
+			price: '6.82',
 			time: '20230829T181500Z',
 			maxRiders: 3,
 			currentRiders: 1,
 			startLat: -41.298333,
 			startLng: 173.244167,
 			endLat: -41.298333,
-			endLng: 173.244167,
+			endLng: 174.244167,
 		},
 		{
 			id: '7',
 			driverName: 'Daniel Lee',
 			startLocation: 'Hamilton',
 			endLocation: 'Tauranga',
-			price: '7',
+			price: '7.13',
 			time: '20230829T200000Z',
 			maxRiders: 4,
 			currentRiders: 3,
@@ -182,7 +192,7 @@ function HomeScreen() {
 	];
 	
 
-	const [selectedItem, setSelectedItem] = useState(null); // State for the selected item
+	const [selectedItem, setSelectedItem] = useState(null);
 	
 	const handleItemPress = (item) => {
 		setSelectedItem(item);
@@ -230,24 +240,31 @@ function HomeScreen() {
 
 
 			<Modal
-			animationType="fade" //fade... 
-			transparent={true}
-			visible={selectedItem !== null}
-			onRequestClose={() => setSelectedItem(null)}
+				animationType="fade" //fade...slide
+				transparent={true}
+				visible={selectedItem !== null}
+				onRequestClose={() => setSelectedItem(null)}
 			>
 				
 			<View style={ModelStyles.modalContainer}>
+				{/* TODO: try make model close on clickOut... i was trying below */}
+				{/* <TouchableOpacity style={ModelStyles.closeSpace} onPress={() => setSelectedItem(null)}></TouchableOpacity> */}
 				<View style={ModelStyles.modalContent}>
-				{/* Display selected item's data here */}
+				{/* popup Display */}
 				{selectedItem && (
-					<View>
+					<View style={ModelStyles.viewBox}>
 						<TouchableOpacity style={ModelStyles.closeButton} onPress={() => setSelectedItem(null)}>
-							<FontAwesome style={ModelStyles.closeButton} name="close" size={27} color="black" />
+							<FontAwesome style={ModelStyles.closeButtonIcon} name="close" size={27} />
 						</TouchableOpacity>
 
+						<Image
+							source={require('./assets/testUser.png')}
+							style={ModelStyles.profileImage}
+						/>
 						<Text style={ModelStyles.driverName}>{selectedItem.driverName}</Text>
-						<Text>Start Location: {selectedItem.startLocation}</Text>
-						<Text>End Location: {selectedItem.endLocation}</Text>
+
+						<Text>{selectedItem.startLocation}</Text>
+						<Text>{selectedItem.endLocation}</Text>
 						{/* Add more data fields as needed */}
 					</View>
 				)}
@@ -262,7 +279,13 @@ function HomeScreen() {
 	);
 }
 
+
+// * STYLE CONSTANTS * //
+const paddingValue = 3;
+const highlight_color = '#357A48';
+
 const styles = StyleSheet.create({
+	
 	cardLocation:{
 		marginTop: 'auto',
 	},
@@ -305,22 +328,26 @@ const styles = StyleSheet.create({
 			},
 		}),
 	},
+
 	price:{
 		position: 'absolute',
-		bottom: 25,
-
+		bottom: 25+paddingValue,
+		left: paddingValue,
 		overflow: 'hidden',
-		backgroundColor: 'white', 
+
+		backgroundColor: 'green',
+		color: 'white',
+
 		borderWidth: 0.6,
 		borderColor: '#ccc',
 		borderRadius: 8,
-		color: 'black',
 		padding: 4, 
 		fontSize: 12, 
 	},
 	location:{
 		position: 'absolute',
-		bottom: 0,
+		bottom: paddingValue,
+		left: paddingValue,
 
 		overflow: 'hidden',
 		backgroundColor: 'white', 
@@ -333,8 +360,8 @@ const styles = StyleSheet.create({
 	},
 	riderInfo: {
 		position: 'absolute',
-		top: 0, 
-		right: 0, 
+		bottom: paddingValue, 
+		right: paddingValue, 
 	
 		overflow: 'hidden',
 		backgroundColor: 'white', 
@@ -347,8 +374,8 @@ const styles = StyleSheet.create({
 	},
 	dateTime:{
 		position: 'absolute',
-		top: 0, 
-		left: 0,
+		top: paddingValue, 
+		left: paddingValue,
 
 		overflow: 'hidden',
 		backgroundColor: 'white', 
@@ -384,18 +411,41 @@ const ModelStyles = StyleSheet.create({
 		top: -10, 
 		right: 0,
 		zIndex: 1,
-		border: 1,
-		borderColor: 'black',
+		width: 40,           
+		height: 40,          
 		alignSelf: 'center',
 		marginTop: 10,
-		color: highlight_color, // You can change the color to your preference
+		color: highlight_color,
+		justifyContent: 'center',
+
+		// * to see size of button
+		// borderWidth: 1,       
+		// borderColor: 'black', 
+	},
+	closeButtonIcon: {
+		alignSelf: 'center',
+		color: highlight_color, 
+
 	},
 
 	driverName: {
 		fontSize: 30,
 		fontWeight: 'bold',
 		marginBottom: 10,
-	}
+	},
+	profileImage: {
+		width: 100, 
+		height: 100,
+		borderRadius: 50, 
+		marginBottom: 10,
+		
+		borderWidth: 0.6,
+		borderColor: '#ccc',
+	  },
+	viewBox: {
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
   });
 
 export default HomeScreen;

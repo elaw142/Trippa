@@ -103,21 +103,29 @@ export default function App() {
                 let iconName;
 
                 if (route.name === "Home") {
-                  iconName = focused ? "home" : "home-outline";
+                  iconName = focused ? "ios-home-sharp" : "ios-home-outline";
                 } else if (route.name === "Account") {
-                  iconName = focused ? "person" : "person-outline";
+                  iconName = focused ? "person-circle-sharp" : "person-circle-outline";
                 } else if (route.name === "AddTrip") {
                   iconName = focused ? "add-circle" : "add-circle-outline";
                 }
 
-                return <Ionicons name={iconName} size={size} color={color} />;
+                return <Ionicons 
+                  name={iconName}
+                  size={size} 
+                  color={color} 
+                  style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
+                />;
               },
-              tabBarActiveTintColor: "#357A48", // Set the active tab color
-              tabBarInactiveTintColor: "black", // Set the inactive tab color
+              tabBarActiveTintColor: "#357A48", 
+              tabBarInactiveTintColor: "black", 
               tabBarStyle: {
-                display: "flex", // Add any additional tabBar styles here
+                display: "flex", 
+                paddingTop: 5, //. remove this line (or change for spacing)
               },
+              tabBarLabel: "", //. remove this line
             })}
+            
           >
             <Tab.Screen
               name="Home"
@@ -142,6 +150,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     backgroundColor: "#fff",
