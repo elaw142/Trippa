@@ -11,9 +11,9 @@ namespace Models
         [Required]
         public required string Password { get; set; }
         public string? Email { get; set; }
-        [Required]
 
         // TODO: phone cant start with leading zero, fix this later... can store as string coz not a soul cares
+        [Required]
         public long? Phone { get; set; }
         public string? Address { get; set; }
 

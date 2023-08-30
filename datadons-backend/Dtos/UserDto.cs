@@ -3,6 +3,7 @@ namespace Dtos{
     {
         public required string Username { get; set; }
         public required string Password { get; set; }
+        public required long Phone { get; set; }
     }
 
     public class DriverDto{

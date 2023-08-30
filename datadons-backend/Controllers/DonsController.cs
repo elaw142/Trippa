@@ -33,9 +33,13 @@ namespace Controllers
 
         // POST api/AddUser
         [HttpPost("AddUser")]
-        public IActionResult AddUser(User user)
+        public IActionResult AddUser(UserDto user)
         {
-            string username = _repo.AddUser(user);
+            string username = _repo.AddUser(new Models.User{
+                Username = user.Username,
+                Password = user.Password,
+                Phone = user.Phone
+            });
             return new CreatedResult($"/api/GetUser/{username}", user);
         }
 
