@@ -128,6 +128,43 @@ namespace Controllers
             }
         }
 
+        // POST api/users/review/{id}
+        [HttpPost("users/review/{userId}")]
+        public IActionResult AddReviewToUser(int userId, ReviewDto reviewDto)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            Review r = new Review
+            {
+                UserId = userId,
+                User = u,
+                ReviewText = reviewDto.ReviewText,
+                Rating = reviewDto.Rating
+            };
+
+            if (reviewDto == null)
+            {
+                return BadRequest("Review object is null");
+            }
+
+            try
+            {
+                _repo.AddReviewToUser(userId, r);
+                return Ok($"Review added to user {u.Username}");
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         //* Trip Endpoints
 
         // GET api/GetTrip - get trip by id

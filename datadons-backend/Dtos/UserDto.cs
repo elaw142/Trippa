@@ -15,4 +15,11 @@ namespace Dtos{
         public required string PlateNumber { get; set; }
 
     }
+
+    public class ReviewDto{
+        public long UserId { get; set; }
+        public long ReviewerId { get; set; }
+        public string ReviewText { get; set; }
+        public int Rating { get; set; }
+    }
 }
