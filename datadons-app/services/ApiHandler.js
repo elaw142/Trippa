@@ -35,7 +35,7 @@ function getUser(id) {
 }
 
 export { 
-    get, 
+    getJson, 
     post,
     getVersion,
     addUser,
