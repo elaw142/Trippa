@@ -33,12 +33,12 @@ namespace Data
                 .HasForeignKey(r => r.ReviewerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // User - Preferences (one-to-many)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Preferences)
-                .WithOne(p => p.User)
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // // User - Preferences (one-to-many)
+            // modelBuilder.Entity<User>()
+            //     .HasMany(u => u.Preferences)
+            //     .WithOne(p => p.User)
+            //     .HasForeignKey(p => p.UserId)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
             // User - Driver (one-to-one)
             modelBuilder.Entity<User>()
@@ -75,11 +75,11 @@ namespace Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Preference - User (many-to-one)
-            modelBuilder.Entity<Preference>()
-                .HasOne(p => p.User)
-                .WithMany(u => u.Preferences)
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // modelBuilder.Entity<Preference>()
+            //     .HasOne(p => p.User)
+            //     .WithMany(u => u.Preferences)
+            //     .HasForeignKey(p => p.UserId)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
             // Trip - CurrentRiders (many-to-many)
             modelBuilder.Entity<Trip>()
@@ -104,6 +104,12 @@ namespace Data
             // GPS (owned by Trip)
             modelBuilder.Entity<GPS>()
                 .HasKey(g => g.Id);
+
+            modelBuilder.Entity<Driver>()
+                .HasMany(d => d.Preferences)
+                .WithOne(p => p.Driver)
+                .HasForeignKey(p => p.DriverId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

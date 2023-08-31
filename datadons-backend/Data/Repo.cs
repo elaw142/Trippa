@@ -175,9 +175,53 @@ namespace Data
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
         }
-        public Driver GetDriver(long driverId){
+        public Driver GetDriver(long driverId)
+        {
             return _repo.Drivers.FirstOrDefault(d => d.Id == driverId);
         }
 
+        public void AddPreference(PreferenceDto preference)
+        {
+            Preference newPreference = new Preference{
+                Category = preference.Category,
+                Description = preference.Description,
+                DriverId = preference.DriverId
+            };
+            if (preference != null)
+            {
+                _repo.Preferences.Add(newPreference);
+                _repo.SaveChanges();
+            }
+
+        }
+        public Preference GetPreference(long id)
+        {
+            return _repo.Preferences.FirstOrDefault(p => p.Id == id);
+        }
+        public Preference UpdatePreference(Preference updatedPreference)
+        {
+            var preference = _repo.Preferences.FirstOrDefault(p => p.Id == updatedPreference.Id);
+            if (updatedPreference != null)
+            {
+                preference.Category = updatedPreference.Category;
+                preference.Description = updatedPreference.Description;
+                preference.DriverId = updatedPreference.DriverId;
+                _repo.SaveChanges();
+            }
+            return preference;
+        }
+        public void DeletePreference(long id)
+        {
+            var preferenceToDelete = _repo.Preferences.FirstOrDefault(p => p.Id == id);
+            if (preferenceToDelete != null)
+            {
+                _repo.Preferences.Remove(preferenceToDelete);
+                _repo.SaveChanges();
+            }
+        }
+        public IEnumerable<Preference> GetPreferencesByDriverId(long driverId)
+        {
+            return _repo.Preferences.Where(p => p.DriverId == driverId).ToArray();
+        }
     }
 }
