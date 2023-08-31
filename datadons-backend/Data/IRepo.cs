@@ -13,7 +13,8 @@ namespace Data
         // Methods to remove and add a driver to a user
         User AddDriverToUser(long userId, Driver driver);
         User RemoveDriverFromUser(long userId);
-
+        Review AddReviewToUser(long userId, Review review);
+        List<Review> getIncomingReviewsForUser(long userId);
 
 
         //* Trips Methods 

@@ -57,6 +57,23 @@ namespace Data
             return user;
         }
 
+        public Review AddReviewToUser(long userId, Review review)
+        {
+            var user = _repo.Users.Include(u => u.IncomingReviews).FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                user.IncomingReviews.Add(review);
+                _repo.SaveChanges();
+            }
+            return review;
+        }
+
+        public List<Review> getIncomingReviewsForUser(long userId){
+            return _repo.Reviews.Where(r => r.UserId == userId).ToList();
+        }
+
+
+
 
 
 

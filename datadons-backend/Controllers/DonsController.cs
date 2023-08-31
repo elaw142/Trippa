@@ -129,6 +129,136 @@ namespace Controllers
             }
         }
 
+        // GET api/users/isDriver/{userId}
+        [HttpGet("users/isDriver/{userId}")]
+        public IActionResult IsDriver(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+            try
+            {
+                if (u.Driver == null)
+                {
+                    return Ok(false);
+                }
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // POST api/users/review/{id}
+        //* add a review to a user (UserId -- the user doing the review, reviewerId[insideReviewDto] -- the user being reviewed)
+        [HttpPost("users/review/{userId}")]
+        public IActionResult AddReviewToUser(int userId, ReviewDto reviewDto)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            Review r = new Review
+            {
+                ReviewerId = reviewDto.ReviewerId,
+                User = u,
+                UserId = userId,
+                ReviewText = reviewDto.ReviewText,
+                Rating = reviewDto.Rating
+            };
+
+            if (reviewDto == null)
+            {
+                return BadRequest("Review object is null");
+            }
+
+            try
+            {
+                _repo.AddReviewToUser(userId, r);
+                return Ok($"Review added to user {u.Username}");
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET api/users/review/{id}
+        //* get all reviews for a user
+        [HttpGet("users/review/{userId}")]
+        public ActionResult<List<OutReviewDto>> GetReviewsForUser(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            try
+            {
+                List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
+                if(reviews == null || reviews.Count == 0)
+                {
+                    return Ok(new List<OutReviewDto>());
+                }
+
+                List<OutReviewDto> OutReviews = new List<OutReviewDto>();
+                foreach (Review r in reviews)
+                {
+                    OutReviewDto outReview = new OutReviewDto
+                    {
+                        ReviewerName = _repo.GetUser(r.ReviewerId).Username,
+                        ReviewText = r.ReviewText,
+                        Rating = (int)r.Rating
+                    };
+                    OutReviews.Add(outReview);
+                }
+                return Ok(OutReviews);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET api/users/review-avd/{id}
+        //* get average rating for a user
+        [HttpGet("users/review-avg/{userId}")]
+        public IActionResult GetAverageRatingForUser(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            try
+            {
+                List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
+                if(reviews == null || reviews.Count == 0)
+                {
+                    return Ok(0);
+                }
+
+                return Ok(reviews.Average(r => r.Rating));
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         //* Trip Endpoints
 
         // GET api/GetTrip - get trip by id
