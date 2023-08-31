@@ -21,8 +21,8 @@ namespace Models
         // public string? Avatar { get; set; }
         // public Preference[]? Preferences { get; set; }
 
-        public Review[]? OutgoingReviews { get; set; }
-        public Review[]? IncomingReviews { get; set; }
+        public List<Review>? OutgoingReviews { get; set; }
+        public List<Review>? IncomingReviews { get; set; }
 
         public Driver? Driver { get; set; }
         public List<Trip> RiddenTrips { get; set; } = new List<Trip>();

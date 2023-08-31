@@ -130,6 +130,7 @@ namespace Controllers
         }
 
         // POST api/users/review/{id}
+        //* add a review to a user (UserId -- the user doing the review, reviewerId[insideReviewDto] -- the user being reviewed)
         [HttpPost("users/review/{userId}")]
         public IActionResult AddReviewToUser(int userId, ReviewDto reviewDto)
         {
@@ -156,6 +157,55 @@ namespace Controllers
             {
                 _repo.AddReviewToUser(userId, r);
                 return Ok($"Review added to user {u.Username}");
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET api/users/review/{id}
+        //* get all reviews for a user
+        [HttpGet("users/review/{userId}")]
+        public IActionResult GetReviewsForUser(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            try
+            {
+                return Ok(u.IncomingReviews);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET api/users/review-avd/{id}
+        //* get average rating for a user
+        [HttpGet("users/review-avg/{userId}")]
+        public IActionResult GetAverageRatingForUser(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+
+            try
+            {
+                if(u.IncomingReviews == null || u.IncomingReviews.Count == 0)
+                {
+                    return Ok(0);
+                }
+
+                return Ok(u.IncomingReviews.Average(r => r.Rating));
             }
             catch (Exception ex)
             {
