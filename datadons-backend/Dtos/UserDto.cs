@@ -17,9 +17,13 @@ namespace Dtos{
     }
 
     public class ReviewDto{
-        public long UserId { get; set; }
         public long ReviewerId { get; set; }
         public string ReviewText { get; set; }
         public int Rating { get; set; }
+    }
+    public class OutReviewDto{
+        public required string ReviewerName { get; set; }
+        public required string ReviewText { get; set; }
+        public required int Rating { get; set; }
     }
 }

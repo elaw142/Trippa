@@ -68,6 +68,10 @@ namespace Data
             return review;
         }
 
+        public List<Review> getIncomingReviewsForUser(long userId){
+            return _repo.Reviews.Where(r => r.UserId == userId).ToList();
+        }
+
 
 
 

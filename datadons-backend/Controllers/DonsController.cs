@@ -166,8 +166,9 @@ namespace Controllers
 
             Review r = new Review
             {
-                UserId = userId,
+                ReviewerId = reviewDto.ReviewerId,
                 User = u,
+                UserId = userId,
                 ReviewText = reviewDto.ReviewText,
                 Rating = reviewDto.Rating
             };
@@ -192,7 +193,7 @@ namespace Controllers
         // GET api/users/review/{id}
         //* get all reviews for a user
         [HttpGet("users/review/{userId}")]
-        public IActionResult GetReviewsForUser(int userId)
+        public ActionResult<List<OutReviewDto>> GetReviewsForUser(int userId)
         {
             User u = _repo.GetUser(userId);
             if (u == null)
@@ -202,7 +203,24 @@ namespace Controllers
 
             try
             {
-                return Ok(u.IncomingReviews);
+                List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
+                if(reviews == null || reviews.Count == 0)
+                {
+                    return Ok(new List<OutReviewDto>());
+                }
+
+                List<OutReviewDto> OutReviews = new List<OutReviewDto>();
+                foreach (Review r in reviews)
+                {
+                    OutReviewDto outReview = new OutReviewDto
+                    {
+                        ReviewerName = _repo.GetUser(r.ReviewerId).Username,
+                        ReviewText = r.ReviewText,
+                        Rating = (int)r.Rating
+                    };
+                    OutReviews.Add(outReview);
+                }
+                return Ok(OutReviews);
             }
             catch (Exception ex)
             {
@@ -224,12 +242,13 @@ namespace Controllers
 
             try
             {
-                if(u.IncomingReviews == null || u.IncomingReviews.Count == 0)
+                List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
+                if(reviews == null || reviews.Count == 0)
                 {
                     return Ok(0);
                 }
 
-                return Ok(u.IncomingReviews.Average(r => r.Rating));
+                return Ok(reviews.Average(r => r.Rating));
             }
             catch (Exception ex)
             {
