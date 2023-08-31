@@ -266,7 +266,7 @@ namespace Controllers
 
         // POST api/AddPreference - create a new preference
         [HttpPost("AddPreference")]
-        public ActionResult<PreferenceDto> AddPreference(PreferenceDto preference)
+        public ActionResult AddPreference(PreferenceDto preference)
         {
             if (preference.Category == null)
             {
