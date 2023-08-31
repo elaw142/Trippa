@@ -1,3 +1,4 @@
+using Dtos;
 using Models;
 
 namespace Data
@@ -12,7 +13,7 @@ namespace Data
         // Methods to remove and add a driver to a user
         User AddDriverToUser(long userId, Driver driver);
         User RemoveDriverFromUser(long userId);
-        void SetUserAsDriver(long userId, Driver driver);
+
 
 
         //* Trips Methods 
@@ -21,7 +22,8 @@ namespace Data
         Trip[] SearchTrips(double? startLatitude, double? startLongitude, double? endLatitude, double? endLongitude, string date, string time, int seats);
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
-        void UpdateTrip(Trip trip);
-        long AddTrip(Trip trip);
+        void UpdateTrip(UpdateTripDto trip);
+        void AddTrip(TripDto tripDto);
+        public Driver GetDriver(long driverId);
     }
 }

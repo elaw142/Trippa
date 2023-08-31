@@ -23,16 +23,16 @@ this changes the database to match the new models and contexts.
 
 ## Testing with Swagger
 
-- Setting self as driver
-
-```c++
-// Create a api call POST request that sets the driver with userid like this
-[HttpPost("setDriver/{userId}")]
-public ActionResult<User> SetDriver(long userId, Driver driver){
-    var user = _repo.AddDriverToUser(userId, driver);
-    if(user == null){
-        return NotFound("User with this userId is not found");
-    }
-    return Ok(user);
-}
-```
+-[x] /api/GetVersion
+-[ ] /api/AddUser
+-[ ] /api/GetUser/{id}
+-[ ] /api/GetAllUsers
+-[ ] /api/{userId}/add-driver
+-[ ] /api/{userId}/driver
+-[ ] /api/{userId}/setAsDriver
+-[x] /api/GetTrip/{id}
+-[x] /api/GetAllTrips
+-[x] /api/AddTrip
+-[x] /api/UpdateTrip
+-[x] /api/GetAllTripsBy/{driverID}
+-[ ] /api/Trips/search

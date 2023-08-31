@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using Models;
-
+using Dtos;
 
 
 namespace Controllers
@@ -10,7 +10,7 @@ namespace Controllers
     // localHost:8080/api
     [Route("api")]
     [ApiController]
-    public class DonsController
+    public class DonsController : Controller
     {
         private readonly IRepo _repo;
         public DonsController(IRepo repo)
@@ -22,9 +22,9 @@ namespace Controllers
 
         // GET api/GetVersion
         [HttpGet("GetVersion")]
-        public string GetVersion()
+        public ActionResult<string> GetVersion()
         {
-            return "0.0.2 (TESTING PHASE)";
+            return Ok("0.0.2 (TESTING PHASE)");
         }
 
 
@@ -41,138 +41,220 @@ namespace Controllers
 
         // GET api/GetUser
         [HttpGet("GetUser/{id}")]
-        public User GetUser(long id)
+        public ActionResult<User> GetUser(long id)
         {
-            return _repo.GetUser(id);
+            if (_repo.GetUser(id) == null)
+            {
+                return BadRequest($"User with id {id} does not exist");
+            }
+            return Ok(_repo.GetUser(id));
         }
 
         // GET api/GetAllUsers
         [HttpGet("GetAllUsers")]
-        public User[] GetAllUsers()
+        public ActionResult<User[]> GetAllUsers()
         {
-            return _repo.GetAllUsers();
+            if (_repo.GetAllUsers().Length == 0)
+            {
+                return BadRequest("No users exist");
+            }
+            return Ok(_repo.GetAllUsers());
         }
 
-        // POST api/{id}/AddDriver
-        [HttpPost("{userId}/add-driver")]
-        public IActionResult AddDriverToUser(int userId, [FromBody] Driver driver)
-        // change to driver dto... driver dto needs to make a driver id, then make a car and link it to the driver
+        // POST api/users/AddDriver/{id}
+        [HttpPost("users/AddDriver/{userId}")]
+        public IActionResult AddDriverToUser(int userId, DriverDto driverDto)
         {
-            if (driver == null)
+            User u = _repo.GetUser(userId);
+            if (u == null)
             {
-                return new BadRequestObjectResult("Driver object is null");
+                return BadRequest("UserId does not exist");
+            }
+
+            Driver d = new Driver
+            {
+                UserId = userId,
+                User = u,
+                LicenseNumber = driverDto.LicenseNumber,
+                Car = new Car
+                {
+                    Make = driverDto.CarMake,
+                    Type = driverDto.CarType,
+                    Model = driverDto.CarModel,
+                    Color = driverDto.CarColor,
+                    LicensePlate = driverDto.PlateNumber
+                }
+            };
+
+            if (driverDto == null)
+            {
+                return BadRequest("Driver object is null");
             }
 
             try
             {
-                _repo.AddDriverToUser(userId, driver);
-                return new OkResult();
+                _repo.AddDriverToUser(userId, d);
+                return Ok($"Driver added to user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return BadRequest(ex.Message);
             }
         }
-        // DELETE api/users/{userId}/driver
-        [HttpDelete("users/{userId}/driver")]
+
+        // DELETE api/users/driver/{userId}
+        [HttpDelete("users/deleteDriver/{userId}")]
         public IActionResult RemoveDriverFromUser(int userId)
         {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
             try
             {
                 _repo.RemoveDriverFromUser(userId);
-                return new OkResult();
+                return Ok($"Driver removed from user {u.Username}");
             }
             catch (Exception ex)
             {
                 // Handle exception and return an error response
-                return new BadRequestObjectResult(ex.Message);            
+                return BadRequest(ex.Message);
             }
         }
-        // GET api/users/{userId}/setAsDriver
-        [HttpPost("users/{userId}/setAsDriver")]
-        public ActionResult<User> SetUserAsDriver(int userId, Driver driver){
-            if(driver == null){
-                return new BadRequestObjectResult("Driver is required");
-            }
-            try {
-                var user = _repo.GetUser(userId);
-                if(user == null){
-                    return new NotFoundObjectResult("User is not found");
-                }
-                _repo.SetUserAsDriver(userId, driver);
-                return new OkResult();
-            } catch (Exception e){
-                return new BadRequestObjectResult("");
-            }
-        }
-
-        // DEL /api/users/removeDriver/{id}
-        [HttpDelete("users/removeDriver{id}")]
-        public IActionResult RemoveDriver(long id)
-        {
-            _repo.RemoveDriverFromUser(id);
-            return new OkResult();
-        }
-
-
- 
 
         //* Trip Endpoints
-        
-        
 
         // GET api/GetTrip - get trip by id
         [HttpGet("GetTrip/{id}")]
-        public Trip GetTrip(long id)
+        public ActionResult<Trip> GetTrip(long id)
         {
-            return _repo.GetTrip(id);
+            Trip trip = _repo.GetTrip(id);
+            if (trip == null)
+            {
+                return BadRequest($"Trip with id {id} does not exist");
+            }
+            return Ok(trip);
         }
 
         // GET api/GetAllTrips - get all trips
         [HttpGet("GetAllTrips")]
-        public Trip[] GetAllTrips()
+        public ActionResult<IEnumerable<Trip>> GetAllTrips()
         {
-            return _repo.GetAllTrips();
+            IEnumerable<Trip> trips = _repo.GetAllTrips();
+            if (trips == null)
+            {
+                return Ok("No trips exist");
+            }
+            return Ok(trips);
         }
 
         // POST api/AddTrip - create a new trip
         [HttpPost("AddTrip")]
-        public IActionResult AddTrip(Trip trip)
+        public ActionResult<TripDto> AddTrip(TripDto trip)
         {
-            long id = _repo.AddTrip(trip);
-            return new CreatedResult($"/api/GetTrip/{id}", trip);
+            if (trip.DriverID == 0)
+            {
+                return BadRequest("DriverID is required");
+            }
+            if (trip.DateTime == null)
+            {
+                return BadRequest("DateTime is required");
+            }
+            if (trip.MaxRiders == 0)
+            {
+                return BadRequest("MaxRiders is required");
+            }
+            if (trip.Price == 0)
+            {
+                return BadRequest("Price is required");
+            }
+            if (trip.StartLatitude == 0)
+            {
+                return BadRequest("StartLatitude is required");
+            }
+            if (trip.StartLongitude == 0)
+            {
+                return BadRequest("StartLongitude is required");
+            }
+            if (trip.EndLatitude == 0)
+            {
+                return BadRequest("EndLatitude is required");
+            }
+            if (trip.EndLongitude == 0)
+            {
+                return BadRequest("EndLongitude is required");
+            }
+            if (trip.DetourRange == 0)
+            {
+                return BadRequest("DetourRange is required");
+            }
+            _repo.AddTrip(trip);
+            return Ok("Success");
         }
 
         // PUT api/UpdateTrip - update a trip
         [HttpPut("UpdateTrip")]
-        public IActionResult UpdateTrip(Trip trip)
+        public ActionResult UpdateTrip(UpdateTripDto trip)
         {
+            if (trip == null)
+            {
+                return BadRequest("Trip object is null");
+            }
+            var tripId = trip.TripID;
+            Trip oldtrip = _repo.GetTrip(tripId);
+            if (oldtrip == null)
+            {
+                return BadRequest($"Trip with id {tripId} does not exist");
+            }
+            var driverId = trip.DriverID;
+            Driver driver = _repo.GetDriver(driverId);
+            if (driver == null)
+            {
+                return BadRequest($"Driver with id {driverId} does not exist");
+            }
             _repo.UpdateTrip(trip);
-            return new OkResult();
+            return Ok();
         }
 
         // DELETE api/DeleteTrip - delete a trip
+        // TODO - I think we should also check if the person trying to delete the trip is the driver
         [HttpDelete("DeleteTrip/{id}")]
-        public IActionResult DeleteTrip(long id)
+        public ActionResult DeleteTrip(long id)
         {
+            Trip trip = _repo.GetTrip(id);
+            if (trip == null)
+            {
+                return BadRequest($"Trip with id {id} does not exist");
+            }
             _repo.DeleteTrip(id);
-            return new OkResult();
+            return Ok();
         }
 
         // GET api/GetAllTripsBy/{driverID} - get all trips by user
         [HttpGet("GetAllTripsBy/{driverID}")]
-        public Trip[] GetAllTripsBy(long driverID)
+        public ActionResult<IEnumerable<Trip>> GetAllTripsBy(long driverID)
         {
-            return _repo.GetAllTripsBy(driverID);
+            IEnumerable<Trip> trips = _repo.GetAllTripsBy(driverID);
+            if (trips.Count() == 0)
+            {
+                return BadRequest($"No trips exist for driver with id {driverID}");
+            }
+            return Ok(trips);
         }
 
-        // GET api/Trips/search - Retrieve trips based on certain criterias like start and end GPS locations, whether the trip is full, date and time range, etc.
+        // GET api/Trips/search - Retrieve trips based on certain criteria like start and end GPS locations, whether the trip is full, date and time range, etc.
+        // Not sure how to test this
         [HttpGet("Trips/search")]
-        public Trip[] SearchTrips([FromQuery] double? startLatitude, [FromQuery] double? startLongitude, [FromQuery] double? endLatitude, [FromQuery] double? endLongitude, [FromQuery] string date, [FromQuery] string time, [FromQuery] int seats)
+        public ActionResult<IEnumerable<Trip>> SearchTrips([FromQuery] double? startLatitude, [FromQuery] double? startLongitude, [FromQuery] double? endLatitude, [FromQuery] double? endLongitude, [FromQuery] string date, [FromQuery] string time, [FromQuery] int seats)
         {
-            return _repo.SearchTrips(startLatitude, startLongitude, endLatitude, endLongitude, date, time, seats);
+            IEnumerable<Trip> trips = _repo.SearchTrips(startLatitude, startLongitude, endLatitude, endLongitude, date, time, seats);
+            if (trips == null)
+            {
+                return BadRequest($"No trips exist for the given criteria");
+            }
+            return Ok(trips);
         }
-
     }
 }
