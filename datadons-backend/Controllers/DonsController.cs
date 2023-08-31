@@ -35,7 +35,8 @@ namespace Controllers
         [HttpPost("AddUser")]
         public IActionResult AddUser(UserDto user)
         {
-            string username = _repo.AddUser(new Models.User{
+            string username = _repo.AddUser(new Models.User
+            {
                 Username = user.Username,
                 Password = user.Password,
                 Phone = user.Phone
@@ -260,5 +261,79 @@ namespace Controllers
             }
             return Ok(trips);
         }
+
+        // Preference Endpoints
+
+        // POST api/AddPreference - create a new preference
+        [HttpPost("AddPreference")]
+        public ActionResult<PreferenceDto> AddPreference(PreferenceDto preference)
+        {
+            if (preference.Category == null)
+            {
+                return BadRequest("Category is required");
+            }
+            if (preference.DriverId == 0)
+            {
+                return BadRequest("DriverId is required");
+            }
+            _repo.AddPreference(preference);
+            return Ok("Success");
+        }
+
+        // GET api/GetPreference - get preference by id
+        [HttpGet("GetPreference/{id}")]
+        public ActionResult<Preference> GetPreference(long id)
+        {
+            Preference preference = _repo.GetPreference(id);
+            if (preference == null)
+            {
+                return BadRequest($"Preference with id {id} does not exist");
+            }
+            return Ok(preference);
+        }
+
+        // Get api/UpdatePreference - update a preference
+        [HttpPut("UpdatePreference")]
+        public ActionResult UpdatePreference(Preference preference)
+        {
+            if (preference == null)
+            {
+                return BadRequest("Preference object is null");
+            }
+            var preferenceId = preference.Id;
+            Preference oldPreference = _repo.GetPreference(preferenceId);
+            if (oldPreference == null)
+            {
+                return BadRequest($"Preference with id {preferenceId} does not exist");
+            }
+            _repo.UpdatePreference(preference);
+            return Ok();
+        }
+
+        // DELETE api/DeletePreference - delete a preference
+        [HttpDelete("DeletePreference/{id}")]
+        public ActionResult DeletePreference(long id)
+        {
+            Preference preference = _repo.GetPreference(id);
+            if (preference == null)
+            {
+                return BadRequest($"Preference with id {id} does not exist");
+            }
+            _repo.DeletePreference(id);
+            return Ok();
+        }
+
+        // GET api/GetPreferencesByDriverId/{driverId} - get all preferences by driver
+        [HttpGet("GetPreferencesByDriverId/{driverId}")]
+        public ActionResult<IEnumerable<Preference>> GetPreferencesByDriverId(long driverId)
+        {
+            IEnumerable<Preference> preferences = _repo.GetPreferencesByDriverId(driverId);
+            if (preferences.Count() == 0)
+            {
+                return BadRequest($"No preferences exist for driver with id {driverId}");
+            }
+            return Ok(preferences);
+        }
+
     }
 }
