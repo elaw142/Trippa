@@ -19,7 +19,7 @@ namespace Models
 
         // TODO: Add avatar functionally
         // public string? Avatar { get; set; }
-        public Preference[]? Preferences { get; set; }
+        // public Preference[]? Preferences { get; set; }
 
         public Review[]? OutgoingReviews { get; set; }
         public Review[]? IncomingReviews { get; set; }
@@ -56,6 +56,7 @@ namespace Models
         [Required]
         public long UserId { get; set; }
         public User? User { get; set; }
+        public List<Preference> Preferences { get; set; } = new List<Preference>();
 
         [Required]
         public required string LicenseNumber { get; set; }
@@ -96,10 +97,11 @@ namespace Models
         public long Id { get; set; }
         // TODO: can make enum for certain preferences
         [Required]
-        public required Category category { get; set; }
+        public required Category Category { get; set; }
         public string? Description { get; set; }
-        public long UserId { get; set; }
-        public User? User { get; set; }
+        public long DriverId { get; set; }
+        public Driver? Driver { get; set; }
+        // public User? User { get; set; }
     }
 
     public enum CarType
@@ -139,12 +141,25 @@ namespace Models
     public enum Category
     {
         // TODO: add more categories
+        [Display(Name = "Smoking")]
         smoking,
+        [Display(Name = "Pets")]
         pets,
+        [Display(Name = "Music")]
         music,
+        [Display(Name = "Food")]
         food,
+        [Display(Name = "Drinks")]
         drinks,
+        [Display(Name = "Chatter")]
         chatter,
+        [Display(Name = "Luggage")]
+        luggage,
+        [Display(Name = "Air Conditioner")]
+        airConditioner,
+        [Display(Name = "Charger")]
+        charger,
+        [Display(Name = "Other")]
         other
     }
 }
