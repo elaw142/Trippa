@@ -129,6 +129,30 @@ namespace Controllers
             }
         }
 
+        // GET api/users/isDriver/{userId}
+        [HttpGet("users/isDriver/{userId}")]
+        public IActionResult IsDriver(int userId)
+        {
+            User u = _repo.GetUser(userId);
+            if (u == null)
+            {
+                return BadRequest("UserId does not exist");
+            }
+            try
+            {
+                if (u.Driver == null)
+                {
+                    return Ok(false);
+                }
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception and return an error response
+                return BadRequest(ex.Message);
+            }
+        }
+
         // POST api/users/review/{id}
         //* add a review to a user (UserId -- the user doing the review, reviewerId[insideReviewDto] -- the user being reviewed)
         [HttpPost("users/review/{userId}")]
