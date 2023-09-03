@@ -7,7 +7,7 @@ export default [
         description:    'desc 1',
 
 
-        image: require('Capstone 399/capstone-project-team-22/Documentation/AppDoc/logo/logo-white-background.png'),
+        image: require('datadons-app/assets/icon.png'),
     
     },
 
@@ -19,7 +19,7 @@ export default [
         description:    'desc 2',
 
 
-        image: require('Capstone 399/capstone-project-team-22/Documentation/AppDoc/logo/logo-white-background.png'),
+        image: require('datadons-app/assets/icon.png'),
     
     },
 
@@ -31,7 +31,7 @@ export default [
         description:    'desc 3',
 
 
-        image: require('Capstone 399/capstone-project-team-22/Documentation/AppDoc/logo/logo-white-background.png'),
+        image: require('datadons-app/assets/icon.png'),
     
     },
 
@@ -43,7 +43,7 @@ export default [
         description:    'desc 4',
 
 
-        image: require('Capstone 399/capstone-project-team-22/Documentation/AppDoc/logo/logo-white-background.png'),
+        image: require('datadons-app/assets/icon.png'),
     
     },
 
