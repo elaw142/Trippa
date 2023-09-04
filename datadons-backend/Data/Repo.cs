@@ -46,12 +46,19 @@ namespace Data
             return user;
         }
 
+        public Driver getDriverUserId(long UserId){
+            return _repo.Drivers.FirstOrDefault(d => d.Id == UserId);
+        }
+
+
         public User RemoveDriverFromUser(long userId)
         {
             var user = _repo.Users.Include(u => u.Driver).FirstOrDefault(u => u.Id == userId);
             if (user != null)
             {
                 user.Driver = null;
+                Driver d =_repo.Drivers.FirstOrDefault(d => d.Id == userId);
+                _repo.Drivers.Remove(d);
                 _repo.SaveChanges();
             }
             return user;

@@ -140,7 +140,7 @@ namespace Controllers
             }
             try
             {
-                if (u.Driver == null)
+                if (_repo.getDriverUserId(userId) == null)
                 {
                     return Ok(false);
                 }

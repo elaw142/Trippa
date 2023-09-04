@@ -15,7 +15,7 @@ namespace Data
         User RemoveDriverFromUser(long userId);
         Review AddReviewToUser(long userId, Review review);
         List<Review> getIncomingReviewsForUser(long userId);
-
+        Driver getDriverUserId(long UserId);
 
         //* Trips Methods 
         Trip GetTrip(long id);
