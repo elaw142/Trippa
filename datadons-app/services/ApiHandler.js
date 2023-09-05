@@ -14,31 +14,47 @@ function post(path, data) {
             "Content-Type": "application/json"
         }
     })
-        .then(res => res.json())
+    .then(async (res) => {
+        if (!res.ok) {
+            const responseText = await res.text();
+            throw new Error(`HTTP error! Status: ${res.status}. Response: ${responseText}`);
+        }
+        return res.json();
+      })
+    .catch((error) => {
+        throw new Error(`Network error: ${error.message}`);
+    });
 }
+  
 
 function getVersion() {
     return fetch(baseUrl + "GetVersion")
         .then(res => res.text())
 }
 
-function addUser(user) {
-    return post("AddUser", user)
+function getUserName(userName) {
+    return fetch(baseUrl + "GetUserByUsername/" + userName)
+        .then((res) => {
+            if (res.status === 404) {
+                return `User with username ${userName} does not exist.`;
+            }
+            return res.json();
+        })
+        .catch((error) => {
+            console.error('Error fetching user:', error);
+            throw error; // Rethrow the error to be handled by the caller
+        });
 }
 
-function getAllUsers() {
-    return getJson("GetAllUsers")
+function AddUser(user) {
+    return post("AddUser", user);
 }
 
-function getUser(id) {
-    return getJson("GetUser/" + id)
-}
 
-export { 
+export {
     getJson, 
     post,
     getVersion,
-    addUser,
-    getAllUsers,
-    getUser
+    getUserName,
+    AddUser,
 }

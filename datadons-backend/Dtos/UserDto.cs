@@ -6,6 +6,12 @@ namespace Dtos{
         public required long Phone { get; set; }
     }
 
+    public class UserOutDto
+    {
+        public required string Username { get; set; }
+        public required string password { get; set; }
+        public long? Phone { get; set; }
+    }
     public class DriverDto{
         public required string LicenseNumber { get; set; }
         public required string CarModel { get; set; }

@@ -1,40 +1,68 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import { navigate } from './NavigationService';
+import { getUserName, AddUser } from './services/ApiHandler';
 
 
 function LoginRegister({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordVerification, setPasswordVerification] = useState('');
+
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
 
 
-    const navigateToHome = () => {
-        navigate('Home');
-      };
     const handleLogin = async () => {
-        // Implement login logic here with api...
-        if (username === 'Test' && password === 'Test') {
-            AsyncStorage.setItem('user', username);
-
-            onLoginSuccess(); 
+        try {
+          const result = await getUserName(username);
+      
+          if (result && result.username === username && password === result.password) {
+            // AsyncStorage.setItem('user', username);
+            console.log('Login successful');
+            onLoginSuccess();
             // navigateToHome();
-        } else {
+          } else {
+            // TODO: better error handling
             alert('Username or password is incorrect');
+          }
+        } catch (error) {
+          console.error('Error fetching username:', error);
         }
-    };
+      };
+      
 
-    const handleRegister = () => {
-        // Implement registration logic here
-    };
+      const handleRegister = async () => {
+        const newUser = {
+            username: username,
+            password: password,
+            phone: phoneNumber
+        };
+      
+        try {
+          const result = await getUserName(username);
+            
+        if (result.username === username) {
+            alert('Username already exists');
+        } else {
+            await AddUser(newUser); // Assuming AddUser returns a promise
+            console.log('User created');
+            setIsRegistering(!isRegistering);
+            setUsername('');
+            setPassword('');
+            setPhoneNumber('');
+        }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      
 
     return (
+        // TODO: add login embellishments (logo, when passwords dont match, taken user name exc...)
         <View style={styles.container}>
             {isRegistering ? (
-
 
                 // REGISTER
                 <View style={styles.container}>
@@ -42,6 +70,7 @@ function LoginRegister({ onLoginSuccess }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Username"
+                        autoCapitalize="none"
                         onChangeText={(text) => setUsername(text)}
                         value={username}
                     />
@@ -56,8 +85,17 @@ function LoginRegister({ onLoginSuccess }) {
                         style={styles.input}
                         placeholder="Password"
                         secureTextEntry={true}
+                        autoCapitalize="none"
                         onChangeText={(text) => setPassword(text)}
                         value={password}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        autoCapitalize="none"
+                        onChangeText={(text) => setPasswordVerification(text)}
+                        value={passwordVerification}
                     />
 
                     <TouchableOpacity
@@ -87,6 +125,7 @@ function LoginRegister({ onLoginSuccess }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Username"
+                        autoCapitalize="none"
                         onChangeText={(text) => setUsername(text)}
                         value={username}
                     />
@@ -94,6 +133,7 @@ function LoginRegister({ onLoginSuccess }) {
                         style={styles.input}
                         placeholder="Password"
                         secureTextEntry={true}
+                        autoCapitalize="none"
                         onChangeText={(text) => setPassword(text)}
                         value={password}
                     />

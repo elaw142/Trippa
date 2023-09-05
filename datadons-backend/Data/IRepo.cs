@@ -17,6 +17,8 @@ namespace Data
         List<Review> getIncomingReviewsForUser(long userId);
         Driver getDriverUserId(long UserId);
 
+        User GetUserByUsername(string username);
+
         //* Trips Methods 
         Trip GetTrip(long id);
         Trip[] GetAllTrips();
