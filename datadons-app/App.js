@@ -25,6 +25,28 @@ export default function App() {
   const [shouldShowSplash, setShouldShowSplash] = useState(true);
   const fadeInWhite = new Animated.Value(0); // this will control the white overlay fade in
 
+    // Check if the user is logged in using AsyncStorage
+    // const isUserLoggedIn = !AsyncStorage.getItem('user');
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+      // In the LoginRegister component
+    const handleLoginSuccess = () => {
+      // Your login logic here...
+      
+      // Set the user as logged in
+      setIsUserLoggedIn(true);
+    };
+
+    useEffect(() => {
+      // Check the user's login status when the app is ready
+      const checkUserLoggedIn = async () => {
+        const user = await AsyncStorage.getItem('user');
+        setIsUserLoggedIn(user !== null); // Set to true if 'user' is found
+        console.log(user);
+      };
+    
+      // Call the function to check user's login status
+      checkUserLoggedIn();
+    }, []);
   useEffect(() => {
     async function prepare() {
       try {
@@ -59,12 +81,7 @@ export default function App() {
     return null;
   }
 
-  // Check if the user is logged in using AsyncStorage
-  const isUserLoggedIn = !AsyncStorage.getItem('user');
-
-  const navigateToHome = () => {
-    navigationRef.current?.navigate('Home'); // Use your navigationRef to navigate
-  };
+  
   
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
@@ -107,7 +124,7 @@ export default function App() {
   ) : (
     <NavigationContainer ref={navigationRef}>
       {!isUserLoggedIn ? (
-        <LoginRegister onLoginSuccess={navigateToHome} />
+        <LoginRegister onLoginSuccess={handleLoginSuccess} />
       ) : (
         <Tab.Navigator
           screenOptions={({ route }) => ({

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { navigate } from './NavigationService';
 
 
 function LoginRegister({ onLoginSuccess }) {
@@ -10,14 +11,17 @@ function LoginRegister({ onLoginSuccess }) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
 
-    const navigation = useNavigation();
 
+    const navigateToHome = () => {
+        navigate('Home');
+      };
     const handleLogin = async () => {
         // Implement login logic here with api...
         if (username === 'Test' && password === 'Test') {
-            await AsyncStorage.setItem('user', username);
+            AsyncStorage.setItem('user', username);
 
             onLoginSuccess(); 
+            // navigateToHome();
         } else {
             alert('Username or password is incorrect');
         }

@@ -46,11 +46,17 @@ del package-lock.json
 ## Using async storage...
 
 // To store data
-await AsyncStorage.setItem('key', 'value');
+```await AsyncStorage.setItem('key', 'value');```
 
 // To retrieve data
-const data = await AsyncStorage.getItem('key');
+```const data = await AsyncStorage.getItem('key');```
 
 // To remove data
-await AsyncStorage.removeItem('key');
+```await AsyncStorage.removeItem('key');```
+
+## Navigation between pages
+```js
+import { navigationRef } from './NavigationService';
+navigationRef.current?.navigate('Home');
+```
 
