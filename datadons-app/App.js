@@ -13,6 +13,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { navigationRef } from './NavigationService'; // Import the navigationRef
+import Onboarding from './components/Onboarding';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -60,26 +62,27 @@ export default function App() {
       } finally {
         // Tell the application to render
         setAppIsReady(true);
+        
+      prepare();
+    }, []);
+
+    const onLayoutRootView = useCallback(async () => {
+      if (appIsReady) {
+        // This tells the splash screen to hide immediately! If we call this after
+        // `setAppIsReady`, then we may see a blank screen while the app is
+        // loading its initial state and rendering its first pixels. So instead,
+        // we hide the splash screen once we know the root view has already
+        // performed layout.
+        await SplashScreen.hideAsync();
       }
+    }, [appIsReady]);
+
+    if (!appIsReady) {
+      return null;
     }
 
-    prepare();
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
+    return (
+        <View
 
   
   
@@ -126,6 +129,7 @@ export default function App() {
       {!isUserLoggedIn ? (
         <LoginRegister onLoginSuccess={handleLoginSuccess} />
       ) : (
+
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {

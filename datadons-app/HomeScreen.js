@@ -92,7 +92,6 @@ function MyMapComponent({ startLocation, endLocation }) {
 
 
 function HomeScreen() {
-
 	const tripsData = [
 		{
 			id: '1',
@@ -280,6 +279,7 @@ function HomeScreen() {
 
 		</View>
 	);
+
 }
 
 
