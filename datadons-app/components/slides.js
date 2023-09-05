@@ -4,7 +4,7 @@ export default [
 
         title: 'Carpool 1 etc.',
 
-        description:    'desc 1',
+        description:    'desc 1 hehehehar',
 
 
         image: require('datadons-app/assets/icon.png'),
@@ -16,10 +16,10 @@ export default [
 
         title: 'Carpool 2 etc.',
 
-        description:    'desc 2',
+        description:    'desc 2 Grrrrrrrr',
 
 
-        image: require('datadons-app/assets/icon.png'),
+        image: require('datadons-app/assets/danielboy.png'),
     
     },
 
@@ -28,10 +28,10 @@ export default [
 
         title: 'Carpool 3 etc.',
 
-        description:    'desc 3',
+        description:    'desc 3 Bob Marley',
 
 
-        image: require('datadons-app/assets/icon.png'),
+        image: require('datadons-app/assets/danielboy.png'),
     
     },
 
@@ -40,10 +40,10 @@ export default [
 
         title: 'Carpool 4 etc.',
 
-        description:    'desc 4',
+        description:    'desc 4 John Doe',
 
 
-        image: require('datadons-app/assets/icon.png'),
+        image: require('datadons-app/assets/danielboy.png'),
     
     },
 

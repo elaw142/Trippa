@@ -6,6 +6,7 @@
   import AccountScreen from './AccountScreen';
   import AddTripScreen from './AddTripScreen';
   import Onboarding from './components/Onboarding';
+  
 
   import { Stylesheet, Text, View, MaskedViewIOS, Animated } from "react-native";
   import Entypo from "@expo/vector-icons/Entypo";
