@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,11 +7,12 @@ import { Video } from "expo-av";
 import HomeScreen from "./HomeScreen";
 import AccountScreen from "./AccountScreen";
 import AddTripScreen from "./AddTripScreen";
-
-import { StyleSheet, Text, View, MaskedViewIOS, Animated } from "react-native";
+import LoginRegister from "./auth";
+import { StyleSheet, View, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
+import { navigationRef } from './NavigationService'; // Import the navigationRef
 
 const Tab = createBottomTabNavigator();
 
@@ -57,100 +59,109 @@ export default function App() {
     return null;
   }
 
+  // Check if the user is logged in using AsyncStorage
+  const isUserLoggedIn = !AsyncStorage.getItem('user');
+
+  const navigateToHome = () => {
+    navigationRef.current?.navigate('Home'); // Use your navigationRef to navigate
+  };
+  
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      {shouldShowSplash ? (
-        <>
-          <View style={styles.videoContainer}>
-            <Video
-              ref={splashVideo}
-              source={require("./assets/splashvideo.mp4")}
-              rate={1.0}
-              isMuted={true}
-              resizeMode={"cover"}
-              shouldPlay
-              style={styles.videoStyle}
-              onPlaybackStatusUpdate={(status) => {
-                if (status.didJustFinish) {
-                  Animated.timing(fadeInWhite, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true,
-                  }).start(() => {
-                    setShouldShowSplash(false);
-                  });
-                }
-              }}
-            />
-          </View>
+    {shouldShowSplash ? (
+      <>
+      <View style={styles.videoContainer}>
+        <Video
+          ref={splashVideo}
+          source={require("./assets/splashvideo.mp4")}
+          rate={1.0}
+          isMuted={true}
+          resizeMode={"cover"}
+          shouldPlay
+          style={styles.videoStyle}
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              Animated.timing(fadeInWhite, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true,
+              }).start(() => {
+                setShouldShowSplash(false);
+              });
+            }
+          }}
+        />
+      </View>
 
-          <Animated.View
-            style={{
-              ...styles.videoContainer,
-              backgroundColor: "white",
-              opacity: fadeInWhite,
-              position: "absolute", // to overlay on top of the video
-              top: 0,
-              left: 0,
-            }}
-          />
-        </>
+      <Animated.View
+        style={{
+          ...styles.videoContainer,
+          backgroundColor: "white",
+          opacity: fadeInWhite,
+          position: "absolute", // to overlay on top of the video
+          top: 0,
+          left: 0,
+        }}
+      />
+    </>
+  ) : (
+    <NavigationContainer ref={navigationRef}>
+      {!isUserLoggedIn ? (
+        <LoginRegister onLoginSuccess={navigateToHome} />
       ) : (
-        <NavigationContainer>
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ focused, color, size }) => {
-                let iconName;
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-                if (route.name === "Home") {
-                  iconName = focused ? "ios-home-sharp" : "ios-home-outline";
-                } else if (route.name === "Account") {
-                  iconName = focused ? "person-circle-sharp" : "person-circle-outline";
-                } else if (route.name === "AddTrip") {
-                  iconName = focused ? "add-circle" : "add-circle-outline";
-                }
+              if (route.name === "Home") {
+                iconName = focused ? "ios-home-sharp" : "ios-home-outline";
+              } else if (route.name === "Account") {
+                iconName = focused ? "person-circle-sharp" : "person-circle-outline";
+              } else if (route.name === "AddTrip") {
+                iconName = focused ? "add-circle" : "add-circle-outline";
+              }
 
-                return <Ionicons 
-                  name={iconName}
-                  size={size} 
-                  color={color} 
-                  style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
-                />;
-              },
-              tabBarActiveTintColor: "#357A48", 
-              tabBarInactiveTintColor: "black", 
-              tabBarStyle: {
-                display: "flex", 
-                paddingTop: 5, //. remove this line (or change for spacing)
-              },
-              tabBarLabel: "", //. remove this line
-            })}
-            
-          >
-            <Tab.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Tab.Screen
-              name="AddTrip"
-              component={AddTripScreen}
-              options={{ headerShown: false }}
-            />
-            <Tab.Screen
-              name="Account"
-              component={AccountScreen}
-              options={{ headerShown: false }}
-            />
-          </Tab.Navigator>
-        </NavigationContainer>
+              return <Ionicons 
+                name={iconName}
+                size={size} 
+                color={color} 
+                style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
+              />;
+            },
+            tabBarActiveTintColor: "#357A48", 
+            tabBarInactiveTintColor: "black", 
+            tabBarStyle: {
+              display: "flex", 
+              paddingTop: 5, //. remove this line (or change for spacing)
+            },
+            tabBarLabel: "", //. remove this line
+          })}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen
+            name="AddTrip"
+            component={AddTripScreen}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen
+            name="Account"
+            component={AccountScreen}
+            options={{ headerShown: false }}
+          />
+        </Tab.Navigator>
       )}
-    </View>
-  );
+    </NavigationContainer>
+  )}
+</View>
+);
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#fff",

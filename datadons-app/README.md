@@ -43,4 +43,14 @@ del package-lock.json
 - clean npm cache
 ```npm cache clean --force```
 
+## Using async storage...
+
+// To store data
+await AsyncStorage.setItem('key', 'value');
+
+// To retrieve data
+const data = await AsyncStorage.getItem('key');
+
+// To remove data
+await AsyncStorage.removeItem('key');
 
