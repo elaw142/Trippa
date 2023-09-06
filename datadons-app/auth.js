@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from './NavigationService';
 import { getUserName, AddUser } from './services/ApiHandler';
@@ -61,6 +61,7 @@ function LoginRegister({ onLoginSuccess }) {
 
     return (
         // TODO: add login embellishments (logo, when passwords dont match, taken user name exc...)
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
             {isRegistering ? (
 
@@ -155,6 +156,7 @@ function LoginRegister({ onLoginSuccess }) {
                 </View>
             )}
         </View>
+        </TouchableWithoutFeedback>
     );
 }
 
