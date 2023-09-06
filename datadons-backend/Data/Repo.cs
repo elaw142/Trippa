@@ -64,6 +64,11 @@ namespace Data
             return user;
         }
 
+        public User GetUserByUsername(string username)
+        {
+            return _repo.Users.FirstOrDefault(u => u.Username == username);
+        }
+
         public Review AddReviewToUser(long userId, Review review)
         {
             var user = _repo.Users.Include(u => u.IncomingReviews).FirstOrDefault(u => u.Id == userId);

@@ -35,7 +35,19 @@ namespace Controllers
         [HttpPost("AddUser")]
         public IActionResult AddUser(UserDto user)
         {
-            string username = _repo.AddUser(new Models.User
+            if (user.Username == null)
+            {
+                return BadRequest("Username is required");
+            }
+            if (user.Password == null)
+            {
+                return BadRequest("Password is required");
+            }
+            if (_repo.GetUserByUsername(user.Username) != null)
+            {
+                return BadRequest("Username already exists");
+            }
+            string username = _repo.AddUser(new User
             {
                 Username = user.Username,
                 Password = user.Password,
@@ -64,6 +76,18 @@ namespace Controllers
                 return BadRequest("No users exist");
             }
             return Ok(_repo.GetAllUsers());
+        }
+
+        //GET api/GetUserByUsername
+        [HttpGet("GetUserByUsername/{username}")]
+        public ActionResult<UserOutDto> GetUserByUsername(string username)
+        {
+            if (_repo.GetUserByUsername(username) == null)
+            {
+                return NotFound($"User with username {username} does not exist");
+            }
+            User user = _repo.GetUserByUsername(username);
+            return Ok(new UserOutDto{ Username = user.Username, password=user.Password, Phone = user.Phone });
         }
 
         // POST api/users/AddDriver/{id}

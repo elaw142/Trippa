@@ -13,6 +13,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -277,6 +279,7 @@ function HomeScreen() {
 
 		</View>
 	);
+
 }
 
 
