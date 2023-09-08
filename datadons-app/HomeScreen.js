@@ -194,34 +194,38 @@ function HomeScreen() {
     },
   ];
 
-  const [selectedItem, setSelectedItem] = useState(null);
+	const [selectedItem, setSelectedItem] = useState(null);
 
-  const [riderCount, setRiderCount] = useState(1);
+	const [riderCount, setRiderCount] = useState(1);
 
-  const handleItemPress = (item) => {
-    setSelectedItem(item);
-  };
+	const handleItemPress = (item) => {
+		setSelectedItem(item);
+	};
 
-  const handleIncreaseRiders = () => {
-    if (
-      selectedItem &&
-      selectedItem.currentRiders + riderCount < selectedItem.maxRiders
-    ) {
-      setRiderCount(riderCount + 1);
-    }
-  };
-  const handleDecreaseRiders = () => {
-    if (riderCount > 1) {
-      setRiderCount(riderCount - 1);
-    }
-  };
+	const handleIncreaseRiders = () => {
+		if (
+		selectedItem &&
+		selectedItem.currentRiders + riderCount < selectedItem.maxRiders
+		) {
+		setRiderCount(riderCount + 1);
+		}
+	};
+	const handleDecreaseRiders = () => {
+		if (riderCount > 1) {
+		setRiderCount(riderCount - 1);
+		}
+	};
 
-  const closeModal = () => {
-    setSelectedItem(null);
-    setRiderCount(1);
-  };
+	const closeModal = () => {
+		setSelectedItem(null);
+		setRiderCount(1);
+	};
 
-  return (
+	const makeTrip = () => {
+		alert("Trip has been made");
+	}
+
+  	return (
     <View style={styles.container}>
       <View style={styles.header}></View>
       <FlatList
@@ -331,13 +335,20 @@ function HomeScreen() {
                 </View>
 
                 {/* Dummy Payment Button */}
-                <View style={ModelStyles.paymentButtonContainer}>
-                  <TouchableOpacity style={ModelStyles.paymentButton}>
-                    <Text style={ModelStyles.paymentButtonText}>
-                      Proceed to Payment
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+
+				{/* TAKE OUT THIS LINE TO MAKE BUTTON WORK */}
+                {/* <View style={ModelStyles.paymentButtonContainer}> */}
+
+				<TouchableOpacity
+					style={ModelStyles.paymentButton}
+					onPress={makeTrip}
+				>
+					<Text style={ModelStyles.buttonText}>
+						DONE
+					</Text>
+				</TouchableOpacity>
+
+                {/* </View>  */}
               </View>
             )}
           </View>
@@ -555,12 +566,24 @@ const ModelStyles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 10,
     width: "80%",
+	color: "black",
+
   },
   paymentButtonText: {
-    color: "#fff",
+    color: "black",
     fontSize: 18,
     fontWeight: "bold",
   },
+  	button: {
+		backgroundColor: highlight_color,
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+	},
+	buttonText: {
+		color: 'black',
+		fontSize: 16,
+	},
 });
 
 export default HomeScreen;
