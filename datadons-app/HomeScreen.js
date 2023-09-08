@@ -210,6 +210,16 @@ function HomeScreen() {
       setRiderCount(riderCount + 1);
     }
   };
+  const handleDecreaseRiders = () => {
+    if (riderCount > 1) {
+      setRiderCount(riderCount - 1);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setRiderCount(1);
+  };
 
   return (
     <View style={styles.container}>
@@ -262,7 +272,10 @@ function HomeScreen() {
         visible={selectedItem !== null}
         onRequestClose={() => setSelectedItem(null)}
       >
-        <View style={ModelStyles.modalContainer}>
+        <TouchableOpacity
+          style={ModelStyles.modalContainer}
+          onPress={closeModal}
+        >
           <View style={ModelStyles.modalContent}>
             {/* popup Display */}
             {selectedItem && (
@@ -289,25 +302,46 @@ function HomeScreen() {
                 <Text>{selectedItem.startLocation}</Text>
                 <Text>{selectedItem.endLocation}</Text>
 
-                {/* Displaying Riders Info and button to increase riders */}
+                {/* Trip details */}
+                <View style={ModelStyles.tripDetails}>
+                  <Text>From: {selectedItem.startLocation}</Text>
+                  <Text>To: {selectedItem.endLocation}</Text>
+                  <Text>Price: ${selectedItem.price}</Text>
+                  <Text>Duration: Approx. 2hrs</Text>
+                  <Text>Distance: 150km</Text>
+                  <Text>Amenities: WiFi, Charging</Text>
+                </View>
+
+                {/* Displaying Riders Info and buttons to increase or decrease riders */}
                 <View style={ModelStyles.riderBooking}>
-                  <Text>Booking for {riderCount} riders.</Text>
+                  <Text style={ModelStyles.riderText}>Number of seats:</Text>
+                  <TouchableOpacity
+                    onPress={handleDecreaseRiders}
+                    style={ModelStyles.riderButton}
+                  >
+                    <Text>-</Text>
+                  </TouchableOpacity>
+                  <Text style={ModelStyles.riderCount}>{riderCount}</Text>
                   <TouchableOpacity
                     onPress={handleIncreaseRiders}
                     style={ModelStyles.riderButton}
                   >
-                    <Text>Add Rider</Text>
+                    <Text>+</Text>
                   </TouchableOpacity>
                 </View>
 
                 {/* Dummy Payment Button */}
-                <TouchableOpacity style={ModelStyles.paymentButton}>
-                  <Text>Proceed to Payment</Text>
-                </TouchableOpacity>
+                <View style={ModelStyles.paymentButtonContainer}>
+                  <TouchableOpacity style={ModelStyles.paymentButton}>
+                    <Text style={ModelStyles.paymentButtonText}>
+                      Proceed to Payment
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             )}
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
@@ -427,6 +461,7 @@ const ModelStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
+    flexDirection: "column",
   },
   modalContent: {
     backgroundColor: "white",
@@ -478,21 +513,53 @@ const ModelStyles = StyleSheet.create({
   },
   riderBooking: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    marginVertical: 20,
+    marginVertical: 15,
+  },
+  riderText: {
+    marginRight: 10,
   },
   riderButton: {
+    marginHorizontal: 10,
     padding: 10,
-    backgroundColor: highlight_color,
+    borderWidth: 1,
+    borderColor: highlight_color,
     borderRadius: 5,
   },
-  paymentButton: {
-    padding: 15,
-    backgroundColor: highlight_color,
-    borderRadius: 10,
-    alignItems: "center",
+  riderCount: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  tripDetails: {
     marginTop: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingBottom: 20,
+    width: "80%",
+  },
+  paymentButtonContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    marginBottom: 20,
+    marginTop: 50,
+    position: "bottom",
+  },
+  paymentButton: {
+    backgroundColor: highlight_color,
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    width: "80%",
+  },
+  paymentButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
