@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,11 +7,13 @@ import { Video } from "expo-av";
 import HomeScreen from "./HomeScreen";
 import AccountScreen from "./AccountScreen";
 import AddTripScreen from "./AddTripScreen";
-
-import { StyleSheet, Text, View, MaskedViewIOS, Animated } from "react-native";
+import LoginRegister from "./auth";
+import { StyleSheet, View, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
+import { navigationRef } from "./NavigationService"; // Import the navigationRef
+import Onboarding from "./components/Onboarding";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +25,29 @@ export default function App() {
   const splashVideo = React.useRef(null);
   const [shouldShowSplash, setShouldShowSplash] = useState(true);
   const fadeInWhite = new Animated.Value(0); // this will control the white overlay fade in
+
+  // Check if the user is logged in using AsyncStorage
+  // const isUserLoggedIn = !AsyncStorage.getItem('user');
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  // In the LoginRegister component
+  const handleLoginSuccess = () => {
+    // Your login logic here...
+
+    // Set the user as logged in
+    setIsUserLoggedIn(true);
+  };
+
+  useEffect(() => {
+    // Check the user's login status when the app is ready
+    const checkUserLoggedIn = async () => {
+      const user = await AsyncStorage.getItem("user");
+      setIsUserLoggedIn(user !== null); // Set to true if 'user' is found
+      console.log(user);
+    };
+
+    // Call the function to check user's login status
+    checkUserLoggedIn();
+  }, []);
 
   useEffect(() => {
     async function prepare() {
@@ -96,53 +122,60 @@ export default function App() {
           />
         </>
       ) : (
-        <NavigationContainer>
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ focused, color, size }) => {
-                let iconName;
+        <NavigationContainer ref={navigationRef}>
+          {isUserLoggedIn ? (
+            <LoginRegister onLoginSuccess={handleLoginSuccess} />
+          ) : (
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
 
-                if (route.name === "Home") {
-                  iconName = focused ? "ios-home-sharp" : "ios-home-outline";
-                } else if (route.name === "Account") {
-                  iconName = focused ? "person-circle-sharp" : "person-circle-outline";
-                } else if (route.name === "AddTrip") {
-                  iconName = focused ? "add-circle" : "add-circle-outline";
-                }
+                  if (route.name === "Home") {
+                    iconName = focused ? "ios-home-sharp" : "ios-home-outline";
+                  } else if (route.name === "Account") {
+                    iconName = focused
+                      ? "person-circle-sharp"
+                      : "person-circle-outline";
+                  } else if (route.name === "AddTrip") {
+                    iconName = focused ? "add-circle" : "add-circle-outline";
+                  }
 
-                return <Ionicons 
-                  name={iconName}
-                  size={size} 
-                  color={color} 
-                  style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
-                />;
-              },
-              tabBarActiveTintColor: "#357A48", 
-              tabBarInactiveTintColor: "black", 
-              tabBarStyle: {
-                display: "flex", 
-                paddingTop: 5, //. remove this line (or change for spacing)
-              },
-              tabBarLabel: "", //. remove this line
-            })}
-            
-          >
-            <Tab.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Tab.Screen
-              name="AddTrip"
-              component={AddTripScreen}
-              options={{ headerShown: false }}
-            />
-            <Tab.Screen
-              name="Account"
-              component={AccountScreen}
-              options={{ headerShown: false }}
-            />
-          </Tab.Navigator>
+                  return (
+                    <Ionicons
+                      name={iconName}
+                      size={size}
+                      color={color}
+                      style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
+                    />
+                  );
+                },
+                tabBarActiveTintColor: "#357A48",
+                tabBarInactiveTintColor: "black",
+                tabBarStyle: {
+                  display: "flex",
+                  paddingTop: 5, //. remove this line (or change for spacing)
+                },
+                tabBarLabel: "", //. remove this line
+              })}
+            >
+              <Tab.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ headerShown: false }}
+              />
+              <Tab.Screen
+                name="AddTrip"
+                component={AddTripScreen}
+                options={{ headerShown: false }}
+              />
+              <Tab.Screen
+                name="Account"
+                component={AccountScreen}
+                options={{ headerShown: false }}
+              />
+            </Tab.Navigator>
+          )}
         </NavigationContainer>
       )}
     </View>
@@ -150,7 +183,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#fff",

@@ -13,6 +13,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
@@ -87,7 +89,28 @@ function MyMapComponent({ startLocation, endLocation }) {
       <Marker
         coordinate={{ latitude: endLat, longitude: endLng }}
         title="End Location"
-      />
+
+      /> */}
+      <Marker
+        coordinate={{ latitude: startLat, longitude: startLng }}
+        title="Start Location"
+      >
+        <Image
+          source={require("./assets/custom_pin.png")}
+          resizeMode="contain"
+          style={{ width: 40, height: 40 }}
+        />
+      </Marker>
+      <Marker
+        coordinate={{ latitude: endLat, longitude: endLng }}
+        title="Start Location"
+      >
+        <Image
+          source={require("./assets/custom_pin.png")}
+          resizeMode="contain"
+          style={{ width: 40, height: 40 }}
+        />
+      </Marker>
     </MapView>
   );
 }
@@ -229,6 +252,7 @@ function HomeScreen() {
     alert("Your trip has been added");
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.header}></View>
@@ -300,6 +324,7 @@ function HomeScreen() {
                 </TouchableOpacity>
 
                 {/* Displaying Driver Info */}
+
                 <Image
                   source={require("./assets/testUser.png")}
                   style={ModelStyles.profileImage}
@@ -307,6 +332,7 @@ function HomeScreen() {
                 <Text style={ModelStyles.driverName}>
                   {selectedItem.driverName}
                 </Text>
+
                 <Text>{selectedItem.startLocation}</Text>
                 <Text>{selectedItem.endLocation}</Text>
 
@@ -469,6 +495,7 @@ const ModelStyles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     flexDirection: "column",
+
   },
   modalContent: {
     backgroundColor: "white",
@@ -518,6 +545,7 @@ const ModelStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   riderBooking: {
     flexDirection: "row",
     justifyContent: "center",
