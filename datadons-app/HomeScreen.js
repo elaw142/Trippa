@@ -15,6 +15,7 @@ import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
   const formattedTime = `${dateTimeString.slice(9, 11)}${dateTimeString.slice(
@@ -81,13 +82,14 @@ function MyMapComponent({ startLocation, endLocation }) {
       // TODO: in settings we can store a user cookie for settings,
       //. we could change this value easily depending on the cookie
     >
-      {/* <Marker
+      <Marker
         coordinate={{ latitude: startLat, longitude: startLng }}
         title="Start Location"
       />
       <Marker
         coordinate={{ latitude: endLat, longitude: endLng }}
         title="End Location"
+
       /> */}
       <Marker
         coordinate={{ latitude: startLat, longitude: startLng }}
@@ -217,9 +219,39 @@ function HomeScreen() {
 
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const [riderCount, setRiderCount] = useState(1);
+
   const handleItemPress = (item) => {
     setSelectedItem(item);
   };
+
+  const handleIncreaseRiders = () => {
+    if (
+      selectedItem &&
+      selectedItem.currentRiders + riderCount < selectedItem.maxRiders
+    ) {
+      setRiderCount(riderCount + 1);
+    }
+  };
+  const handleDecreaseRiders = () => {
+    if (riderCount > 1) {
+      setRiderCount(riderCount - 1);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setRiderCount(1);
+  };
+
+  const makeTrip = () => {
+    alert("Trip has been made");
+  };
+
+  const addToTrip = () => {
+    alert("Your trip has been added");
+  };
+
 
   return (
     <View style={styles.container}>
@@ -272,9 +304,10 @@ function HomeScreen() {
         visible={selectedItem !== null}
         onRequestClose={() => setSelectedItem(null)}
       >
-        <View style={ModelStyles.modalContainer}>
-          {/* TODO: try make model close on clickOut... i was trying below */}
-          {/* <TouchableOpacity style={ModelStyles.closeSpace} onPress={() => setSelectedItem(null)}></TouchableOpacity> */}
+        <TouchableOpacity
+          style={ModelStyles.modalContainer}
+          onPress={closeModal}
+        >
           <View style={ModelStyles.modalContent}>
             {/* popup Display */}
             {selectedItem && (
@@ -290,6 +323,8 @@ function HomeScreen() {
                   />
                 </TouchableOpacity>
 
+                {/* Displaying Driver Info */}
+
                 <Image
                   source={require("./assets/testUser.png")}
                   style={ModelStyles.profileImage}
@@ -300,11 +335,46 @@ function HomeScreen() {
 
                 <Text>{selectedItem.startLocation}</Text>
                 <Text>{selectedItem.endLocation}</Text>
-                {/* Add more data fields as needed */}
+
+                {/* Trip details */}
+                <View style={ModelStyles.tripDetails}>
+                  <Text>From: {selectedItem.startLocation}</Text>
+                  <Text>To: {selectedItem.endLocation}</Text>
+                  <Text>Price: ${selectedItem.price}</Text>
+                  <Text>Duration: Approx. 2hrs</Text>
+                  <Text>Distance: 150km</Text>
+                  <Text>Amenities: WiFi, Charging</Text>
+                </View>
+
+                {/* Displaying Riders Info and buttons to increase or decrease riders */}
+                <View style={ModelStyles.riderBooking}>
+                  <Text style={ModelStyles.riderText}>Number of seats:</Text>
+                  <TouchableOpacity
+                    onPress={handleDecreaseRiders}
+                    style={ModelStyles.riderButton}
+                  >
+                    <Text>-</Text>
+                  </TouchableOpacity>
+                  <Text style={ModelStyles.riderCount}>{riderCount}</Text>
+                  <TouchableOpacity
+                    onPress={handleIncreaseRiders}
+                    style={ModelStyles.riderButton}
+                  >
+                    <Text>+</Text>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                  style={ModelStyles.paymentButton}
+                  onPress={addToTrip}
+                >
+                  <Text style={ModelStyles.buttonText}>Proceed to Payment</Text>
+                </TouchableOpacity>
+
+                {/* </View>  */}
               </View>
             )}
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
@@ -424,6 +494,8 @@ const ModelStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
+    flexDirection: "column",
+
   },
   modalContent: {
     backgroundColor: "white",
@@ -472,6 +544,68 @@ const ModelStyles = StyleSheet.create({
   viewBox: {
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  riderBooking: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 15,
+  },
+  riderText: {
+    marginRight: 10,
+  },
+  riderButton: {
+    marginHorizontal: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: highlight_color,
+    borderRadius: 5,
+  },
+  riderCount: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  tripDetails: {
+    marginTop: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingBottom: 20,
+    width: "80%",
+  },
+  paymentButtonContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    marginBottom: 20,
+    marginTop: 50,
+    position: "bottom",
+  },
+  paymentButton: {
+    backgroundColor: highlight_color,
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    width: "80%",
+    color: "black",
+  },
+  paymentButtonText: {
+    color: "black",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  button: {
+    backgroundColor: highlight_color,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 16,
   },
 });
 
