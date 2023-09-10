@@ -50,6 +50,20 @@ function AddUser(user) {
     return post("AddUser", user);
 }
 
+function AddDriver(userId, driver) {
+    return post("AddDriver/"+userId, driver);
+}
+
+// const test = {
+//     LicenceNumber: "123456",
+//     CarModel: "test",
+//     CarColor: "test",
+//     CarMake: "test", 
+//     CarType: "test",
+//     PlateNumber: "test",
+// }
+
+// AddDriver(1, test).then((res) => {console.error.og(res)})
 
 export {
     getJson, 
@@ -57,4 +71,5 @@ export {
     getVersion,
     getUserName,
     AddUser,
+    AddDriver,
 }
