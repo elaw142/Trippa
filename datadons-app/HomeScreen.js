@@ -82,7 +82,7 @@ function MyMapComponent({ startLocation, endLocation }) {
       // TODO: in settings we can store a user cookie for settings,
       //. we could change this value easily depending on the cookie
     >
-      <Marker
+      {/* <Marker
         coordinate={{ latitude: startLat, longitude: startLng }}
         title="Start Location"
       />
