@@ -52,10 +52,10 @@ function getUserId(userName) {
             if (res.status === 404) {
                 return `User with username ${userName} does not exist.`;
             }
-            // console.log(res.text());
+            // console.log(res);
             // return parseInt(res);
             // return res.json();
-            return res.json();
+            return res.text();
         })
         
         .catch((error) => {
