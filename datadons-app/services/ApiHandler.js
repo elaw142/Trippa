@@ -46,12 +46,30 @@ function getUserName(userName) {
         });
 }
 
+function getUserId(userName) {
+    return fetch(baseUrl + "GetIdByUsername/" + userName)
+        .then((res) => {
+            if (res.status === 404) {
+                return `User with username ${userName} does not exist.`;
+            }
+            // console.log(res.text());
+            // return parseInt(res);
+            // return res.json();
+            return res.json();
+        })
+        
+        .catch((error) => {
+            console.error('Error fetching user:', error);
+            throw error; // Rethrow the error to be handled by the caller
+        });
+}
+
 function AddUser(user) {
     return post("AddUser", user);
 }
 
 function AddDriver(userId, driver) {
-    return post("AddDriver/"+userId, driver);
+    return post("users/AddDriver/"+userId, driver);
 }
 
 // const test = {
@@ -70,6 +88,7 @@ export {
     post,
     getVersion,
     getUserName,
+    getUserId,
     AddUser,
     AddDriver,
 }

@@ -89,6 +89,18 @@ namespace Controllers
             User user = _repo.GetUserByUsername(username);
             return Ok(new UserOutDto{ Username = user.Username, password=user.Password, Phone = user.Phone });
         }
+        
+        //GET api/GetIdByUsername
+        [HttpGet("GetIdByUsername/{username}")]
+        public ActionResult<long> GetIdByUsername(string username)
+        {
+            if (_repo.GetUserByUsername(username) == null)
+            {
+                return NotFound($"User with username {username} does not exist");
+            }
+            User user = _repo.GetUserByUsername(username);
+            return Ok(user.Id);
+        }
 
         // POST api/users/AddDriver/{id}
         [HttpPost("users/AddDriver/{userId}")]
