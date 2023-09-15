@@ -18,10 +18,14 @@ namespace Data
         Driver getDriverUserId(long UserId);
 
         User GetUserByUsername(string username);
+        public User GetUserFromDriverId(long driverId);
 
         //* Trips Methods 
         Trip GetTrip(long id);
         Trip[] GetAllTrips();
+        IEnumerable<Trip> GetAllTripsWithGPS();
+        double getGpsLon(long id);
+        double getGpsLat(long id);
         Trip[] SearchTrips(double? startLatitude, double? startLongitude, double? endLatitude, double? endLongitude, string date, string time, int seats);
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);

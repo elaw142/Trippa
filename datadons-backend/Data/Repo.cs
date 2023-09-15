@@ -51,6 +51,22 @@ namespace Data
             return _repo.Drivers.FirstOrDefault(d => d.Id == UserId);
         }
 
+        public IEnumerable<Trip> GetAllTripsWithGPS()
+        {
+            return _repo.Trips.Include(t => t.StartPoint).Include(t => t.EndPoint).ToArray();
+        }
+
+        public double getGpsLon(long id){
+            return _repo.GPS.FirstOrDefault(g => g.Id == id).Longitude;
+        }
+
+        public double getGpsLat(long id){
+            return _repo.GPS.FirstOrDefault(g => g.Id == id).Latitude;
+        }
+
+        public User GetUserFromDriverId(long driverId){
+            return _repo.Users.FirstOrDefault(u => u.Driver.Id == driverId);
+        }
 
         public User RemoveDriverFromUser(long userId)
         {
@@ -202,6 +218,8 @@ namespace Data
                     Longitude = tripDto.EndLongitude
                 },
                 DetourRange = tripDto.DetourRange,
+                StartLocation = tripDto.startLocation,
+                EndLocation = tripDto.endLocation
             };
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();

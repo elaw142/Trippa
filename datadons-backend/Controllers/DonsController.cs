@@ -416,6 +416,48 @@ namespace Controllers
             return Ok(trips);
         }
 
+             
+        // GET api/GetAllTrips - get all trips as tripOutDTOs
+        [HttpGet("GetAllTripsOut")]
+        public ActionResult<IEnumerable<TripOutDto>> GetAllTripsOut()
+        {
+            IEnumerable<Trip> trips = _repo.GetAllTripsWithGPS();
+            if (trips == null)
+            {
+                return Ok("No trips exist");
+            }
+            List<TripOutDto> tripOutDtos = new List<TripOutDto>();
+            foreach (Trip t in trips)
+            {
+                Console.WriteLine(trips.Count());
+                Console.WriteLine(t.StartPoint.Latitude);
+                TripOutDto tripOutDto = new TripOutDto
+                {
+
+                    TripID = t.TripID,
+                    DriverID = t.DriverID,
+                    DateTime = t.DateTime,
+                    MaxRiders = t.MaxRiders,
+                    Price = t.Price,
+                    StartLatitude = t.StartPoint.Latitude,
+                    StartLongitude = t.StartPoint.Longitude,
+                    EndLatitude = t.EndPoint.Latitude,
+                    EndLongitude = t.EndPoint.Longitude,
+
+                    DetourRange = t.DetourRange,
+                    CurrentRiders = t.CurrentRiders.Count,
+
+                    DriverName = _repo.GetUserFromDriverId(t.DriverID).Username,
+
+                    StartLocation = t.StartLocation,
+                    EndLocation = t.EndLocation,
+
+                };
+                tripOutDtos.Add(tripOutDto);
+            }
+            return Ok(tripOutDtos);
+        }
+
         // Preference Endpoints
 
         // POST: api/preferences/addToTrip/{tripId}

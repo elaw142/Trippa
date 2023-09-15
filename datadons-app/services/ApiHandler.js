@@ -50,6 +50,9 @@ function AddUser(user) {
     return post("AddUser", user);
 }
 
+function getAllTrips() {
+    return getJson("GetAllTripsOut")
+}
 
 export {
     getJson, 
@@ -57,4 +60,5 @@ export {
     getVersion,
     getUserName,
     AddUser,
+    getAllTrips,
 }

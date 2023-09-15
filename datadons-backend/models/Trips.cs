@@ -33,6 +33,9 @@ namespace Models
         public GPS? EndPoint { get; set; }
         public double DetourRange { get; set; }
         public ICollection<Preference> Preferences { get; set; }
+
+        public string? StartLocation { get; set; }
+        public string? EndLocation { get; set; }
     }
 
     public class GPS
