@@ -255,7 +255,10 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}></View>
+      <View style={styles.header}>
+          <Text style={styles.headerKiwi}>Kiwi</Text>
+          <Text style={styles.headerKom}>Kommute</Text>
+      </View>
       <FlatList
         data={tripsData}
         renderItem={({ item }) => (
@@ -395,13 +398,25 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
-    paddingTop: 150,
+    paddingTop: 50,
   },
 
   header: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
+    flexDirection: 'col',
+    padding: 10,
+    width: '100%',
+
+  },
+  headerKiwi: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    color: highlight_color,
+  },
+
+  headerKom: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    color: highlight_color,
   },
 
   tripCard: {
