@@ -56,7 +56,8 @@ namespace Models
         [Required]
         public long UserId { get; set; }
         public User? User { get; set; }
-        public List<Preference> Preferences { get; set; } = new List<Preference>();
+        public int? PreferenceId { get; set; }
+        public Preference Preference { get; set; }
 
         [Required]
         public required string LicenseNumber { get; set; }
@@ -92,17 +93,16 @@ namespace Models
 
     public class Preference
     {
+        public int Id { get; set; }
+        public bool NoPets { get; set; }
+        public bool NoLuggage { get; set; }
+        // ... other properties
 
-        [Key]
-        public long Id { get; set; }
-        // TODO: can make enum for certain preferences
-        [Required]
-        public required Category Category { get; set; }
-        public string? Description { get; set; }
-        public long DriverId { get; set; }
-        public Driver? Driver { get; set; }
-        // public User? User { get; set; }
+        public long TripId { get; set; }  // ForeignKey
+        public Trip Trip { get; set; }   // Navigation Property
     }
+
+
 
     public enum CarType
     {
