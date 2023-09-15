@@ -1,4 +1,5 @@
-const baseUrl = "http://localhost:5107/api/"
+// const baseUrl = "http://localhost:5107/api/"
+const baseUrl = "https://datadons.azurewebsites.net/api/"
 
 
 function getJson(path) {
