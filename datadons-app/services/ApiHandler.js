@@ -1,4 +1,5 @@
-const baseUrl = "http://localhost:5107/api/"
+// const baseUrl = "http://localhost:5107/api/"
+const baseUrl = "https://datadons.azurewebsites.net/api/"
 
 
 function getJson(path) {
@@ -85,20 +86,14 @@ function AddUser(user) {
     return post("AddUser", user);
 }
 
+function getAllTrips() {
+    return getJson("GetAllTripsOut")
+}
 function AddDriver(userId, driver) {
     return post("users/AddDriver/"+userId, driver);
 }
 
-// const test = {
-//     LicenceNumber: "123456",
-//     CarModel: "test",
-//     CarColor: "test",
-//     CarMake: "test", 
-//     CarType: "test",
-//     PlateNumber: "test",
-// }
 
-// AddDriver(1, test).then((res) => {console.error.og(res)})
 
 export {
     getJson, 
@@ -107,5 +102,6 @@ export {
     getUserName,
     getUserId,
     AddUser,
+    getAllTrips,
     AddDriver,
 }

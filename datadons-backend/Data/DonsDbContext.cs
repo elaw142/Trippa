@@ -20,7 +20,7 @@ namespace Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Preference> Preferences { get; set; }
         public DbSet<Trip> Trips { get; set; }
-
+        public DbSet<GPS> GPS { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // User - IncomingReviews (one-to-many)

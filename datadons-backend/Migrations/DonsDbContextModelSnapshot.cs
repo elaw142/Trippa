@@ -163,6 +163,9 @@ namespace datadonsbackend.Migrations
                     b.Property<long>("DriverID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("EndLocation")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("EndPointId")
                         .HasColumnType("INTEGER");
 
@@ -171,6 +174,9 @@ namespace datadonsbackend.Migrations
 
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("StartLocation")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("StartPointId")
                         .HasColumnType("INTEGER");
