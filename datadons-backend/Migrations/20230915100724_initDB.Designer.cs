@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace datadonsbackend.Migrations
 {
     [DbContext(typeof(DonsDbContext))]
-    [Migration("20230912234421_MyNewChanges")]
-    partial class MyNewChanges
+    [Migration("20230915100724_initDB")]
+    partial class initDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,6 +166,9 @@ namespace datadonsbackend.Migrations
                     b.Property<long>("DriverID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("EndLocation")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("EndPointId")
                         .HasColumnType("INTEGER");
 
@@ -174,6 +177,9 @@ namespace datadonsbackend.Migrations
 
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("StartLocation")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("StartPointId")
                         .HasColumnType("INTEGER");

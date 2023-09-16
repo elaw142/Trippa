@@ -1,4 +1,5 @@
-const baseUrl = "http://localhost:5107/api/"
+// const baseUrl = "http://localhost:5107/api/"
+const baseUrl = "https://datadons.azurewebsites.net/api/"
 
 
 function getJson(path) {
@@ -54,6 +55,9 @@ function AddUser(user) {
     return post("AddUser", user);
 }
 
+function getAllTrips() {
+    return getJson("GetAllTripsOut")
+}
 
 export {
     getJson, 
@@ -61,4 +65,5 @@ export {
     getVersion,
     getUserName,
     AddUser,
+    getAllTrips,
 }

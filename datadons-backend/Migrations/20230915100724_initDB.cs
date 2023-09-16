@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace datadonsbackend.Migrations
 {
     /// <inheritdoc />
-    public partial class MyNewChanges : Migration
+    public partial class initDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -128,7 +128,9 @@ namespace datadonsbackend.Migrations
                     Price = table.Column<double>(type: "REAL", nullable: false),
                     StartPointId = table.Column<int>(type: "INTEGER", nullable: false),
                     EndPointId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DetourRange = table.Column<double>(type: "REAL", nullable: false)
+                    DetourRange = table.Column<double>(type: "REAL", nullable: false),
+                    StartLocation = table.Column<string>(type: "TEXT", nullable: true),
+                    EndLocation = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
