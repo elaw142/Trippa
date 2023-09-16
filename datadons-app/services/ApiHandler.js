@@ -3,8 +3,22 @@ const baseUrl = "http://localhost:5107/api/"
 
 function getJson(path) {
     return fetch(baseUrl + path)
-        .then(res => res.json())
-}
+      .then(async (res) => {
+        if (!res.ok) {
+          const responseText = await res.text();
+          throw new Error(`HTTP error! Status: ${res.status}. Response: ${responseText}`);
+        }
+        try {
+          return res.json();
+        } catch (error) {
+          throw new Error(`JSON parsing error: ${error.message}`);
+        }
+      })
+      .catch((error) => {
+        throw new Error(`Network error: ${error.message}`);
+      });
+  }
+  
 
 function post(path, data) {
     return fetch(baseUrl + path, {
@@ -19,7 +33,13 @@ function post(path, data) {
             const responseText = await res.text();
             throw new Error(`HTTP error! Status: ${res.status}. Response: ${responseText}`);
         }
-        return res.json();
+        try {
+            return res.json();
+        }  catch {
+            return res;
+        } finally {
+            console.log("returned data");
+        }
       })
     .catch((error) => {
         throw new Error(`Network error: ${error.message}`);
@@ -52,9 +72,6 @@ function getUserId(userName) {
             if (res.status === 404) {
                 return `User with username ${userName} does not exist.`;
             }
-            // console.log(res);
-            // return parseInt(res);
-            // return res.json();
             return res.text();
         })
         

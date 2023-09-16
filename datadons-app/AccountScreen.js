@@ -30,23 +30,22 @@ function AccountScreen() {
   };
   
   const registerDriver = async () => {
-    // Create a driver (done by adding driver to user)
-    const newDriver = {
-      licenseNumber: license,
-      carModel: carModel,
-      carColor: carColor,
-      carMake: carMake,
-      carType: carType,
-      plateNumber: plateNumber
-    };
-    
     try {
+      // Create a driver (done by adding driver to user)
+      const newDriver = {
+        licenseNumber: license,
+        carModel: carModel,
+        carColor: carColor,
+        carMake: carMake,
+        carType: carType,
+        plateNumber: plateNumber
+      };
+  
       const user = await AsyncStorage.getItem('user');
-      // const userid = await getUserId('jamie');
       const userid = await getUserId(user);
-      // console.log(userid);
+      
       const result = await AddDriver(userid, newDriver);
-
+      // TODO: handle json parse error..... 
       if (result && result.license === license) {
         alert("License already in use");
       } else {
@@ -61,9 +60,22 @@ function AccountScreen() {
         setPlateNumber("");
       }
     } catch (error) {
-      console.error("Error:", error);
+      // Handle the error here
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          "The instance of entity type 'Driver' cannot be tracked because another instance with the same key value for {'UserId'} is already being tracked."
+        )
+      ) {
+        // Handle the specific error here
+        alert("USER IS A DRIVER ALREADY")
+
+      }else{
+      console.error(error);
+      }
     }
   };
+  
 
   return (
     <View style={styles.container}>
