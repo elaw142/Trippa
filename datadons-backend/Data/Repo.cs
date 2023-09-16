@@ -46,7 +46,8 @@ namespace Data
             return user;
         }
 
-        public Driver getDriverUserId(long UserId){
+        public Driver getDriverUserId(long UserId)
+        {
             return _repo.Drivers.FirstOrDefault(d => d.Id == UserId);
         }
 
@@ -57,7 +58,7 @@ namespace Data
             if (user != null)
             {
                 user.Driver = null;
-                Driver d =_repo.Drivers.FirstOrDefault(d => d.Id == userId);
+                Driver d = _repo.Drivers.FirstOrDefault(d => d.Id == userId);
                 _repo.Drivers.Remove(d);
                 _repo.SaveChanges();
             }
@@ -80,7 +81,8 @@ namespace Data
             return review;
         }
 
-        public List<Review> getIncomingReviewsForUser(long userId){
+        public List<Review> getIncomingReviewsForUser(long userId)
+        {
             return _repo.Reviews.Where(r => r.UserId == userId).ToList();
         }
 
@@ -199,7 +201,7 @@ namespace Data
                     Latitude = tripDto.EndLatitude,
                     Longitude = tripDto.EndLongitude
                 },
-                DetourRange = tripDto.DetourRange
+                DetourRange = tripDto.DetourRange,
             };
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
@@ -209,48 +211,99 @@ namespace Data
             return _repo.Drivers.FirstOrDefault(d => d.Id == driverId);
         }
 
-        public void AddPreference(PreferenceDto preference)
+        public PreferenceForTripDTO AddPreferenceToTrip(long tripId, Preference preference)
         {
-            Preference newPreference = new Preference{
-                Category = preference.Category,
-                Description = preference.Description,
-                DriverId = preference.DriverId
+            var trip = _repo.Trips.Include(t => t.Preferences).FirstOrDefault(t => t.TripID == tripId);
+            if (trip != null)
+            {
+                trip.Preferences.Add(preference);
+                _repo.SaveChanges();
+            }
+            PreferenceForTripDTO newPrefDto = new PreferenceForTripDTO
+            {
+                NoPets = preference.NoPets,
+                NoLuggage = preference.NoLuggage,
+                TripId = tripId
             };
-            if (preference != null)
-            {
-                _repo.Preferences.Add(newPreference);
-                _repo.SaveChanges();
-            }
+            return newPrefDto;
+        }
 
-        }
-        public Preference GetPreference(long id)
+        public List<Preference> GetPreferencesForTrip(long tripId)
         {
-            return _repo.Preferences.FirstOrDefault(p => p.Id == id);
+            return _repo.Preferences.Where(p => p.TripId == tripId).ToList();
         }
-        public Preference UpdatePreference(Preference updatedPreference)
+
+        public List<PreferenceForTripDTO> ConvertToDtoList(List<Preference> preferences)
         {
-            var preference = _repo.Preferences.FirstOrDefault(p => p.Id == updatedPreference.Id);
-            if (updatedPreference != null)
+            return preferences.Select(p => new PreferenceForTripDTO
             {
-                preference.Category = updatedPreference.Category;
-                preference.Description = updatedPreference.Description;
-                preference.DriverId = updatedPreference.DriverId;
-                _repo.SaveChanges();
-            }
-            return preference;
+                NoPets = p.NoPets,
+                NoLuggage = p.NoLuggage,
+                TripId = p.TripId
+            }).ToList();
         }
-        public void DeletePreference(long id)
+
+        public void RemovePreferenceFromTrip(long preferenceId)
         {
-            var preferenceToDelete = _repo.Preferences.FirstOrDefault(p => p.Id == id);
+            var preferenceToDelete = _repo.Preferences.FirstOrDefault(p => p.Id == preferenceId);
+            Console.WriteLine(preferenceToDelete);
             if (preferenceToDelete != null)
             {
                 _repo.Preferences.Remove(preferenceToDelete);
                 _repo.SaveChanges();
+                Console.WriteLine("Preference deleted");
             }
         }
-        public IEnumerable<Preference> GetPreferencesByDriverId(long driverId)
+
+        public PreferenceForTripDTO GetPreferenceByTripId(int tripId)
         {
-            return _repo.Preferences.Where(p => p.DriverId == driverId).ToArray();
+            var preference = _repo.Preferences.FirstOrDefault(p => p.TripId == tripId);
+            if (preference != null)
+            {
+                PreferenceForTripDTO newPrefDto = new PreferenceForTripDTO
+                {
+                    NoPets = preference.NoPets,
+                    NoLuggage = preference.NoLuggage,
+                    TripId = tripId
+                };
+                return newPrefDto;
+            }
+            return null;
         }
+
+        public PreferenceForTripDTO GetPreferenceByPreferenceId(int preferenceId)
+        {
+            var preference = _repo.Preferences.FirstOrDefault(p => p.Id == preferenceId);
+            if (preference != null)
+            {
+                PreferenceForTripDTO newPrefDto = new PreferenceForTripDTO
+                {
+                    NoPets = preference.NoPets,
+                    NoLuggage = preference.NoLuggage,
+                    TripId = preference.TripId
+                };
+                return newPrefDto;
+            }
+            return null;
+        }
+
+        public void SetPreferenceForTrip(int tripId, Preference preference)
+        {
+            var existingPreference = _repo.Preferences.FirstOrDefault(p => p.TripId == tripId);
+            if (existingPreference != null)
+            {
+                _repo.Preferences.Remove(existingPreference);
+                _repo.SaveChanges();
+                _repo.Preferences.Add(preference);
+                _repo.SaveChanges();
+            }
+            else
+            {
+                // If the driver doesn't have a preference, add it
+                _repo.Preferences.Add(preference);
+                _repo.SaveChanges();
+            }
+        }
+
     }
 }

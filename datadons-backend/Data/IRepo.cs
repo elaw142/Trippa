@@ -28,10 +28,13 @@ namespace Data
         void UpdateTrip(UpdateTripDto trip);
         void AddTrip(TripDto tripDto);
         public Driver GetDriver(long driverId);
-        public void AddPreference(PreferenceDto preference);
-        Preference GetPreference(long id);
-        Preference UpdatePreference(Preference updatedPreference);
-        void DeletePreference(long id);
-        IEnumerable<Preference> GetPreferencesByDriverId(long driverId);
+        public PreferenceForTripDTO GetPreferenceByTripId(int tripId);
+        void SetPreferenceForTrip(int driverId, Preference preference);
+        PreferenceForTripDTO AddPreferenceToTrip(long tripId, Preference preference);
+        List<Preference> GetPreferencesForTrip(long tripId);
+        public PreferenceForTripDTO GetPreferenceByPreferenceId(int preferenceId);
+        void RemovePreferenceFromTrip(long preferenceId);
+        public List<PreferenceForTripDTO> ConvertToDtoList(List<Preference> preferences);
+
     }
 }

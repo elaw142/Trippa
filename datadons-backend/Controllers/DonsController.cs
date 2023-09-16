@@ -87,7 +87,7 @@ namespace Controllers
                 return NotFound($"User with username {username} does not exist");
             }
             User user = _repo.GetUserByUsername(username);
-            return Ok(new UserOutDto{ Username = user.Username, password=user.Password, Phone = user.Phone });
+            return Ok(new UserOutDto { Username = user.Username, password = user.Password, Phone = user.Phone });
         }
         
         //GET api/GetIdByUsername
@@ -240,7 +240,7 @@ namespace Controllers
             try
             {
                 List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
-                if(reviews == null || reviews.Count == 0)
+                if (reviews == null || reviews.Count == 0)
                 {
                     return Ok(new List<OutReviewDto>());
                 }
@@ -279,7 +279,7 @@ namespace Controllers
             try
             {
                 List<Review> reviews = _repo.getIncomingReviewsForUser(userId);
-                if(reviews == null || reviews.Count == 0)
+                if (reviews == null || reviews.Count == 0)
                 {
                     return Ok(0);
                 }
@@ -430,76 +430,104 @@ namespace Controllers
 
         // Preference Endpoints
 
-        // POST api/AddPreference - create a new preference
-        [HttpPost("AddPreference")]
-        public ActionResult AddPreference(PreferenceDto preference)
+        // POST: api/preferences/addToTrip/{tripId}
+        [HttpPost("addPrefToTrip")]
+        public ActionResult<PreferenceForTripDTO> AddPreferenceToTrip([FromBody] PreferenceForTripDTO preferenceDto)
         {
-            if (preference.Category == null)
+            var preference = new Preference
             {
-                return BadRequest("Category is required");
-            }
-            if (preference.DriverId == 0)
+                NoPets = preferenceDto.NoPets,
+                NoLuggage = preferenceDto.NoLuggage,
+                TripId = preferenceDto.TripId
+            };
+            var tripId = preferenceDto.TripId;
+            var preferenceFromTripId = _repo.GetPreferenceByTripId((int)tripId);
+            if (preferenceFromTripId != null)
             {
-                return BadRequest("DriverId is required");
+                return BadRequest($"Preference already exists for trip with id {tripId}");
             }
-            _repo.AddPreference(preference);
-            return Ok("Success");
+            var addedPreference = _repo.AddPreferenceToTrip(preferenceDto.TripId, preference);
+            if (addedPreference == null)
+            {
+                return BadRequest("Failed to add the preference.");
+            }
+            return Ok(addedPreference);
         }
 
-        // GET api/GetPreference - get preference by id
-        [HttpGet("GetPreference/{id}")]
-        public ActionResult<Preference> GetPreference(long id)
+        // After testing this, I don't think this is actually needed - we can just use the getPrefForTrip endpoint 
+        // // GET: api/preferences/getAllForTrip/{tripId}
+        // [HttpGet("getAllPrefsForTrip/{tripId}")]
+        // public ActionResult<IEnumerable<PreferenceForTripDTO>> GetAllPreferencesForTrip(long tripId)
+        // {
+        //     var trip = _repo.GetTrip(tripId);
+        //     if (trip == null)
+        //     {
+        //         return BadRequest($"Trip with id {tripId} does not exist");
+        //     }
+        //     var prefs = _repo.GetPreferencesForTrip(tripId);
+        //     if (prefs == null || !prefs.Any())
+        //     {
+        //         return BadRequest($"No preferences exist for trip with id {tripId}");
+        //     }
+        //     var prefsDto = _repo.ConvertToDtoList(prefs);
+        //     return Ok(prefsDto);
+        // }
+
+
+        // DELETE: api/preferences/removeFromTrip/{preferenceId}
+        [HttpDelete("removePrefFromTrip/{preferenceId}")]
+        public ActionResult RemovePreferenceFromTrip(long preferenceId)
         {
-            Preference preference = _repo.GetPreference(id);
-            if (preference == null)
+            var pref = _repo.GetPreferenceByPreferenceId((int)preferenceId);
+            if (pref == null)
             {
-                return BadRequest($"Preference with id {id} does not exist");
+                return BadRequest($"Preference with id {preferenceId} does not exist");
             }
-            return Ok(preference);
+            var tripId = pref.TripId;
+            Console.WriteLine(tripId);
+            _repo.RemovePreferenceFromTrip(tripId);
+            return Ok();
         }
 
-        // Get api/UpdatePreference - update a preference
-        [HttpPut("UpdatePreference")]
-        public ActionResult UpdatePreference(Preference preference)
+        // GET: api/preferences/getAllForTrip/{tripId}
+        [HttpGet("getPrefForTrip/{tripId}")]
+        public ActionResult<PreferenceForTripDTO> GetPreferenceForTrip(long tripId)
         {
+            var trip = _repo.GetTrip(tripId);
+            if (trip == null)
+            {
+                return BadRequest($"Trip with id {tripId} does not exist");
+            }
+            var pref = _repo.GetPreferenceByTripId((int)tripId);
+            if (pref == null)
+            {
+                return BadRequest($"No preferences exist for trip with id {tripId}");
+            }
+            return Ok(pref);
+        }
+
+        // PUT: api/preferences/setForTrip/{tripId}
+        [HttpPut("UpdatePrefForTrip")]
+        public ActionResult UpdatePreferenceForTrip(PreferenceForTripDTO preferenceForTripDTO)
+        {
+            var tripId = preferenceForTripDTO.TripId;
+            var preference = new Preference
+            {
+                NoPets = preferenceForTripDTO.NoPets,
+                NoLuggage = preferenceForTripDTO.NoLuggage,
+                TripId = preferenceForTripDTO.TripId
+            };
             if (preference == null)
             {
                 return BadRequest("Preference object is null");
             }
-            var preferenceId = preference.Id;
-            Preference oldPreference = _repo.GetPreference(preferenceId);
-            if (oldPreference == null)
+            var trip = _repo.GetTrip(tripId);
+            if (trip == null)
             {
-                return BadRequest($"Preference with id {preferenceId} does not exist");
+                return BadRequest($"Trip with id {tripId} does not exist");
             }
-            _repo.UpdatePreference(preference);
+            _repo.SetPreferenceForTrip((int)tripId, preference);
             return Ok();
         }
-
-        // DELETE api/DeletePreference - delete a preference
-        [HttpDelete("DeletePreference/{id}")]
-        public ActionResult DeletePreference(long id)
-        {
-            Preference preference = _repo.GetPreference(id);
-            if (preference == null)
-            {
-                return BadRequest($"Preference with id {id} does not exist");
-            }
-            _repo.DeletePreference(id);
-            return Ok();
-        }
-
-        // GET api/GetPreferencesByDriverId/{driverId} - get all preferences by driver
-        [HttpGet("GetPreferencesByDriverId/{driverId}")]
-        public ActionResult<IEnumerable<Preference>> GetPreferencesByDriverId(long driverId)
-        {
-            IEnumerable<Preference> preferences = _repo.GetPreferencesByDriverId(driverId);
-            if (preferences.Count() == 0)
-            {
-                return BadRequest($"No preferences exist for driver with id {driverId}");
-            }
-            return Ok(preferences);
-        }
-
     }
 }
