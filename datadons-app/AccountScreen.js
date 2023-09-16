@@ -1,25 +1,86 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigationRef } from './NavigationService'; // Import the navigationRef
+import { AddDriver, getUserId } from './services/ApiHandler'
+import { FontAwesome } from "@expo/vector-icons";
 
 
 function AccountScreen() {
-
+  const [license, setLicense] = useState('');
+  const [carModel, setModel] = useState('');
+  const [carColor, setColor] = useState('');
+  const [carMake, setMake] = useState('');
+  const [carType, setType] = useState('');
+  const [plateNumber, setPlateNumber] = useState('');
+  
+  const [isRegistering, setItRegistering] = useState(false);
+  
+  const [modalVisible, setModalVisible] = useState(false);
+  
   const handleLogout = () => {
     // TODO: redirect to login...
     AsyncStorage.removeItem('user')
-      .then(() => {
-        navigationRef.current?.navigate('Home');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .then(() => {
+      navigationRef.current?.navigate('Home');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
+  
+  const registerDriver = async () => {
+    try {
+      // Create a driver (done by adding driver to user)
+      const newDriver = {
+        licenseNumber: license,
+        carModel: carModel,
+        carColor: carColor,
+        carMake: carMake,
+        carType: carType,
+        plateNumber: plateNumber
+      };
+  
+      const user = await AsyncStorage.getItem('user');
+      const userid = await getUserId(user);
+      
+      const result = await AddDriver(userid, newDriver);
+      // TODO: handle json parse error..... 
+      if (result && result.license === license) {
+        alert("License already in use");
+      } else {
+        await AddDriver(user, newDriver);
+        console.log("Driver Created");
+        setItRegistering(!isRegistering);
+        setLicense("");
+        setModel("");
+        setColor("");
+        setMake("");
+        setType("");
+        setPlateNumber("");
+      }
+    } catch (error) {
+      // Handle the error here
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          "The instance of entity type 'Driver' cannot be tracked because another instance with the same key value for {'UserId'} is already being tracked."
+        )
+      ) {
+        // Handle the specific error here
+        alert("USER IS A DRIVER ALREADY")
+
+      }else{
+      console.error(error);
+      }
+    }
+  };
+  
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <TouchableOpacity
+    <View style={styles.container}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <TouchableOpacity
           style={styles.button}
           onPress={handleLogout}
         >
@@ -27,6 +88,97 @@ function AccountScreen() {
               Logout
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>
+            Register as a Driver
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        animationType="fade"
+        transparent="false"
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <TouchableOpacity
+          style={modal.modalContainer}
+          onPress={() => setModalVisible(!modalVisible)}
+        >
+          <View style={Modal.modalContent}>
+            <Text style={styles.header}>Register as a Driver</Text>
+            <Text>Enter your details below</Text>
+              <View style={Modal.viewBox}>
+                {/* <TouchableOpacity
+                  style={Modal.closeButton}
+                >
+                  <FontAwesome
+                    style={Modal.closeButtonIcon}
+                    name="close"
+                    size={27}
+                  />
+                </TouchableOpacity> */}
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Car Model"
+                  autoCapitalize="words"
+                  onChangeText={(text) => setModel(text)}
+                  value={carModel}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Car Colour"
+                  autoCapitalize="words"
+                  onChangeText={(text) => setColor(text)}
+                  value={carColor}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Car Make"
+                  autoCapitalize="words"
+                  onChangeText={(text) => setMake(text)}
+                  value={carMake}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Car Type"
+                  autoCapitalize="words"
+                  onChangeText={(text) => setType(text)}
+                  value={carType}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Plate Number"
+                  autoCapitalize="characters"
+                  onChangeText={(text) => setPlateNumber(text)}
+                  value={plateNumber}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Driver's Lincense"
+                  autoCapitalize="characters"
+                  onChangeText={(text) => setLicense(text)}
+                  value={license}
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={registerDriver}
+                >
+                  <Text style={styles.buttonText}>
+                    Submit
+                  </Text>
+                </TouchableOpacity>
+
+              </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -59,6 +211,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
+        marginBottom: 25
     },
     buttonText: {
         color: 'white',
@@ -69,5 +222,46 @@ const styles = StyleSheet.create({
         color: highlight_color,
     },
 });
+
+const modal = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0)",
+    flexDirection: "column",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+    marginTop: 500,
+    height: "100%",
+    overflow: "hidden",
+  },
+  closeButton: {
+    position: "absolute",
+    top: -10,
+    right: 0,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    alignSelf: "center",
+    marginTop: 10,
+    color: highlight_color,
+    justifyContent: "center",
+
+    // * to see size of button
+    // borderWidth: 1,
+    // borderColor: 'black',
+  },
+  closeButtonIcon: {
+    alignSelf: "center",
+    color: highlight_color,
+  },
+
+
+})
 
 export default AccountScreen;
