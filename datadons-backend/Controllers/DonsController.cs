@@ -87,7 +87,7 @@ namespace Controllers
                 return NotFound($"User with username {username} does not exist");
             }
             User user = _repo.GetUserByUsername(username);
-            return Ok(new UserOutDto { Username = user.Username, password = user.Password, Phone = user.Phone });
+            return Ok(new UserOutDto { Username = user.Username, password = user.Password, Phone = user.Phone , Id = user.Id});
         }
 
         // POST api/users/AddDriver/{id}

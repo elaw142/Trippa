@@ -46,6 +46,10 @@ function getUserName(userName) {
         });
 }
 
+
+function GetUserId(userName){
+    return fetch(baseUrl + "GetUserId/" + userName)
+}
 function AddUser(user) {
     return post("AddUser", user);
 }

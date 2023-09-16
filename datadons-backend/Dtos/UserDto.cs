@@ -11,6 +11,7 @@ namespace Dtos{
         public required string Username { get; set; }
         public required string password { get; set; }
         public long? Phone { get; set; }
+        public long Id { get; set; }
     }
     public class DriverDto{
         public required string LicenseNumber { get; set; }
