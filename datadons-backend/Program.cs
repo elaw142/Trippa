@@ -27,12 +27,12 @@ public class Program
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        Console.WriteLine("\n\n\n\nDevelopment environment is up and running!\n\n\n");
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    // if (app.Environment.IsDevelopment())
+    // {
+    //     Console.WriteLine("\n\n\n\nDevelopment environment is up and running!\n\n\n");
+    //     app.UseSwagger();
+    //     app.UseSwaggerUI();
+    // }
 
     app.UseSwagger();
     app.UseSwaggerUI();
