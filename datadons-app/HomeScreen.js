@@ -16,7 +16,6 @@ import { FontAwesome } from "@expo/vector-icons";
 import { getAllTrips } from "./services/ApiHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage"; //This will be used later for settings
 
-
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
   if (dateTimeString === undefined) {
@@ -33,7 +32,7 @@ function format12HourTime(date) {
     return null;
   }
   const hour = date.getHours();
-  const minute = date.getMinutes().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, "0");
   const ampm = hour >= 12 ? "PM" : "AM";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   return `${formattedHour}:${minute}${ampm}`;
@@ -66,8 +65,20 @@ function MyMapComponent({ startLocation, endLocation }) {
   const centerLng = (startLng + endLng) / 2;
 
   // Calculate the delta values for padding (adjust these values as needed)
-  const latitudeDelta = Math.abs(startLat - endLat) * 2;
-  const longitudeDelta = Math.abs(startLng - endLng) * 2;
+  var latitudeDelta = Math.abs(startLat - endLat) * 2;
+  var longitudeDelta = Math.abs(startLng - endLng) * 2;
+  if (latitudeDelta == 0) {
+    latitudeDelta += 0.00001;
+  }
+  if (startLng == endLat) {
+    longitudeDelta += 0.00001;
+  }
+
+  // determine platform for custom pin
+  const pinImage =
+    Platform.OS === "ios"
+      ? require("./assets/pin-ios.png")
+      : require("./assets/pin-android.png");
 
   return (
     <MapView
@@ -78,7 +89,7 @@ function MyMapComponent({ startLocation, endLocation }) {
         latitudeDelta,
         longitudeDelta,
       }}
-      zoomEnabled={false} 
+      zoomEnabled={false}
       scrollEnabled={false}
       mapType="standard" // standard, satellite, hybrid, terrain
       // TODO: in settings we can store a user cookie for settings,
@@ -96,60 +107,54 @@ function MyMapComponent({ startLocation, endLocation }) {
       <Marker
         coordinate={{ latitude: startLat, longitude: startLng }}
         title="Start Location"
+        centerOffset={{ x: 1, y: -8 }}
       >
-        <Image
-          source={require("./assets/custom_pin.png")}
-          resizeMode="contain"
-          style={{ width: 40, height: 40 }}
-        />
+        <Image source={pinImage} resizeMode="contain" style={styles.pinImage} />
       </Marker>
       <Marker
         coordinate={{ latitude: endLat, longitude: endLng }}
         title="Start Location"
+        centerOffset={{ x: 1, y: -8 }}
       >
-        <Image
-          source={require("./assets/custom_pin.png")}
-          resizeMode="contain"
-          style={{ width: 40, height: 40 }}
-        />
+        <Image source={pinImage} resizeMode="contain" style={styles.pinImage} />
       </Marker>
     </MapView>
   );
 }
 
 function getFormattedAddress(address) {
-  if (address === undefined) { return null}
+  if (address === undefined) {
+    return null;
+  }
   return JSON.parse(address).results[0].formatted_address;
 }
 
-function convertAddressApiJson(start,end) {
-  // this was interesting to code... 
+function convertAddressApiJson(start, end) {
+  // this was interesting to code...
   // FIXME: bit of a hacky way to do this, but it works
   // pass in start and end address json from google api
   // returns the highest address point, eg auckland to whangari would return auckland to whangari
   // however auckland to auckland would return address to address
   function findHighestMismatchElement(list1, list2) {
-      let index = -1;
-      for (let i = list1.length - 1; i >= 0; i--) {
-          if (list1[i].long_name !== list2[i].long_name) {
-              index = i;
-              break;
-          }
+    let index = -1;
+    for (let i = list1.length - 1; i >= 0; i--) {
+      if (list1[i].long_name !== list2[i].long_name) {
+        index = i;
+        break;
       }
-      return index;
+    }
+    return index;
   }
 
-  var startComp = JSON.parse(start).results[0].address_components
-  var endComp = JSON.parse(end).results[0].address_components
+  var startComp = JSON.parse(start).results[0].address_components;
+  var endComp = JSON.parse(end).results[0].address_components;
 
-  var index = findHighestMismatchElement(startComp, endComp)
+  var index = findHighestMismatchElement(startComp, endComp);
 
-  return [startComp[index].short_name, endComp[index].short_name] ;
+  return [startComp[index].short_name, endComp[index].short_name];
 }
 
 function HomeScreen() {
-
-
   const [selectedItem, setSelectedItem] = useState(null);
 
   const [riderCount, setRiderCount] = useState(1);
@@ -185,153 +190,161 @@ function HomeScreen() {
     alert("Your trip has been added");
   };
 
-  const [tripsData,setTripsData] = useState([]);
+  const [tripsData, setTripsData] = useState([]);
 
   setTimeout(() => {
     getAllTrips().then((trips) => {
       // if(tripsData.length != trips.length){
-        // }
+      // }
       console.log(trips.length + " Trip(s) fetched");
       setTripsData(trips);
-    })
+    });
   }, "2000");
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-          <Text style={styles.headerKiwi}>Kiwi</Text>
-          <Text style={styles.headerKom}>Kommute</Text>
+        <Text style={styles.headerKiwi}>Kiwi</Text>
+        <Text style={styles.headerKom}>Kommute</Text>
       </View>
       {tripsData.length > 0 ? (
-      <>
-      <FlatList
-        data={tripsData}
-        renderItem={({ item }) => (
-          <TouchableOpacity key={item.tripID} onPress={() => handleItemPress(item)}>
-            <View style={styles.tripCard}>
-              <MyMapComponent
-                startLocation={{
-                  startLat: item.startLatitude,
-                  startLng: item.startLongitude,
-                }}
-                endLocation={{ 
-                  endLat: item.endLatitude,
-                  endLng: item.endLongitude 
-                }}
-              />
-              <Text style={styles.dateTime}>{formatDateTime(item.dateTime)}</Text>
-              <Text style={styles.riderInfo}>
-                <FontAwesome5
-                  name="car-side"
-                  size={14}
-                  color={highlight_color}
-                />
-                {item.currentRiders}/{item.maxRiders}
-              </Text>
-
-              <View style={styles.cardLocation}>
-                <Text style={styles.price}>${item.price}</Text>
-                <Text style={styles.location}>
-                  {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
-                  {item.startLocation}
-                  <AntDesign
-                    name="arrowright"
-                    size={13}
-                    color={highlight_color}
+        <>
+          <FlatList
+            data={tripsData}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                key={item.tripID}
+                onPress={() => handleItemPress(item)}
+              >
+                <View style={styles.tripCard}>
+                  <MyMapComponent
+                    startLocation={{
+                      startLat: item.startLatitude,
+                      startLng: item.startLongitude,
+                    }}
+                    endLocation={{
+                      endLat: item.endLatitude,
+                      endLng: item.endLongitude,
+                    }}
                   />
-                  {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
-                  {item.endLocation}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.tripID}
-        vertical
-        showsVerticalScrollIndicator={false}
-      />
+                  <Text style={styles.dateTime}>
+                    {formatDateTime(item.dateTime)}
+                  </Text>
+                  <Text style={styles.riderInfo}>
+                    <FontAwesome5
+                      name="car-side"
+                      size={14}
+                      color={highlight_color}
+                    />
+                    {item.currentRiders}/{item.maxRiders}
+                  </Text>
 
-      <Modal
-        animationType="fade" //fade...slide
-        transparent={true}
-        visible={selectedItem !== null}
-        onRequestClose={() => setSelectedItem(null)}
-      >
-        <TouchableOpacity
-          style={ModelStyles.modalContainer}
-          onPress={closeModal}
-        >
-          <View style={ModelStyles.modalContent}>
-            {/* popup Display */}
-            {selectedItem && (
-              <View style={ModelStyles.viewBox}>
-                <TouchableOpacity
-                  style={ModelStyles.closeButton}
-                  onPress={() => setSelectedItem(null)}
-                >
-                  <FontAwesome
-                    style={ModelStyles.closeButtonIcon}
-                    name="close"
-                    size={27}
-                  />
-                </TouchableOpacity>
-
-                {/* Displaying Driver Info */}
-
-                <Image
-                  source={require("./assets/testUser.png")}
-                  style={ModelStyles.profileImage}
-                />
-                <Text style={ModelStyles.driverName}>
-                  {selectedItem.driverName}
-                </Text>
-
-                <Text>{selectedItem.startLocation}</Text>
-                <Text>{selectedItem.endLocation}</Text>
-
-                {/* Trip details */}
-                <View style={ModelStyles.tripDetails}>
-                  {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
-                  <Text>To: {getFormattedAddress(selectedItem.endLocation)}</Text> */}
-                  <Text>From: {selectedItem.startLocation}</Text>
-                  <Text>To: {selectedItem.endLocation}</Text>
-                  <Text>Time: {formatDateTime(selectedItem.dateTime)}</Text>
-                  <Text>Price: ${selectedItem.price}</Text>
-                  <Text>Duration: Approx. 2hrs</Text>
-                  <Text>Distance: 150km</Text>
-                  <Text>Amenities: WiFi, Charging</Text>
+                  <View style={styles.cardLocation}>
+                    <Text style={styles.price}>${item.price}</Text>
+                    <Text style={styles.location}>
+                      {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
+                      {item.startLocation}
+                      <AntDesign
+                        name="arrowright"
+                        size={13}
+                        color={highlight_color}
+                      />
+                      {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
+                      {item.endLocation}
+                    </Text>
+                  </View>
                 </View>
-
-                {/* Displaying Riders Info and buttons to increase or decrease riders */}
-                <View style={ModelStyles.riderBooking}>
-                  <Text style={ModelStyles.riderText}>Number of seats:</Text>
-                  <TouchableOpacity
-                    onPress={handleDecreaseRiders}
-                    style={ModelStyles.riderButton}
-                  >
-                    <Text>-</Text>
-                  </TouchableOpacity>
-                  <Text style={ModelStyles.riderCount}>{riderCount}</Text>
-                  <TouchableOpacity
-                    onPress={handleIncreaseRiders}
-                    style={ModelStyles.riderButton}
-                  >
-                    <Text>+</Text>
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity
-                  style={ModelStyles.paymentButton}
-                  onPress={addToTrip}
-                >
-                  <Text style={ModelStyles.buttonText}>Proceed to Payment</Text>
-                </TouchableOpacity>
-
-              </View>
+              </TouchableOpacity>
             )}
-          </View>
-        </TouchableOpacity>
-      </Modal>
-      </>
+            keyExtractor={(item) => item.tripID}
+            vertical
+            showsVerticalScrollIndicator={false}
+          />
+
+          <Modal
+            animationType="fade" //fade...slide
+            transparent={true}
+            visible={selectedItem !== null}
+            onRequestClose={() => setSelectedItem(null)}
+          >
+            <TouchableOpacity
+              style={ModelStyles.modalContainer}
+              onPress={closeModal}
+            >
+              <View style={ModelStyles.modalContent}>
+                {/* popup Display */}
+                {selectedItem && (
+                  <View style={ModelStyles.viewBox}>
+                    <TouchableOpacity
+                      style={ModelStyles.closeButton}
+                      onPress={() => setSelectedItem(null)}
+                    >
+                      <FontAwesome
+                        style={ModelStyles.closeButtonIcon}
+                        name="close"
+                        size={27}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Displaying Driver Info */}
+
+                    <Image
+                      source={require("./assets/testUser.png")}
+                      style={ModelStyles.profileImage}
+                    />
+                    <Text style={ModelStyles.driverName}>
+                      {selectedItem.driverName}
+                    </Text>
+
+                    <Text>{selectedItem.startLocation}</Text>
+                    <Text>{selectedItem.endLocation}</Text>
+
+                    {/* Trip details */}
+                    <View style={ModelStyles.tripDetails}>
+                      {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
+                  <Text>To: {getFormattedAddress(selectedItem.endLocation)}</Text> */}
+                      <Text>From: {selectedItem.startLocation}</Text>
+                      <Text>To: {selectedItem.endLocation}</Text>
+                      <Text>Time: {formatDateTime(selectedItem.dateTime)}</Text>
+                      <Text>Price: ${selectedItem.price}</Text>
+                      <Text>Duration: Approx. 2hrs</Text>
+                      <Text>Distance: 150km</Text>
+                      <Text>Amenities: WiFi, Charging</Text>
+                    </View>
+
+                    {/* Displaying Riders Info and buttons to increase or decrease riders */}
+                    <View style={ModelStyles.riderBooking}>
+                      <Text style={ModelStyles.riderText}>
+                        Number of seats:
+                      </Text>
+                      <TouchableOpacity
+                        onPress={handleDecreaseRiders}
+                        style={ModelStyles.riderButton}
+                      >
+                        <Text>-</Text>
+                      </TouchableOpacity>
+                      <Text style={ModelStyles.riderCount}>{riderCount}</Text>
+                      <TouchableOpacity
+                        onPress={handleIncreaseRiders}
+                        style={ModelStyles.riderButton}
+                      >
+                        <Text>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity
+                      style={ModelStyles.paymentButton}
+                      onPress={addToTrip}
+                    >
+                      <Text style={ModelStyles.buttonText}>
+                        Proceed to Payment
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        </>
       ) : (
         <Text>No trips available</Text>
       )}
@@ -358,20 +371,19 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: 'col',
+    flexDirection: "col",
     padding: 10,
-    width: '100%',
-
+    width: "100%",
   },
   headerKiwi: {
     fontSize: 60,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: highlight_color,
   },
 
   headerKom: {
     fontSize: 60,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: highlight_color,
   },
 
@@ -395,6 +407,21 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 2,
+      },
+    }),
+  },
+
+  pinImage: {
+    ...Platform.select({
+      ios: {
+        width: 50,
+        height: 50,
+      },
+      android: {
+        width: 30,
+        height: 30,
+        // marginTop: 20,
+        // marginLeft: 10,
       },
     }),
   },
@@ -466,7 +493,6 @@ const ModelStyles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     flexDirection: "column",
-
   },
   modalContent: {
     backgroundColor: "white",
