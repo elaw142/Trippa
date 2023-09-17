@@ -31,7 +31,7 @@ jobs:
       - name: dotnet publish
         run: |
           cd datadons-backend
-          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ./datadons-backend
+          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
