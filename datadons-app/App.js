@@ -123,7 +123,7 @@ export default function App() {
         </>
       ) : (
         <NavigationContainer ref={navigationRef}>
-          {isUserLoggedIn ? (
+          {isUserLoggedIn ? ( //add ! back after deveopment
             <LoginRegister onLoginSuccess={handleLoginSuccess} />
           ) : (
             <Tab.Navigator
