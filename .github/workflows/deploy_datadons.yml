@@ -57,6 +57,10 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_56C3CFD2B06644F8849F177B943F56A3 }}
           package: .
 
+      - name: listDir
+        run: ls -R
+
+        
       - name: Apply Entity Framework Migrations
         run: |
           cd datadons-backend
