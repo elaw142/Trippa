@@ -23,10 +23,15 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: |
+          cd datadons-backend
+          dotnet build --configuration Release
+        
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: |
+          cd datadons-backend
+          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ./datadons-backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
