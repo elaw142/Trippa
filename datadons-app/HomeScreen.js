@@ -13,30 +13,32 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllTrips } from "./services/ApiHandler";
+import AsyncStorage from "@react-native-async-storage/async-storage"; //This will be used later for settings
 
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
-  const formattedTime = `${dateTimeString.slice(9, 11)}${dateTimeString.slice(
-    11,
-    13
-  )}`;
-
-  const day = dateTimeString.slice(6, 8);
-  const formattedDate = `${day}${getDaySuffix(Number(day))}`;
-  return `${format12HourTime(formattedTime)}`;
+  if (dateTimeString === undefined) {
+    return null;
+  }
+  const date = new Date(dateTimeString);
+  const formattedTime = format12HourTime(date);
+  const formattedDate = `${date.getDate()}${getDaySuffix(date.getDate())}`;
+  return `${formattedTime} on ${formattedDate}`;
 }
 
-function format12HourTime(dateTimeString) {
-  const hour = Number(dateTimeString.slice(0, 2));
-  const minute = dateTimeString.slice(2, 5);
+function format12HourTime(date) {
+  if (date === undefined) {
+    return null;
+  }
+  const hour = date.getHours();
+  const minute = date.getMinutes().toString().padStart(2, '0');
   const ampm = hour >= 12 ? "PM" : "AM";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   return `${formattedHour}:${minute}${ampm}`;
 }
 
-// Helper function to get the day suffix (e.g., "st", "nd", "rd", "th")
 function getDaySuffix(day) {
   if (day >= 11 && day <= 13) {
     return "th";
@@ -76,8 +78,8 @@ function MyMapComponent({ startLocation, endLocation }) {
         latitudeDelta,
         longitudeDelta,
       }}
-      zoomEnabled={false} // Disable zooming
-      scrollEnabled={false} // Disable panning
+      zoomEnabled={false} 
+      scrollEnabled={false}
       mapType="standard" // standard, satellite, hybrid, terrain
       // TODO: in settings we can store a user cookie for settings,
       //. we could change this value easily depending on the cookie
@@ -115,107 +117,38 @@ function MyMapComponent({ startLocation, endLocation }) {
   );
 }
 
+function getFormattedAddress(address) {
+  if (address === undefined) { return null}
+  return JSON.parse(address).results[0].formatted_address;
+}
+
+function convertAddressApiJson(start,end) {
+  // this was interesting to code... 
+  // FIXME: bit of a hacky way to do this, but it works
+  // pass in start and end address json from google api
+  // returns the highest address point, eg auckland to whangari would return auckland to whangari
+  // however auckland to auckland would return address to address
+  function findHighestMismatchElement(list1, list2) {
+      let index = -1;
+      for (let i = list1.length - 1; i >= 0; i--) {
+          if (list1[i].long_name !== list2[i].long_name) {
+              index = i;
+              break;
+          }
+      }
+      return index;
+  }
+
+  var startComp = JSON.parse(start).results[0].address_components
+  var endComp = JSON.parse(end).results[0].address_components
+
+  var index = findHighestMismatchElement(startComp, endComp)
+
+  return [startComp[index].short_name, endComp[index].short_name] ;
+}
+
 function HomeScreen() {
-  const tripsData = [
-    {
-      id: "1",
-      driverName: "John Doe",
-      startLocation: "Auckland Central",
-      endLocation: "Auckland Airport",
-      price: "5.00",
-      time: "20230829T100000Z",
-      maxRiders: 4,
-      currentRiders: 2,
-      startLat: -36.844667,
-      startLng: 174.758863,
-      endLat: -37.004167,
-      endLng: 174.785556,
-    },
-    {
-      id: "2",
-      driverName: "Jane Smith",
-      startLocation: "Queen St",
-      endLocation: "Whangarei Heads",
-      price: "2.23",
-      time: "20230829T113000Z",
-      maxRiders: 3,
-      currentRiders: 0,
-      startLat: -36.847222,
-      startLng: 174.764167,
-      endLat: -35.731111,
-      endLng: 174.323333,
-    },
-    {
-      id: "3",
-      driverName: "David Johnson",
-      startLocation: "Rotorua",
-      endLocation: "Taupo",
-      price: "10.53",
-      time: "20230829T130000Z",
-      maxRiders: 5,
-      currentRiders: 1,
-      startLat: -38.136667,
-      startLng: 176.249167,
-      endLat: -38.685833,
-      endLng: 176.070833,
-    },
-    {
-      id: "4",
-      driverName: "Sarah Wilson",
-      startLocation: "Wellington",
-      endLocation: "Napier",
-      price: "8.99",
-      time: "20230829T144500Z",
-      maxRiders: 2,
-      currentRiders: 2,
-      startLat: -41.286667,
-      startLng: 174.776111,
-      endLat: -39.491667,
-      endLng: 176.915,
-    },
-    {
-      id: "5",
-      driverName: "Michael Brown",
-      startLocation: "Christchurch",
-      endLocation: "Dunedin",
-      price: "15.00",
-      time: "20230829T163000Z",
-      maxRiders: 6,
-      currentRiders: 4,
-      startLat: -43.532222,
-      startLng: 172.636111,
-      endLat: -45.878889,
-      endLng: 170.5025,
-    },
-    {
-      id: "6",
-      driverName: "Emily Davis",
-      startLocation: "Nelson",
-      endLocation: "Picton",
-      price: "6.82",
-      time: "20230829T181500Z",
-      maxRiders: 3,
-      currentRiders: 1,
-      startLat: -41.298333,
-      startLng: 173.244167,
-      endLat: -41.298333,
-      endLng: 174.244167,
-    },
-    {
-      id: "7",
-      driverName: "Daniel Lee",
-      startLocation: "Hamilton",
-      endLocation: "Tauranga",
-      price: "7.13",
-      time: "20230829T200000Z",
-      maxRiders: 4,
-      currentRiders: 3,
-      startLat: -37.7875,
-      startLng: 175.279444,
-      endLat: -37.686111,
-      endLng: 176.167222,
-    },
-  ];
+
 
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -252,6 +185,16 @@ function HomeScreen() {
     alert("Your trip has been added");
   };
 
+  const [tripsData,setTripsData] = useState([]);
+
+  setTimeout(() => {
+    getAllTrips().then((trips) => {
+      // if(tripsData.length != trips.length){
+        // }
+      console.log(trips.length + " Trip(s) fetched");
+      setTripsData(trips);
+    })
+  }, "2000");
 
   return (
     <View style={styles.container}>
@@ -259,19 +202,24 @@ function HomeScreen() {
           <Text style={styles.headerKiwi}>Kiwi</Text>
           <Text style={styles.headerKom}>Kommute</Text>
       </View>
+      {tripsData.length > 0 ? (
+      <>
       <FlatList
         data={tripsData}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleItemPress(item)}>
+          <TouchableOpacity key={item.tripID} onPress={() => handleItemPress(item)}>
             <View style={styles.tripCard}>
               <MyMapComponent
                 startLocation={{
-                  startLat: item.startLat,
-                  startLng: item.startLng,
+                  startLat: item.startLatitude,
+                  startLng: item.startLongitude,
                 }}
-                endLocation={{ endLat: item.endLat, endLng: item.endLng }}
+                endLocation={{ 
+                  endLat: item.endLatitude,
+                  endLng: item.endLongitude 
+                }}
               />
-              <Text style={styles.dateTime}>{formatDateTime(item.time)}</Text>
+              <Text style={styles.dateTime}>{formatDateTime(item.dateTime)}</Text>
               <Text style={styles.riderInfo}>
                 <FontAwesome5
                   name="car-side"
@@ -284,19 +232,21 @@ function HomeScreen() {
               <View style={styles.cardLocation}>
                 <Text style={styles.price}>${item.price}</Text>
                 <Text style={styles.location}>
+                  {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
                   {item.startLocation}
                   <AntDesign
                     name="arrowright"
                     size={13}
                     color={highlight_color}
                   />
+                  {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
                   {item.endLocation}
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.tripID}
         vertical
         showsVerticalScrollIndicator={false}
       />
@@ -341,8 +291,11 @@ function HomeScreen() {
 
                 {/* Trip details */}
                 <View style={ModelStyles.tripDetails}>
+                  {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
+                  <Text>To: {getFormattedAddress(selectedItem.endLocation)}</Text> */}
                   <Text>From: {selectedItem.startLocation}</Text>
                   <Text>To: {selectedItem.endLocation}</Text>
+                  <Text>Time: {formatDateTime(selectedItem.dateTime)}</Text>
                   <Text>Price: ${selectedItem.price}</Text>
                   <Text>Duration: Approx. 2hrs</Text>
                   <Text>Distance: 150km</Text>
@@ -373,12 +326,15 @@ function HomeScreen() {
                   <Text style={ModelStyles.buttonText}>Proceed to Payment</Text>
                 </TouchableOpacity>
 
-                {/* </View>  */}
               </View>
             )}
           </View>
         </TouchableOpacity>
       </Modal>
+      </>
+      ) : (
+        <Text>No trips available</Text>
+      )}
     </View>
   );
 }

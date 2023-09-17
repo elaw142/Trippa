@@ -42,12 +42,14 @@ namespace datadonsbackend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DriverId");
+                    b.HasIndex("DriverId")
+                        .IsUnique();
 
                     b.ToTable("Cars");
                 });
@@ -62,13 +64,15 @@ namespace datadonsbackend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("PreferenceId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("PreferenceId");
 
                     b.ToTable("Drivers");
                 });
@@ -92,22 +96,22 @@ namespace datadonsbackend.Migrations
 
             modelBuilder.Entity("Models.Preference", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("UserId")
+                    b.Property<bool>("NoLuggage")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("category")
+                    b.Property<bool>("NoPets")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TripId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TripId");
 
                     b.ToTable("Preferences");
                 });
@@ -159,6 +163,9 @@ namespace datadonsbackend.Migrations
                     b.Property<long>("DriverID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("EndLocation")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("EndPointId")
                         .HasColumnType("INTEGER");
 
@@ -167,6 +174,9 @@ namespace datadonsbackend.Migrations
 
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("StartLocation")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("StartPointId")
                         .HasColumnType("INTEGER");
@@ -229,8 +239,8 @@ namespace datadonsbackend.Migrations
             modelBuilder.Entity("Models.Car", b =>
                 {
                     b.HasOne("Models.Driver", "Driver")
-                        .WithMany("Cars")
-                        .HasForeignKey("DriverId")
+                        .WithOne("Car")
+                        .HasForeignKey("Models.Car", "DriverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -239,23 +249,29 @@ namespace datadonsbackend.Migrations
 
             modelBuilder.Entity("Models.Driver", b =>
                 {
+                    b.HasOne("Models.Preference", "Preference")
+                        .WithMany()
+                        .HasForeignKey("PreferenceId");
+
                     b.HasOne("Models.User", "User")
                         .WithOne("Driver")
                         .HasForeignKey("Models.Driver", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Preference");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("Models.Preference", b =>
                 {
-                    b.HasOne("Models.User", "User")
+                    b.HasOne("Models.Trip", "Trip")
                         .WithMany("Preferences")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("Models.Review", b =>
@@ -286,6 +302,13 @@ namespace datadonsbackend.Migrations
                     b.HasOne("Models.User", null)
                         .WithMany("DrivenTrips")
                         .HasForeignKey("DriverID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Driver", null)
+                        .WithMany()
+                        .HasForeignKey("DriverID")
+                        .HasPrincipalKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -323,7 +346,12 @@ namespace datadonsbackend.Migrations
 
             modelBuilder.Entity("Models.Driver", b =>
                 {
-                    b.Navigation("Cars");
+                    b.Navigation("Car");
+                });
+
+            modelBuilder.Entity("Models.Trip", b =>
+                {
+                    b.Navigation("Preferences");
                 });
 
             modelBuilder.Entity("Models.User", b =>
@@ -335,8 +363,6 @@ namespace datadonsbackend.Migrations
                     b.Navigation("IncomingReviews");
 
                     b.Navigation("OutgoingReviews");
-
-                    b.Navigation("Preferences");
                 });
 #pragma warning restore 612, 618
         }

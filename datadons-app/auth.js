@@ -19,7 +19,7 @@ function LoginRegister({ onLoginSuccess }) {
           const result = await getUserName(username);
       
           if (result && result.username === username && password === result.password) {
-            // AsyncStorage.setItem('user', username);
+            AsyncStorage.setItem('user', username);
             console.log('Login successful');
             onLoginSuccess();
             // navigateToHome();

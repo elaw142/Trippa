@@ -18,20 +18,27 @@ namespace Data
         Driver getDriverUserId(long UserId);
 
         User GetUserByUsername(string username);
+        public User GetUserFromDriverId(long driverId);
 
         //* Trips Methods 
         Trip GetTrip(long id);
         Trip[] GetAllTrips();
+        IEnumerable<Trip> GetAllTripsWithGPS();
+        double getGpsLon(long id);
+        double getGpsLat(long id);
         Trip[] SearchTrips(double? startLatitude, double? startLongitude, double? endLatitude, double? endLongitude, string date, string time, int seats);
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
         void UpdateTrip(UpdateTripDto trip);
         void AddTrip(TripDto tripDto);
         public Driver GetDriver(long driverId);
-        public void AddPreference(PreferenceDto preference);
-        Preference GetPreference(long id);
-        Preference UpdatePreference(Preference updatedPreference);
-        void DeletePreference(long id);
-        IEnumerable<Preference> GetPreferencesByDriverId(long driverId);
+        public PreferenceForTripDTO GetPreferenceByTripId(int tripId);
+        void SetPreferenceForTrip(int driverId, Preference preference);
+        PreferenceForTripDTO AddPreferenceToTrip(long tripId, Preference preference);
+        List<Preference> GetPreferencesForTrip(long tripId);
+        public PreferenceForTripDTO GetPreferenceByPreferenceId(int preferenceId);
+        void RemovePreferenceFromTrip(long preferenceId);
+        public List<PreferenceForTripDTO> ConvertToDtoList(List<Preference> preferences);
+
     }
 }
