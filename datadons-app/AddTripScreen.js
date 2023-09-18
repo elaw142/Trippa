@@ -9,11 +9,10 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-// import Slider from "react-native-sliders";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-// import MapView, { Marker } from "react-native-maps";
-// import MapViewDirections from 'react-native-maps-directions';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getUserName,
@@ -31,7 +30,7 @@ function SearchGoogleAutoComplete(props) {
       minLength={2} // minimum length of text to search
       autoFocus={true}
       returnKeyType={"search"} // Can be left out for default return key
-      listViewDisplayed={false} // true/false/undefined
+      listViewDisplayed={"auto"} // true/false/undefined
       fetchDetails={true}
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
@@ -43,9 +42,9 @@ function SearchGoogleAutoComplete(props) {
       query={{
         key: "AIzaSyDrwiWWzU9dTML6CrMVHgEx8ZrcRFunoa8",
         language: "en",
-        location: "-40.900557,174.885971", 
-        radius: "1500000", 
-        components: "country:NZ", 
+        location: "-40.900557,174.885971",
+        radius: "1500000",
+        components: "country:NZ",
       }}
       nearbyPlacesAPI="GooglePlacesSearch"
       debounce={300}
@@ -109,63 +108,72 @@ function AddTripScreen() {
     // await AddTrip(newTrip);
   };
   return (
-    <View style={styles.container}>
-      {/* Start Location */}
-      <Text>Start Location:</Text>
-      <SearchGoogleAutoComplete notifyChange={handleStartLocationChange} />
-      {console.log("Start location complete")}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View>
+        {/* Title */}
+        <Text style={styles.header}>Add a Trip</Text>
 
-      {/* End Location */}
-      <Text>End Location:</Text>
-      <SearchGoogleAutoComplete notifyChange={handleEndLocationChange} />
-      {console.log("End location complete")}
-      {/* {startLocation && endLocation && (
-      <MyMapComponent
-        startLocation={{ startLat: startLocation.lat, startLng: startLocation.lng }}
-        endLocation={{ endLat: endLocation.lat, endLng: endLocation.lng }}
-      />
-      )} */}
-      {/* Other Information */}
-      <Text>Price:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={(double) => {
-          const parsedPrice = parseFloat(double);
-          if (!isNaN(parsedPrice) || double === "") {
-            setPrice(double.toString());
-            {
-              console.log("Price set");
-            }
-          }
-        }}
-        value={price.toString()}
-      />
-      {/* <View style={styles.slider}>
-        <Slider
-          value={this.state.value}
-          onValueChange={value => setPrice({ value })}
-        />
-        <Text>
-          Value: {this.state.value}
-        </Text>
-      </View> */}
-      <Text>Detour Range:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => {
-          const parsedRange = parseFloat(text);
-          if (!isNaN(parsedRange) || text === "") {
-            setDetourRange(text.toString());
-          }
-        }}
-        value={detourRange.toString()}
-      />
+        {/* Start and End Location */}
+        <View style={styles.locationContainer}>
+          <Text>Start Location:</Text>
+          <SearchGoogleAutoComplete
+            styles={{
+              container: { width: 300, zIndex: 9999 },
+              textInputContainer: { width: "100%" },
+              listView: { backgroundColor: "white" },
+            }}
+            notifyChange={handleStartLocationChange}
+          />
+        </View>
 
-      {/* Submit Button */}
-      <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.locationContainer1}>
+          <Text>End Location:</Text>
+          <SearchGoogleAutoComplete
+            styles={{
+              container: { width: 300, zIndex: 9999 },
+              textInputContainer: { width: "100%" },
+              listView: { backgroundColor: "white" },
+            }}
+            notifyChange={handleEndLocationChange}
+          />
+        </View>
+
+        {/* Price Information */}
+        <View style={styles.priceContainer}>
+          <Text>Price($NZD):</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(double) => {
+              const parsedPrice = parseFloat(double);
+              if (!isNaN(parsedPrice) || double === "") {
+                setPrice(double.toString());
+              }
+            }}
+            value={price.toString()}
+          />
+        </View>
+
+        {/* Detour Range Information */}
+        <View style={styles.detourContainer}>
+          <Text>Detour Range(Meters):</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => {
+              const parsedRange = parseFloat(text);
+              if (!isNaN(parsedRange) || text === "") {
+                setDetourRange(text.toString());
+              }
+            }}
+            value={detourRange.toString()}
+          />
+        </View>
+
+        {/* Submit Button */}
+        <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -174,15 +182,47 @@ const highlight_color = "#357A48";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    minHeight: "100%",
+    paddingTop: 70,
     backgroundColor: "#f2f2f2",
   },
+  locationContainer: {
+    width: "100%",
+    overflow: "visible",
+    alignItems: "center",
+    marginTop: 150,
+    zIndex: 9999,
+    position: "absolute",
+  },
+
+  locationContainer1: {
+    width: "100%",
+    overflow: "visible",
+    alignItems: "center",
+    marginTop: 250,
+
+    zIndex: 9998,
+    position: "absolute",
+  },
+  priceContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 180,
+  },
+  detourContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 30,
+  },
   header: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 40,
+    marginBottom: 40,
     color: "#333",
+    fontWeight: "bold",
+    marginTop: 80,
+    textAlign: "center",
+    alignItems: "center",
+    marginBottom: 50,
   },
   input: {
     width: 300,
@@ -200,15 +240,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    elevation: 2, // add shadow on Android
-    shadowOffset: { width: 1, height: 1 }, // shadow on iOS
+    marginTop: 40,
+    elevation: 2,
+    shadowOffset: { width: 1, height: 1 },
     shadowColor: "#333",
     shadowOpacity: 0.3,
     shadowRadius: 2,
+    width: "50%",
+    alignSelf: "center",
   },
   buttonText: {
     color: "white",
     fontSize: 16,
+    textAlign: "center",
   },
   toggleText: {
     marginTop: 10,
