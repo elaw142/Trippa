@@ -42,6 +42,9 @@ export default function App() {
     const checkUserLoggedIn = async () => {
       const user = await AsyncStorage.getItem("user");
       setIsUserLoggedIn(user !== null); // Set to true if 'user' is found
+      if(isUserLoggedIn){
+        console.log("USER IS LOGGED IN")
+      }
       console.log(user);
     };
 
@@ -123,7 +126,7 @@ export default function App() {
         </>
       ) : (
         <NavigationContainer ref={navigationRef}>
-          {isUserLoggedIn ? ( //add ! back after deveopment
+          {!isUserLoggedIn ? (
             <LoginRegister onLoginSuccess={handleLoginSuccess} />
           ) : (
             <Tab.Navigator

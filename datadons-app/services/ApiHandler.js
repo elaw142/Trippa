@@ -89,6 +89,7 @@ function AddUser(user) {
 function getAllTrips() {
     return getJson("GetAllTripsOut")
 }
+
 function AddDriver(userId, driver) {
     return post("users/AddDriver/"+userId, driver);
 }
