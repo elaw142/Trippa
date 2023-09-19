@@ -230,8 +230,9 @@ const modalContentRef = useRef();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerKiwi}>Kiwi</Text>
-        <Text style={styles.headerKom}>Kommute</Text>
+        {/* <Text style={styles.headerKiwi}>Kiwi</Text>
+        <Text style={styles.headerKom}>Kommute</Text> */}
+        <Text style={styles.headerKiwi}>TRIPPR</Text>
       </View>
 
       {tripsData.length > 0 ? (
