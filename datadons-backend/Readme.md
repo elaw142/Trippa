@@ -21,6 +21,16 @@ dotnet ef database update
 
 this changes the database to match the new models and contexts.
 
+# COMPILE FOR HOST!!
+    
+```sh
+dotnet publish -c Release -o ./publish
+```
+then move sqlite into publish folder
+
+```sh
+cp  ./DonsDb.sqlite ./publish/DonsDb.sqlite
+```
 ## Testing with Swagger
 
 -[x] /api/GetVersion

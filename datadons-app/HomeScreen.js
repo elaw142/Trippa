@@ -14,30 +14,30 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllTrips } from "./services/ApiHandler";
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
-  const formattedTime = `${dateTimeString.slice(9, 11)}${dateTimeString.slice(
-    11,
-    13
-  )}`;
-
-  const day = dateTimeString.slice(6, 8);
-  const formattedDate = `${day}${getDaySuffix(Number(day))}`;
-  return `${format12HourTime(formattedTime)}`;
+  if (dateTimeString === undefined) {
+    return null;
+  }
+  const date = new Date(dateTimeString);
+  const formattedTime = format12HourTime(date);
+  const formattedDate = `${date.getDate()}${getDaySuffix(date.getDate())}`;
+  return `${formattedTime} on ${formattedDate}`;
 }
-
 
 function format12HourTime(date) {
   if (date === undefined) {
     return null;
   }
   const hour = date.getHours();
-  const minute = date.getMinutes().toString().padStart(2, "0");
+  const minute = date.getMinutes().toString().padStart(2, '0');
   const ampm = hour >= 12 ? "PM" : "AM";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   return `${formattedHour}:${minute}${ampm}`;
 }
+
 
 // Helper function to get the day suffix (e.g., "st", "nd", "rd", "th")
 function getDaySuffix(day) {
