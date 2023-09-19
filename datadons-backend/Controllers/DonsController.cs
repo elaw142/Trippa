@@ -87,9 +87,9 @@ namespace Controllers
                 return NotFound($"User with username {username} does not exist");
             }
             User user = _repo.GetUserByUsername(username);
-            return Ok(new UserOutDto { Username = user.Username, password = user.Password, Phone = user.Phone , Id = user.Id});
+            return Ok(new UserOutDto { Username = user.Username, password = user.Password, Phone = user.Phone, Id = user.Id });
         }
-        
+
         //GET api/GetIdByUsername
         [HttpGet("GetIdByUsername/{username}")]
         public ActionResult<long> GetIdByUsername(string username)
@@ -293,7 +293,19 @@ namespace Controllers
             }
         }
 
+        // Driver Endpoints 
 
+        // GET api/GetDriverByUserId - get driver by id
+        [HttpGet("GetDriverByUserId/{id}")]
+        public ActionResult<Driver> GetDriverByUserId(long id)
+        {
+            Driver driver = _repo.getDriverUserId(id);
+            if (driver == null)
+            {
+                return BadRequest($"Driver with id {id} does not exist");
+            }
+            return Ok(driver);
+        }
 
         //* Trip Endpoints
 
@@ -428,7 +440,7 @@ namespace Controllers
             return Ok(trips);
         }
 
-             
+
         // GET api/GetAllTrips - get all trips as tripOutDTOs
         [HttpGet("GetAllTripsOut")]
         public ActionResult<IEnumerable<TripOutDto>> GetAllTripsOut()

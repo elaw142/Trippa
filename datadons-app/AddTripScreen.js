@@ -19,6 +19,7 @@ import {
   AddTrip,
   GetUserId,
   IsDriver,
+  getDriverByUserId,
 } from "./services/ApiHandler";
 
 const GOOGLE_MAPS_APIKEY = "AAIzaSyDrwiWWzU9dTML6CrMVHgEx8ZrcRFunoa8";
@@ -84,8 +85,10 @@ function AddTripScreen() {
     const user = await AsyncStorage.getItem("user");
     console.log(user + " hehehehe");
     var userId = await getUserName(user).userId;
+    var driverId = await getDriverByUserId(userId);
+    console.log('driverId:', driverId);
     const newTrip = {
-      DriverId: userId,
+      DriverId: Number(driverId),
       DateTime: new Date(
         new Date().toString().split("GMT")[0] + " UTC"
       ).toISOString(),
@@ -105,7 +108,7 @@ function AddTripScreen() {
     console.log("DetourRange:", detourRange);
     console.log("startAddress", startAddress);
     console.log("endAddress", endAddress);
-    // await AddTrip(newTrip);
+    await AddTrip(newTrip);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
