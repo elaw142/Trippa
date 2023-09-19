@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -13,19 +13,20 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
-import { getAllTrips } from "./services/ApiHandler";
-import AsyncStorage from "@react-native-async-storage/async-storage"; //This will be used later for settings
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
-  if (dateTimeString === undefined) {
-    return null;
-  }
-  const date = new Date(dateTimeString);
-  const formattedTime = format12HourTime(date);
-  const formattedDate = `${date.getDate()}${getDaySuffix(date.getDate())}`;
-  return `${formattedTime} on ${formattedDate}`;
+  const formattedTime = `${dateTimeString.slice(9, 11)}${dateTimeString.slice(
+    11,
+    13
+  )}`;
+
+  const day = dateTimeString.slice(6, 8);
+  const formattedDate = `${day}${getDaySuffix(Number(day))}`;
+  return `${format12HourTime(formattedTime)}`;
 }
+
 
 function format12HourTime(date) {
   if (date === undefined) {
@@ -38,6 +39,7 @@ function format12HourTime(date) {
   return `${formattedHour}:${minute}${ampm}`;
 }
 
+// Helper function to get the day suffix (e.g., "st", "nd", "rd", "th")
 function getDaySuffix(day) {
   if (day >= 11 && day <= 13) {
     return "th";
@@ -122,6 +124,7 @@ function MyMapComponent({ startLocation, endLocation }) {
   );
 }
 
+
 function getFormattedAddress(address) {
   if (address === undefined) {
     return null;
@@ -177,10 +180,32 @@ function HomeScreen() {
     }
   };
 
+const modalContentRef = useRef();
+
   const closeModal = () => {
     setSelectedItem(null);
     setRiderCount(1);
   };
+
+  const onModalContainerPress = (event) => {
+    event.persist(); 
+
+    modalContentRef.current.measureInWindow((contentX, contentY, contentWidth, contentHeight) => {
+        const { locationX, locationY } = event.nativeEvent;
+
+        if (
+            locationX < contentX ||
+            locationX > contentX + contentWidth ||
+            locationY < contentY ||
+            locationY > contentY + contentHeight
+        ) {
+            closeModal();
+        }
+    });
+};
+
+
+
 
   const makeTrip = () => {
     alert("Trip has been made");
@@ -189,6 +214,7 @@ function HomeScreen() {
   const addToTrip = () => {
     alert("Your trip has been added");
   };
+
 
   const [tripsData, setTripsData] = useState([]);
 
@@ -207,6 +233,7 @@ function HomeScreen() {
         <Text style={styles.headerKiwi}>Kiwi</Text>
         <Text style={styles.headerKom}>Kommute</Text>
       </View>
+
       {tripsData.length > 0 ? (
         <>
           <FlatList
@@ -351,6 +378,7 @@ function HomeScreen() {
     </View>
   );
 }
+
 
 // * STYLE CONSTANTS * //
 const paddingValue = 3;
@@ -576,6 +604,7 @@ const ModelStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     marginBottom: 20,
+    paddingBottom: 30,
     marginTop: 50,
     position: "bottom",
   },
