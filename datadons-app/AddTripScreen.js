@@ -81,30 +81,32 @@ function AddTripScreen() {
   };
 
   const handleSubmit = async () => {
-    console.log(startLocation, endLocation);
-    const startLat = startLocation.lat;
-    const startLng = startLocation.lng;
-    const endLat = endLocation.lat;
-    const endLng = endLocation.lng;
-    const user = await AsyncStorage.getItem("user");
-    console.log(user + " hehehehe");
-    var username = await getUserName(user); // good
-    var userid = username.id; // good
-    var driverId = await GetDriverIdByUserId(userid);
-    console.log("driverId:", driverId);
+    try {
+      console.log(startLocation, endLocation);
+      const startLat = startLocation.lat;
+      const startLng = startLocation.lng;
+      const endLat = endLocation.lat;
+      const endLng = endLocation.lng;
+      const user = await AsyncStorage.getItem("user");
+      console.log(user + " hehehehe");
+      var username = await getUserName(user); // good
+      var userid = username.id; // good
+      var driverId = await GetDriverIdByUserId(userid);
+      console.log("driverId:", driverId);
 
-    const newTrip = {
-      DriverId: Number(driverId),
-      DateTime: dateTime.toISOString(),
-      MaxRiders: parseInt(maxRiders, 10),
-      Price: price,
-      StartLatitude: startLat,
-      StartLongitude: startLng,
-      EndLatitude: endLat,
-      EndLongitude: endLng,
-      DetourRange: parseFloat(detourRange),
-      StartLocation: startAddress,
-      EndLocation: endAddress,
+      const newTrip = {
+        DriverId: Number(driverId),
+        DateTime: dateTime.toISOString(),
+        MaxRiders: parseInt(maxRiders, 10),
+        Price: price,
+        StartLatitude: startLat,
+        StartLongitude: startLng,
+        EndLatitude: endLat,
+        EndLongitude: endLng,
+        DetourRange: parseFloat(detourRange),
+        StartLocation: startAddress,
+        EndLocation: endAddress,
+      
     };
     console.log(newTrip);
     console.log("Start Location:", startLocation);
@@ -115,6 +117,16 @@ function AddTripScreen() {
     console.log("endAddress", endAddress);
     await AddTrip(newTrip);
     navigationRef.current?.navigate("Home");
+  } catch (error) {
+    if (error.message === "Network response was not ok") {
+      // Handle the specific error here
+      alert("You must be a driver to add a trip");
+      // You can display an error message to the user or perform other error-handling tasks.
+    } else {
+      // Handle other errors
+      console.error("An unexpected error occurred:", error);
+    }
+  }
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

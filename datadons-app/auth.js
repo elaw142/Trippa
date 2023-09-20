@@ -52,6 +52,11 @@ function LoginRegister({ onLoginSuccess }) {
             setUsername('');
             setPassword('');
             setPhoneNumber('');
+
+            AsyncStorage.setItem('user', username);
+            console.log('Login successful');
+            onLoginSuccess();
+            
         }
         } catch (error) {
           console.error('Error:', error);
@@ -281,7 +286,7 @@ return (
 
                     <TouchableOpacity
                         style={styles.button2}
-                        onPress={isRegistering ? handleRegister : handleLogin}
+                        onPress={handleRegister}
                     >
                         <Text style={styles.buttonText}>
                             Register
