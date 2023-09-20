@@ -17,10 +17,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getUserName,
   AddTrip,
-  GetUserId,
   IsDriver,
+  getUserId,
   getDriverByUserId,
 } from "./services/ApiHandler";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const GOOGLE_MAPS_APIKEY = "AAIzaSyDrwiWWzU9dTML6CrMVHgEx8ZrcRFunoa8";
 
@@ -64,6 +65,8 @@ function AddTripScreen() {
   const [startAddress, setStartAddress] = useState("");
   const [endAddress, setEndAddress] = useState("");
   const [detourRange, setDetourRange] = useState("");
+  const [dateTime, setDateTime] = useState(new Date()); // this will preset it to "today's" date
+  const [maxRiders, setMaxRiders] = useState("");
 
   const handleStartLocationChange = (location, address) => {
     setStartLocation(location);
@@ -84,14 +87,14 @@ function AddTripScreen() {
     AsyncStorage.setItem("user", "p1");
     const user = await AsyncStorage.getItem("user");
     console.log(user + " hehehehe");
-    var userId = await getUserName(user).userId;
+    var username = await getUserName(user);
+    var userId = await getUserId(username);
     var driverId = await getDriverByUserId(userId);
-    console.log('driverId:', driverId);
+    console.log("driverId:", driverId);
     const newTrip = {
       DriverId: Number(driverId),
-      DateTime: new Date(
-        new Date().toString().split("GMT")[0] + " UTC"
-      ).toISOString(),
+      DateTime: dateTime.toISOString(),
+      MaxRiders: parseInt(maxRiders, 10),
       Price: price,
       StartLatitude: startLat,
       StartLongitude: startLng,
@@ -115,7 +118,6 @@ function AddTripScreen() {
       <View>
         {/* Title */}
         <Text style={styles.header}>Add a Trip</Text>
-
         {/* Start and End Location */}
         <View style={styles.locationContainer}>
           <Text>Start Location:</Text>
@@ -128,7 +130,6 @@ function AddTripScreen() {
             notifyChange={handleStartLocationChange}
           />
         </View>
-
         <View style={styles.locationContainer1}>
           <Text>End Location:</Text>
           <SearchGoogleAutoComplete
@@ -140,7 +141,35 @@ function AddTripScreen() {
             notifyChange={handleEndLocationChange}
           />
         </View>
-
+        {/* Date time picker */}
+        <View style={styles.dateTimeContainer}>
+          <Text>Select DateTime:</Text>
+          <DateTimePicker
+            value={dateTime}
+            mode="datetime"
+            is24Hour={true}
+            display="default"
+            onChange={(event, selectedDate) => {
+              const currentDate = selectedDate || dateTime;
+              setDateTime(currentDate);
+            }}
+          />
+        </View>
+        {/* Maximum Riders Information */}
+        <View style={styles.maxRidersContainer}>
+          <Text>Maximum Riders:</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            onChangeText={(text) => {
+              const parsedRiders = parseInt(text, 10);
+              if (!isNaN(parsedRiders) || text === "") {
+                setMaxRiders(text);
+              }
+            }}
+            value={maxRiders.toString()}
+          />
+        </View>
         {/* Price Information */}
         <View style={styles.priceContainer}>
           <Text>Price($NZD):</Text>
@@ -155,7 +184,6 @@ function AddTripScreen() {
             value={price.toString()}
           />
         </View>
-
         {/* Detour Range Information */}
         <View style={styles.detourContainer}>
           <Text>Detour Range(Meters):</Text>
@@ -170,7 +198,6 @@ function AddTripScreen() {
             value={detourRange.toString()}
           />
         </View>
-
         {/* Submit Button */}
         <TouchableOpacity onPress={handleSubmit} style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -186,7 +213,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 70,
+    paddingTop: 20,
     backgroundColor: "#f2f2f2",
   },
   locationContainer: {
@@ -207,10 +234,22 @@ const styles = StyleSheet.create({
     zIndex: 9998,
     position: "absolute",
   },
+  dateTimeContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 160,
+  },
+
+  maxRidersContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 30,
+  },
+
   priceContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 180,
+    marginTop: 30,
   },
   detourContainer: {
     width: "100%",
@@ -243,7 +282,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginTop: 40,
+    marginTop: 20,
     elevation: 2,
     shadowOffset: { width: 1, height: 1 },
     shadowColor: "#333",

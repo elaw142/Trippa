@@ -1,5 +1,5 @@
-// const baseUrl = "http://localhost:5107/api/"
-const baseUrl = "https://datadons.azurewebsites.net/api/";
+const baseUrl = "http://localhost:5107/api/";
+// const baseUrl = "https://datadons.azurewebsites.net/api/";
 
 function getJson(path) {
   return fetch(baseUrl + path)
@@ -99,7 +99,7 @@ function AddTrip(trip) {
 }
 
 function getDriverByUserId(userId) {
-    return fetch(baseUrl + "GetDriverByUserId/" + userId)
+  return fetch(baseUrl + "GetDriverByUserId/" + userId);
 }
 
 export {

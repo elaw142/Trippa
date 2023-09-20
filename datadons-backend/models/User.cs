@@ -56,13 +56,8 @@ namespace Models
         [Required]
         public long UserId { get; set; }
         public User? User { get; set; }
-        public int? PreferenceId { get; set; }
-        public Preference Preference { get; set; }
-
         [Required]
         public required string LicenseNumber { get; set; }
-        // TODO: Add license image
-        // public string? LicenseImage { get; set; }
         public Car? Car { get; set; }
     }
 

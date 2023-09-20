@@ -15,7 +15,8 @@ namespace Data
         User RemoveDriverFromUser(long userId);
         Review AddReviewToUser(long userId, Review review);
         List<Review> getIncomingReviewsForUser(long userId);
-        Driver getDriverUserId(long UserId);
+        public Driver GetDriverByUserId(long UserId);
+        public DriverDto ToDriverDto(Driver driver);
 
         User GetUserByUsername(string username);
         public User GetUserFromDriverId(long driverId);

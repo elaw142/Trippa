@@ -46,9 +46,25 @@ namespace Data
             return user;
         }
 
-        public Driver getDriverUserId(long UserId)
+        public DriverDto ToDriverDto(Driver driver)
         {
-            return _repo.Drivers.FirstOrDefault(d => d.Id == UserId);
+            return new DriverDto
+            {
+                UserId = driver.UserId,
+                LicenseNumber = driver.LicenseNumber,
+                CarModel = driver.Car?.Model,
+                CarColor = driver.Car?.Color,
+                CarMake = driver.Car?.Make,
+                CarType = driver.Car?.Type,
+                PlateNumber = driver.Car?.LicensePlate
+            };
+        }
+
+        public Driver GetDriverByUserId(long userId)
+        {
+            return _repo.Drivers
+                .Include(d => d.Car) 
+                .FirstOrDefault(d => d.UserId == userId);
         }
 
         public IEnumerable<Trip> GetAllTripsWithGPS()
@@ -56,15 +72,18 @@ namespace Data
             return _repo.Trips.Include(t => t.StartPoint).Include(t => t.EndPoint).ToArray();
         }
 
-        public double getGpsLon(long id){
+        public double getGpsLon(long id)
+        {
             return _repo.GPS.FirstOrDefault(g => g.Id == id).Longitude;
         }
 
-        public double getGpsLat(long id){
+        public double getGpsLat(long id)
+        {
             return _repo.GPS.FirstOrDefault(g => g.Id == id).Latitude;
         }
 
-        public User GetUserFromDriverId(long driverId){
+        public User GetUserFromDriverId(long driverId)
+        {
             return _repo.Users.FirstOrDefault(u => u.Driver.Id == driverId);
         }
 

@@ -14,6 +14,7 @@ namespace Dtos{
         public long Id { get; set; }
     }
     public class DriverDto{
+        public long UserId { get; set; } 
         public required string LicenseNumber { get; set; }
         public required string CarModel { get; set; }
         public required string CarColor { get; set; }
