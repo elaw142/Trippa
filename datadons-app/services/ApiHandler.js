@@ -1,5 +1,5 @@
-const baseUrl = "http://localhost:5107/api/";
-// const baseUrl = "https://datadons.azurewebsites.net/api/";
+// const baseUrl = "http://localhost:5107/api/";
+const baseUrl = "https://datadons.azurewebsites.net/api/";
 
 function getJson(path) {
   return fetch(baseUrl + path)
@@ -102,6 +102,24 @@ function getDriverByUserId(userId) {
   return fetch(baseUrl + "GetDriverByUserId/" + userId);
 }
 
+function GetDriverIdByUserId(userId) {
+  return fetch(baseUrl + "GetDriverIdByUserId/" + userId)
+    .then(async (response) => {
+      console.log("response:", response);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const responseData = await response.json();
+      console.log("responseData:", responseData);
+      return responseData;
+    })
+    .catch((error) => {
+      console.error("Error fetching driver ID:", error);
+      throw error;
+    });
+}
+
 export {
   getJson,
   post,
@@ -113,4 +131,5 @@ export {
   AddDriver,
   AddTrip,
   getDriverByUserId,
+  GetDriverIdByUserId,
 };

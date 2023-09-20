@@ -20,8 +20,10 @@ import {
   IsDriver,
   getUserId,
   getDriverByUserId,
+  GetDriverIdByUserId,
 } from "./services/ApiHandler";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { navigationRef } from "./NavigationService";
 
 const GOOGLE_MAPS_APIKEY = "AAIzaSyDrwiWWzU9dTML6CrMVHgEx8ZrcRFunoa8";
 
@@ -84,13 +86,14 @@ function AddTripScreen() {
     const startLng = startLocation.lng;
     const endLat = endLocation.lat;
     const endLng = endLocation.lng;
-    AsyncStorage.setItem("user", "p1");
+    // AsyncStorage.setItem("user", "p1"); // Comment out when testing
     const user = await AsyncStorage.getItem("user");
     console.log(user + " hehehehe");
-    var username = await getUserName(user);
-    var userId = await getUserId(username);
-    var driverId = await getDriverByUserId(userId);
+    var username = await getUserName(user); // good
+    var userid = username.id; // good
+    var driverId = await GetDriverIdByUserId(userid);
     console.log("driverId:", driverId);
+
     const newTrip = {
       DriverId: Number(driverId),
       DateTime: dateTime.toISOString(),
@@ -100,7 +103,7 @@ function AddTripScreen() {
       StartLongitude: startLng,
       EndLatitude: endLat,
       EndLongitude: endLng,
-      Detour: detourRange,
+      DetourRange: parseFloat(detourRange),
       StartLocation: startAddress,
       EndLocation: endAddress,
     };
@@ -112,6 +115,7 @@ function AddTripScreen() {
     console.log("startAddress", startAddress);
     console.log("endAddress", endAddress);
     await AddTrip(newTrip);
+    navigationRef.current?.navigate("Home");
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -175,6 +179,7 @@ function AddTripScreen() {
           <Text>Price($NZD):</Text>
           <TextInput
             style={styles.input}
+            keyboardType="numeric"
             onChangeText={(double) => {
               const parsedPrice = parseFloat(double);
               if (!isNaN(parsedPrice) || double === "") {
@@ -189,6 +194,7 @@ function AddTripScreen() {
           <Text>Detour Range(Meters):</Text>
           <TextInput
             style={styles.input}
+            keyboardType="numeric"
             onChangeText={(text) => {
               const parsedRange = parseFloat(text);
               if (!isNaN(parsedRange) || text === "") {
