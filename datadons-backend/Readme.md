@@ -15,7 +15,7 @@ for swagger visit `https://localhost:5001/swagger`
 When changing models and contexts run the following commands:
 
 ```sh
-dotnet ef migrations add initMigrations
+dotnet ef migrations add MyNewChanges
 dotnet ef database update
 ```
 

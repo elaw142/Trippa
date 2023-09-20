@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace datadonsbackend.Migrations
 {
     [DbContext(typeof(DonsDbContext))]
-    [Migration("20230920053700_MyNewChanges")]
+    [Migration("20230920054724_MyNewChanges")]
     partial class MyNewChanges
     {
         /// <inheritdoc />
