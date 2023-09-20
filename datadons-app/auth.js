@@ -340,6 +340,7 @@ const styles = StyleSheet.create({
     input: {
         width: 300,
         height: 40,
+        color: 'white',
         borderColor: 'white',
         borderWidth: 1,
         paddingHorizontal: 10,
@@ -350,6 +351,7 @@ const styles = StyleSheet.create({
     inputregister: {
         width: 300,
         height: 40,
+        color: 'white',
         borderColor: 'white',
         borderWidth: 1,
         paddingHorizontal: 10,
