@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigationRef } from './NavigationService'; // Import the navigationRef
 import { AddDriver, getUserId } from './services/ApiHandler'
@@ -40,16 +40,25 @@ function AccountScreen() {
         carType: carType,
         plateNumber: plateNumber
       };
-  
       const user = await AsyncStorage.getItem('user');
       const userid = await getUserId(user);
       
       const result = await AddDriver(userid, newDriver);
-      // TODO: handle json parse error..... 
+      console.log(result)
+      // TODO: handle json parse error.....
+      if (result === "returned data"){
+        console.log("Driver Created");
+        setItRegistering(!isRegistering);
+        setLicense("");
+        setModel("");
+        setColor("");
+        setMake("");
+        setType("");
+        setPlateNumber("");
+      }
       if (result && result.license === license) {
         alert("License already in use");
       } else {
-        await AddDriver(user, newDriver);
         console.log("Driver Created");
         setItRegistering(!isRegistering);
         setLicense("");
@@ -73,6 +82,15 @@ function AccountScreen() {
       }else{
       console.error(error);
       }
+    } finally {
+      console.log("Driver Created");
+      setItRegistering(setItRegistering(false));
+      setLicense("");
+      setModel("");
+      setColor("");
+      setMake("");
+      setType("");
+      setPlateNumber("");
     }
   };
   
@@ -97,7 +115,6 @@ function AccountScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-
       <Modal
         animationType="fade"
         transparent="false"
@@ -106,12 +123,24 @@ function AccountScreen() {
           setModalVisible(!modalVisible);
         }}
       >
-        <TouchableOpacity
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View
           style={modal.modalContainer}
           onPress={() => setModalVisible(!modalVisible)}
+          
         >
           <View style={Modal.modalContent}>
             <Text style={styles.header}>Register as a Driver</Text>
+            <TouchableOpacity
+                style={modal.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <FontAwesome
+                  style={modal.closeButtonIcon}
+                  name="close"
+                  size={27}
+                />
+            </TouchableOpacity>
             <Text>Enter your details below</Text>
               <View style={Modal.viewBox}>
                 {/* <TouchableOpacity
@@ -174,10 +203,10 @@ function AccountScreen() {
                     Submit
                   </Text>
                 </TouchableOpacity>
-
               </View>
           </View>
-        </TouchableOpacity>
+        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -230,15 +259,36 @@ const modal = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0)",
     flexDirection: "column",
+    paddingBottom: "40%",
   },
   modalContent: {
-    backgroundColor: "white",
+    // backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     width: "100%",
     marginTop: 500,
     height: "100%",
     overflow: "hidden",
+  },
+  closeButton: {
+    position: "absolute",
+    top: -10,
+    right: 0,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    alignSelf: "center",
+    marginTop: 10,
+    color: highlight_color,
+    justifyContent: "center",
+
+    // * to see size of button
+    // borderWidth: 1,
+    // borderColor: 'black',
+  },
+  closeButtonIcon: {
+    alignSelf: "center",
+    color: highlight_color,
   },
   closeButton: {
     position: "absolute",

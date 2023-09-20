@@ -232,7 +232,7 @@ const modalContentRef = useRef();
       <View style={styles.header}>
         {/* <Text style={styles.headerKiwi}>Kiwi</Text>
         <Text style={styles.headerKom}>Kommute</Text> */}
-        <Text style={styles.headerKiwi}>TRIPPR</Text>
+        <Text style={styles.headerKiwi}>TRIPA</Text>
       </View>
 
       {tripsData.length > 0 ? (
@@ -374,7 +374,7 @@ const modalContentRef = useRef();
           </Modal>
         </>
       ) : (
-        <Text>No trips available</Text>
+        <Text>Loading Trips...</Text>
       )}
     </View>
   );
