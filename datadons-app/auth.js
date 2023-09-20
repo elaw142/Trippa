@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginBottom: 5,
         borderRadius: 5,
-        top: '26%',
+        top: '28%',
     },
     button: {
         backgroundColor: 'white',
@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
     toggleText2: {
         marginTop: 10,
         color: 'white',
-        position: 'relative',
         bottom: '-700%',
     },
     circle: {
