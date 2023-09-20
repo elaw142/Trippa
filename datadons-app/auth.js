@@ -203,11 +203,7 @@ return (
                     <View style={styles.circle}></View>
                     <Text style={styles.header3}>Welcome Back!</Text>
                     <Text style={styles.headerlogin}>Login</Text>
-                    <KeyboardAvoidingView
-                        style={styles.inputContainer} // Create this style in your stylesheet
-                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                        keyboardVerticalOffset={Platform.OS === 'ios' ? 200 : -400} // Adjust the offset as needed
-                    >
+
                         {/* <View> */}
                             <TextInput
                                 style={styles.input}
@@ -225,7 +221,6 @@ return (
                                 value={password}
                             />
                         {/* <View> */}
-                    </KeyboardAvoidingView>
 
                     <TouchableOpacity
                         style={[styles.button, styles.loginButton]}
