@@ -225,7 +225,7 @@ const modalContentRef = useRef();
       console.log(trips.length + " Trip(s) fetched");
       setTripsData(trips);
     });
-  }, "2000");
+  }, "20000");
 
   return (
     <View style={styles.container}>
