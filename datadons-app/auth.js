@@ -286,9 +286,9 @@ return (
                     <TouchableOpacity
                         onPress={() => setPage('login')}
                     >
-                    <Text style={styles.toggleText2}>
-                        Already have an account? Login
-                    </Text>
+                        <Text style={styles.toggleText2}>
+                            Already have an account? Login
+                        </Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     toggleText2: {
         marginTop: 10,
         color: 'white',
-        bottom: '-700%',
+        top: "750%",
     },
     circle: {
         width: 1500,
@@ -410,8 +410,7 @@ const styles = StyleSheet.create({
         top: '45%',
         backgroundColor: highlight_color,
         position: 'absolute',
-        bottom: 0,
-
+        bottom: 0
     },
     logo: {
         width: '40%',
