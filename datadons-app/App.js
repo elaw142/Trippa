@@ -94,7 +94,7 @@ export default function App() {
             <Video
               ref={splashVideo}
               source={require("./assets/splashvideo.mp4")}
-              rate={1.0}
+              rate={0.75}
               isMuted={true}
               resizeMode={"cover"}
               shouldPlay
