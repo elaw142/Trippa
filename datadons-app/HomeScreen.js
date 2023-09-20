@@ -383,7 +383,7 @@ const modalContentRef = useRef();
 
 // * STYLE CONSTANTS * //
 const paddingValue = 3;
-const highlight_color = "#357A48";
+const highlight_color = "#007c3e";
 
 const styles = StyleSheet.create({
   cardLocation: {
