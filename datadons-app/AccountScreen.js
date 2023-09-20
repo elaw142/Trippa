@@ -143,16 +143,7 @@ function AccountScreen() {
             </TouchableOpacity>
             <Text>Enter your details below</Text>
               <View style={Modal.viewBox}>
-                {/* <TouchableOpacity
-                  style={Modal.closeButton}
-                >
-                  <FontAwesome
-                    style={Modal.closeButtonIcon}
-                    name="close"
-                    size={27}
-                  />
-                </TouchableOpacity> */}
-
+ 
                 <TextInput
                   style={styles.input}
                   placeholder="Car Model"
@@ -221,6 +212,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100%',
+        color: "black",
     },
     header: {
         fontSize: 24,
@@ -233,6 +225,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingHorizontal: 10,
         marginBottom: 10,
+        color: "black",
         borderRadius: 5,
     },
     button: {
@@ -248,7 +241,6 @@ const styles = StyleSheet.create({
     },
     toggleText: {
         marginTop: 10,
-        color: highlight_color,
     },
 });
 
