@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard, TouchableWithoutFeedback, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard, TouchableWithoutFeedback, Image, KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserName, AddUser } from './services/ApiHandler';
 import logo from './assets/logo.png';
@@ -17,7 +17,7 @@ function LoginRegister({ onLoginSuccess }) {
     const handleLogin = async () => {
         try {
           const result = await getUserName(username);
-      
+
           if (result && result.username === username && password === result.password) {
             AsyncStorage.setItem('user', username);
             console.log('Login successful');
@@ -203,21 +203,30 @@ return (
                     <View style={styles.circle}></View>
                     <Text style={styles.header3}>Welcome Back!</Text>
                     <Text style={styles.headerlogin}>Login</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Username"
-                        autoCapitalize="none"
-                        onChangeText={(text) => setUsername(text)}
-                        value={username}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry={true}
-                        autoCapitalize="none"
-                        onChangeText={(text) => setPassword(text)}
-                        value={password}
-                    />
+                    <KeyboardAvoidingView
+                        style={styles.inputContainer} // Create this style in your stylesheet
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 200 : -400} // Adjust the offset as needed
+                    >
+                        {/* <View> */}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Username"
+                                autoCapitalize="none"
+                                onChangeText={(text) => setUsername(text)}
+                                value={username}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Password"
+                                secureTextEntry={true}
+                                autoCapitalize="none"
+                                onChangeText={(text) => setPassword(text)}
+                                value={password}
+                            />
+                        {/* <View> */}
+                    </KeyboardAvoidingView>
+
                     <TouchableOpacity
                         style={[styles.button, styles.loginButton]}
                         onPress={handleLogin}
@@ -359,6 +368,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         top: '28%',
     },
+    inputContainer: { 
+        top: '24%',
+    },
     button: {
         backgroundColor: 'white',
         width: 200,
@@ -399,7 +411,7 @@ const styles = StyleSheet.create({
     toggleText2: {
         marginTop: 10,
         color: 'white',
-        top: "750%",
+        top: "800%",
     },
     circle: {
         width: 1500,
