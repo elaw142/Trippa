@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace datadonsbackend.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class MyNewChanges : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,27 @@ namespace datadonsbackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Drivers",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LicenseNumber = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Drivers", x => x.Id);
+                    table.UniqueConstraint("AK_Drivers_UserId", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Drivers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,26 +113,10 @@ namespace datadonsbackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cars", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Drivers",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<long>(type: "INTEGER", nullable: false),
-                    PreferenceId = table.Column<int>(type: "INTEGER", nullable: true),
-                    LicenseNumber = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Drivers", x => x.Id);
-                    table.UniqueConstraint("AK_Drivers_UserId", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Drivers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Cars_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -213,11 +218,6 @@ namespace datadonsbackend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Drivers_PreferenceId",
-                table: "Drivers",
-                column: "PreferenceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Preferences_TripId",
                 table: "Preferences",
                 column: "TripId");
@@ -256,32 +256,16 @@ namespace datadonsbackend.Migrations
                 name: "IX_Trips_StartPointId",
                 table: "Trips",
                 column: "StartPointId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Cars_Drivers_DriverId",
-                table: "Cars",
-                column: "DriverId",
-                principalTable: "Drivers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Drivers_Preferences_PreferenceId",
-                table: "Drivers",
-                column: "PreferenceId",
-                principalTable: "Preferences",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Trips_Drivers_DriverID",
-                table: "Trips");
-
             migrationBuilder.DropTable(
                 name: "Cars");
+
+            migrationBuilder.DropTable(
+                name: "Preferences");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
@@ -290,13 +274,10 @@ namespace datadonsbackend.Migrations
                 name: "TripRiders");
 
             migrationBuilder.DropTable(
-                name: "Drivers");
-
-            migrationBuilder.DropTable(
-                name: "Preferences");
-
-            migrationBuilder.DropTable(
                 name: "Trips");
+
+            migrationBuilder.DropTable(
+                name: "Drivers");
 
             migrationBuilder.DropTable(
                 name: "GPS");

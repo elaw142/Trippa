@@ -15,7 +15,7 @@ namespace datadonsbackend.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
 
             modelBuilder.Entity("Models.Car", b =>
                 {
@@ -64,15 +64,10 @@ namespace datadonsbackend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("PreferenceId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PreferenceId");
 
                     b.ToTable("Drivers");
                 });
@@ -249,16 +244,10 @@ namespace datadonsbackend.Migrations
 
             modelBuilder.Entity("Models.Driver", b =>
                 {
-                    b.HasOne("Models.Preference", "Preference")
-                        .WithMany()
-                        .HasForeignKey("PreferenceId");
-
                     b.HasOne("Models.User", "User")
                         .WithOne("Driver")
                         .HasForeignKey("Models.Driver", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Preference");
 
                     b.Navigation("User");
                 });
