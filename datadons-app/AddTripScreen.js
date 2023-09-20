@@ -84,7 +84,7 @@ function AddTripScreen() {
     const startLng = startLocation.lng;
     const endLat = endLocation.lat;
     const endLng = endLocation.lng;
-    AsyncStorage.setItem("user", "p1");
+    // AsyncStorage.setItem("user", "p1");
     const user = await AsyncStorage.getItem("user");
     console.log(user + " hehehehe");
     var username = await getUserName(user);

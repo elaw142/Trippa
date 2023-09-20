@@ -40,16 +40,25 @@ function AccountScreen() {
         carType: carType,
         plateNumber: plateNumber
       };
-  
       const user = await AsyncStorage.getItem('user');
       const userid = await getUserId(user);
       
       const result = await AddDriver(userid, newDriver);
-      // TODO: handle json parse error..... 
+      console.log(result)
+      // TODO: handle json parse error.....
+      if (result === "returned data"){
+        console.log("Driver Created");
+        setItRegistering(!isRegistering);
+        setLicense("");
+        setModel("");
+        setColor("");
+        setMake("");
+        setType("");
+        setPlateNumber("");
+      }
       if (result && result.license === license) {
         alert("License already in use");
       } else {
-        await AddDriver(user, newDriver);
         console.log("Driver Created");
         setItRegistering(!isRegistering);
         setLicense("");
@@ -73,6 +82,15 @@ function AccountScreen() {
       }else{
       console.error(error);
       }
+    } finally {
+      console.log("Driver Created");
+      setItRegistering(setItRegistering(false));
+      setLicense("");
+      setModel("");
+      setColor("");
+      setMake("");
+      setType("");
+      setPlateNumber("");
     }
   };
   
