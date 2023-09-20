@@ -3,7 +3,8 @@ name: Build and deploy ASP.Net Core app to Azure Web App - datadons
 on:
   push:
     branches:
-      - DEPLOY
+      # TODO: AutoDeploy
+      # - DEPLOY
   workflow_dispatch:
 
 jobs:

@@ -5,7 +5,8 @@ name: Test Backend Build
 on:
   pull_request:
     branches:
-      - '*'
+      # TODO: AutoTest
+      # - '*'
   workflow_dispatch:
 
 jobs:
