@@ -176,7 +176,7 @@ namespace Controllers
             }
             try
             {
-                if (_repo.getDriverUserId(userId) == null)
+                if (_repo.GetDriverByUserId(userId) == null)
                 {
                     return Ok(false);
                 }
@@ -297,15 +297,17 @@ namespace Controllers
 
         // GET api/GetDriverByUserId - get driver by id
         [HttpGet("GetDriverByUserId/{id}")]
-        public ActionResult<Driver> GetDriverByUserId(long id)
+        public ActionResult<DriverDto> GetDriverByUserId(long id)
         {
-            Driver driver = _repo.getDriverUserId(id);
+            Driver driver = _repo.GetDriverByUserId(id);
             if (driver == null)
             {
-                return BadRequest($"Driver with id {id} does not exist");
+                return BadRequest($"Driver with user id {id} does not exist");
             }
-            return Ok(driver);
+            DriverDto driverDto = _repo.ToDriverDto(driver);
+            return Ok(driverDto);
         }
+
 
         //* Trip Endpoints
 
