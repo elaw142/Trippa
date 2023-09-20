@@ -308,6 +308,22 @@ namespace Controllers
             return Ok(driverDto);
         }
 
+        // GET api/GetDriverIdByUserId - get driver by id
+        [HttpGet("GetDriverIdByUserId/{userId}")]
+        public ActionResult<long> GetDriverIdByUserId(long userId)
+        {
+            // Call the GetDriverByUserId method
+            Driver driver = _repo.GetDriverByUserId(userId);
+
+            // Check if the driver exists
+            if (driver == null)
+            {
+                return NotFound($"No driver found for user with ID {userId}");
+            }
+
+            // Return the DriverId
+            return Ok(driver.Id);
+        }
 
         //* Trip Endpoints
 
