@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace datadonsbackend.Migrations
 {
     [DbContext(typeof(DonsDbContext))]
-    [Migration("20230920054724_MyNewChanges")]
+    [Migration("20231003103023_MyNewChanges")]
     partial class MyNewChanges
     {
         /// <inheritdoc />
@@ -98,10 +98,19 @@ namespace datadonsbackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("NoDrinks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NoFood")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("NoLuggage")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("NoPets")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NoSmoking")
                         .HasColumnType("INTEGER");
 
                     b.Property<long>("TripId")

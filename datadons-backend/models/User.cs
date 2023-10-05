@@ -91,7 +91,9 @@ namespace Models
         public int Id { get; set; }
         public bool NoPets { get; set; }
         public bool NoLuggage { get; set; }
-        // ... other properties
+        public bool NoFood { get; set; }
+        public bool NoDrinks { get; set; }
+        public bool NoSmoking { get; set; }
 
         public long TripId { get; set; }  // ForeignKey
         public Trip Trip { get; set; }   // Navigation Property

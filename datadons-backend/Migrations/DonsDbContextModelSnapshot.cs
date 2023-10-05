@@ -95,10 +95,19 @@ namespace datadonsbackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("NoDrinks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NoFood")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("NoLuggage")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("NoPets")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NoSmoking")
                         .HasColumnType("INTEGER");
 
                     b.Property<long>("TripId")

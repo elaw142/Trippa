@@ -510,6 +510,9 @@ namespace Controllers
             {
                 NoPets = preferenceDto.NoPets,
                 NoLuggage = preferenceDto.NoLuggage,
+                NoFood = preferenceDto.NoFood,
+                NoDrinks = preferenceDto.NoDrinks,
+                NoSmoking = preferenceDto.NoSmoking,
                 TripId = preferenceDto.TripId
             };
             var tripId = preferenceDto.TripId;
@@ -587,6 +590,9 @@ namespace Controllers
             {
                 NoPets = preferenceForTripDTO.NoPets,
                 NoLuggage = preferenceForTripDTO.NoLuggage,
+                NoFood = preferenceForTripDTO.NoFood,
+                NoDrinks = preferenceForTripDTO.NoDrinks,
+                NoSmoking = preferenceForTripDTO.NoSmoking,
                 TripId = preferenceForTripDTO.TripId
             };
             if (preference == null)

@@ -63,7 +63,7 @@ namespace Data
         public Driver GetDriverByUserId(long userId)
         {
             return _repo.Drivers
-                .Include(d => d.Car) 
+                .Include(d => d.Car)
                 .FirstOrDefault(d => d.UserId == userId);
         }
 
@@ -260,6 +260,9 @@ namespace Data
             {
                 NoPets = preference.NoPets,
                 NoLuggage = preference.NoLuggage,
+                NoDrinks = preference.NoDrinks,
+                NoFood = preference.NoFood,
+                NoSmoking = preference.NoSmoking,
                 TripId = tripId
             };
             return newPrefDto;
@@ -276,6 +279,9 @@ namespace Data
             {
                 NoPets = p.NoPets,
                 NoLuggage = p.NoLuggage,
+                NoDrinks = p.NoDrinks,
+                NoFood = p.NoFood,
+                NoSmoking = p.NoSmoking,
                 TripId = p.TripId
             }).ToList();
         }
@@ -301,6 +307,9 @@ namespace Data
                 {
                     NoPets = preference.NoPets,
                     NoLuggage = preference.NoLuggage,
+                    NoDrinks = preference.NoDrinks,
+                    NoFood = preference.NoFood,
+                    NoSmoking = preference.NoSmoking,
                     TripId = tripId
                 };
                 return newPrefDto;
@@ -317,6 +326,9 @@ namespace Data
                 {
                     NoPets = preference.NoPets,
                     NoLuggage = preference.NoLuggage,
+                    NoDrinks = preference.NoDrinks,
+                    NoFood = preference.NoFood,
+                    NoSmoking = preference.NoSmoking,
                     TripId = preference.TripId
                 };
                 return newPrefDto;
