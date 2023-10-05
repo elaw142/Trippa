@@ -1,71 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
 
-const ChatScreen = () => {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-
-  const handleSend = () => {
-    if (newMessage.trim() !== '') {
-      setMessages([...messages, { text: newMessage, sender: 'user' }]);
-      setNewMessage('');
-    }
+export default class RideChat extends React.Component {
+  state = {
+    messages: [
+      {
+        _id: 1,
+        text: 'Hello there',
+        createdAt: new Date(),
+        user: {
+          _id: 1,
+          name: 'React Native',
+          avatar: require("./assets/testUser.png"),
+        },
+      },
+      {
+        _id: 2,
+        text: 'Hi!',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'React Native',
+          avatar: require("./assets/danielboy.png"),
+        },
+      },
+    ]
   };
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-      <FlatList
-        data={messages}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start',
-              backgroundColor: item.sender === 'user' ? 'blue' : 'green',
-              borderRadius: 10,
-              margin: 5,
-              padding: 10,
-              maxWidth: '70%',
-            }}>
-            <Text style={{ color: 'white' }}>{item.text}</Text>
-          </View>
-        )}
-        inverted 
-      />
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 10,
-          marginBottom: 10,
-        }}>
-        <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: 'gray',
-            borderRadius: 5,
-            marginRight: 10,
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-          }}
-          placeholder="Type your message..."
-          value={newMessage}
-          onChangeText={(text) => setNewMessage(text)}
-        />
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'green',
-            borderRadius: 5,
-            paddingVertical: 10,
-            paddingHorizontal: 15,
-          }}
-          onPress={handleSend}>
-          <Text style={{ color: 'white' }}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+  // Function to handle new messages
+  onSend(messages = []) {
+    // TODO: Update DB...
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }));
+  }
 
-export default ChatScreen;
+  render() {
+    return (
+      <View style={styles.container}>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={messages => this.onSend(messages)} 
+        />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+});
