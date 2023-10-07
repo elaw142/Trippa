@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default class RideChat extends React.Component {
   state = {
@@ -30,14 +32,20 @@ export default class RideChat extends React.Component {
 
   // Function to handle new messages
   onSend(messages = []) {
-    // TODO: Update DB...
+    // Create a custom message object
+    messages[0].user.avatar = require("./assets/icon.png");
+    // TODO: set
+    messages[0].user.name = AsyncStorage.setItem('user', username);
+
+    // Append the custom message to the messages state
     this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
+      messages: GiftedChat.append([...previousState.messages], messages),
     }));
   }
 
   render() {
     return (
+      
       <View style={styles.container}>
         <GiftedChat
           messages={this.state.messages}

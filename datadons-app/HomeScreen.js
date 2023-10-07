@@ -141,7 +141,7 @@ function convertAddressApiJson(start, end) {
     }
     return index;
   }
-  console.log(start);
+  // console.log(start);
   var startComp = start.split(",");
   var endComp = end.split(",");
 
