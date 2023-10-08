@@ -12,6 +12,8 @@ export default class RideChat extends React.Component {
       {
         id: 1,
         title: 'Auckland Airport to Auckland CBD',
+
+
         messages: [
           {
             _id: 4,
@@ -122,7 +124,10 @@ export default class RideChat extends React.Component {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.listItem} onPress={() => this.openChatModal(item.id)}>
-              <Text>{item.title}</Text>
+            <Text style={styles.chatTitle}>{item.title}</Text>
+            <Text style={styles.firstMessage}>
+              {item.messages.length > 0 ? item.messages[0].text : 'No messages'}
+            </Text>
             </TouchableOpacity>
           )}
         />
@@ -162,11 +167,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listItem: {
-    padding: 8,
+    padding: 10,
     margin: 10,
-    backgroundColor: "gray",
-    borderRadius: 8,
-    marginVertical: 8,
+    backgroundColor: "white",
+    borderRadius: 0,
+    
+    marginVertical: 2,
     height: 70,
     minWidth: "95%",
     ...Platform.select({
@@ -184,6 +190,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     paddingBottom: 20,
+  },
+  firstMessage: {
+    fontSize: 14,
+    color: 'gray',
   },
 });
 
