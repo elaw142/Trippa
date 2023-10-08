@@ -369,6 +369,7 @@ const modalContentRef = useRef();
           </Modal>
         </>
       ) : (
+        // TODO: add a loading stuff
         <Text>Loading Trips...</Text>
       )}
     </View>
