@@ -1,5 +1,5 @@
-const baseUrl = "http://localhost:5107/api/";
-// const baseUrl = "https://datadons.azurewebsites.net/api/";
+// const baseUrl = "http://localhost:5107/api/";
+const baseUrl = "https://datadons.azurewebsites.net/api/";
 
 function getJson(path) {
   return fetch(baseUrl + path)
@@ -10,11 +10,7 @@ function getJson(path) {
           `HTTP error! Status: ${res.status}. Response: ${responseText}`
         );
       }
-      try {
-        return res.json();
-      } catch (error) {
-        throw new Error(`JSON parsing error: ${error.message}`);
-      }
+      return res.json();
     })
     .catch((error) => {
       throw new Error(`Network error: ${error.message}`);
@@ -28,25 +24,28 @@ function post(path, data) {
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        const responseText = await res.text();
-        throw new Error(
-          `HTTP error! Status: ${res.status}. Response: ${responseText}`
-        );
-      }
-      try {
-        return res.json();
-      } catch {
-        return res;
-      } finally {
-        console.log("returned data");
-      }
-    })
-    .catch((error) => {
-      throw new Error(`Network error: ${error.message}`);
-    });
+  }).then(async (res) => {
+    const rawResponse = await res.text();
+    console.log("Raw Response from POST:", rawResponse);
+
+    if (!res.ok) {
+      throw new Error(
+        `HTTP error! Status: ${res.status}. Response: ${rawResponse}`
+      );
+    }
+
+
+    try {
+      const jsonResponse = res.json(); 
+      console.log("Raw Response from POST:", jsonResponse); 
+      return jsonResponse;
+    } catch {
+      console.warn("Response was not JSON. Returning as-is:", res); 
+      return res;
+    } finally {
+      console.log("returned data");
+    }
+  });
 }
 
 function getVersion() {
@@ -63,7 +62,7 @@ function getUserName(userName) {
     })
     .catch((error) => {
       console.error("Error fetching user:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     });
 }
 
@@ -78,7 +77,7 @@ function getUserId(userName) {
 
     .catch((error) => {
       console.error("Error fetching user:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     });
 }
 
@@ -105,25 +104,25 @@ function getDriverByUserId(userId) {
 function GetDriverIdByUserId(userId) {
   return fetch(baseUrl + "GetDriverIdByUserId/" + userId)
     .then(async (response) => {
-      console.log("response:", response);
+      // console.log("response:", response);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const responseData = await response.json();
-      console.log("responseData:", responseData);
+      // console.log("responseData:", responseData);
       return responseData;
     })
     .catch((error) => {
-      console.error("Error fetching driver ID:", error);
+      // console.error("Error fetching driver ID:", error);
       throw error;
     });
 }
 
 function AddPreferenceToTrip(preference) {
+  console.log("Sending preferences:", preference);
   return post("addPrefToTrip", preference);
 }
-
 
 export {
   getJson,

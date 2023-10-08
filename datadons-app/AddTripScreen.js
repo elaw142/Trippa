@@ -90,18 +90,16 @@ function AddTripScreen() {
   };
 
   const handleSubmit = async () => {
+    console.log("handleSubmit invoked");
     try {
-      console.log(startLocation, endLocation);
       const startLat = startLocation.lat;
       const startLng = startLocation.lng;
       const endLat = endLocation.lat;
       const endLng = endLocation.lng;
       const user = await AsyncStorage.getItem("user");
-      console.log(user + " hehehehe");
-      var username = await getUserName(user); // good
-      var userid = username.id; // good
+      var username = await getUserName(user);
+      var userid = username.id;
       var driverId = await GetDriverIdByUserId(userid);
-      console.log("driverId:", driverId);
 
       const newTrip = {
         DriverId: Number(driverId),
@@ -116,34 +114,29 @@ function AddTripScreen() {
         StartLocation: startAddress,
         EndLocation: endAddress,
       };
-      console.log(newTrip);
-      console.log("Start Location:", startLocation);
-      console.log("End Location:", endLocation);
-      console.log("Price:", price);
-      console.log("DetourRange:", detourRange);
-      console.log("startAddress", startAddress);
-      console.log("endAddress", endAddress);
-      await AddTrip(newTrip);
-      navigationRef.current?.navigate("Home");
       const addedTripResponse = await AddTrip(newTrip);
       if (addedTripResponse && addedTripResponse.id) {
         const preferencePayload = {
           ...preferences,
           TripId: addedTripResponse.id,
         };
-        await AddPreferenceToTrip(preferencePayload);
+
+        console.log("Sending preferences to backend:", preferencePayload);
+
+        const preferenceResponse = await AddPreferenceToTrip(preferencePayload);
+        console.log("Response after sending preferences:", preferenceResponse);
       }
+
+      navigationRef.current?.navigate("Home");
     } catch (error) {
       if (error.message === "Network response was not ok") {
-        // Handle the specific error here
         alert("You must be a driver to add a trip");
-        // You can display an error message to the user or perform other error-handling tasks.
       } else {
-        // Handle other errors
         console.error("An unexpected error occurred:", error);
       }
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View>
