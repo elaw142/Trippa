@@ -7,13 +7,12 @@ export default class RideChat extends React.Component {
   state = {
     messages: [],
     isChatModalVisible: false,
+    isInformationModalVisible: false, // Added state for information modal
     selectedChat: null,
     chats: [
       {
         id: 1,
         title: 'Auckland Airport to Auckland CBD',
-
-
         messages: [
           {
             _id: 4,
@@ -47,7 +46,7 @@ export default class RideChat extends React.Component {
           },
           {
             _id: 1,
-            text: 'Hi, i have created a spotify playlist for the trip!',
+            text: 'Hi, I have created a Spotify playlist for the trip!',
             createdAt: Date.parse("2023-10-06T21:14:14.677Z"),
             user: {
               _id: 3,
@@ -74,7 +73,7 @@ export default class RideChat extends React.Component {
           },
           {
             _id: 2,
-            text: 'Hi, i was wondering if we could leave at 5:30 instead of 5:00?',
+            text: 'Hi, I was wondering if we could leave at 5:30 instead of 5:00?',
             createdAt: new Date(),
             user: {
               _id: 3,
@@ -115,6 +114,20 @@ export default class RideChat extends React.Component {
     this.setState({ isChatModalVisible: false, selectedChat: null });
   }
 
+  // Function to open the information tab
+  openInformationTab() {
+    // Add your logic to open the information tab here
+    // You can use another Modal or any component to show the information.
+    // Example: this.setState({ isInformationModalVisible: true });
+    alert("feature in progress")
+  }
+
+  // Function to close the information tab
+  closeInformationTab() {
+    // Add your logic to close the information tab here
+    // Example: this.setState({ isInformationModalVisible: false });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -124,10 +137,10 @@ export default class RideChat extends React.Component {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.listItem} onPress={() => this.openChatModal(item.id)}>
-            <Text style={styles.chatTitle}>{item.title}</Text>
-            <Text style={styles.firstMessage}>
-              {item.messages.length > 0 ? item.messages[0].text : 'No messages'}
-            </Text>
+              <Text style={styles.chatTitle}>{item.title}</Text>
+              <Text style={styles.firstMessage}>
+                {item.messages.length > 0 ? item.messages[0].text : 'No messages'}
+              </Text>
             </TouchableOpacity>
           )}
         />
@@ -141,18 +154,30 @@ export default class RideChat extends React.Component {
             <TouchableOpacity onPress={() => this.closeChatModal()} style={messageStyle.closeButton}>
               <Text>BACK</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.openInformationTab()} style={messageStyle.infoButton}>
+              <Text>Info</Text>
+            </TouchableOpacity>
             {this.state.selectedChat !== null && (
               <GiftedChat
                 messages={this.state.chats.find(chat => chat.id === this.state.selectedChat).messages}
                 onSend={messages => this.onSend(messages)}
                 user={{
-                  _id: 1, // Set ID when out of testing phase
+                  _id: 1, // Set ID when out of the testing phase
                   name: 'User Name', // Set the user's name
                   avatar: require("./assets/icon.png"), // Set the user's avatar
                 }}
               />
             )}
           </View>
+        </Modal>
+
+        {/* Information Modal */}
+        <Modal
+          visible={this.state.isInformationModalVisible}
+          animationType="slide"
+          onRequestClose={() => this.closeInformationTab()}
+        >
+          {/* Add your information tab content here */}
         </Modal>
       </View>
     );
@@ -168,13 +193,13 @@ const styles = StyleSheet.create({
   },
   listItem: {
     padding: 10,
-    margin: 10,
+    // margin: 10,
     backgroundColor: "white",
     borderRadius: 0,
     
     marginVertical: 2,
     height: 70,
-    minWidth: "95%",
+    minWidth: "100%",
     ...Platform.select({
       ios: {
         shadowColor: "black",
@@ -206,5 +231,16 @@ const messageStyle = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     alignItems: "center",
-  }
+  },
+  infoButton: {
+    position: 'absolute',
+    backgroundColor: "#2196F3",
+    marginTop: 50,
+    width: 100,
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    right: 20,
+  },
 })
