@@ -7,6 +7,8 @@ import { Video } from "expo-av";
 import HomeScreen from "./HomeScreen";
 import AccountScreen from "./AccountScreen";
 import AddTripScreen from "./AddTripScreen";
+import MessageScreen from './MessageScreen'; // Import your ChatScreen component
+
 import LoginRegister from "./auth";
 import { StyleSheet, View, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -142,7 +144,12 @@ export default function App() {
                       : "person-circle-outline";
                   } else if (route.name === "AddTrip") {
                     iconName = focused ? "add-circle" : "add-circle-outline";
+
+                  } else if  (route.name === "Messages") {
+                    iconName = focused ? "chatbubble-sharp" : "chatbubble-outline";
                   }
+                  
+
 
                   return (
                     <Ionicons
@@ -172,6 +179,11 @@ export default function App() {
                 component={AddTripScreen}
                 options={{ headerShown: false }}
               />
+                <Tab.Screen
+                name = "Messages"
+                component={MessageScreen}
+                options= {{headerShown:false}}
+                />
               <Tab.Screen
                 name="Account"
                 component={AccountScreen}
