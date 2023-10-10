@@ -49,12 +49,40 @@ function SearchGoogleAutoComplete(props) {
     );
   }
 
+function getTrips(){
+    const allTrips = getAllTrips();
+    return allTrips;
+}
+
 function Search(){
-    const [from, setFrom] = useState('');
-    const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
     const [numPeople, setNumPeople] = useState('');
+    const [startLocation, setStartLocation] = useState(null);
+    const [endLocation, setEndLocation] = useState(null);
+    const [startAddress, setStartAddress] = useState("");
+    const [endAddress, setEndAddress] = useState("");
+    const [isDateModalVisible, setDateModalVisible] = useState(false);
+    const [isNumPeopleModalVisible, setNumPeopleModalVisible] = useState(false);
+
     
+    const handleStartLocationChange = (location, address) => {
+        setStartLocation(location);
+        setStartAddress(address);
+      };
+    
+      const handleEndLocationChange = (location, address) => {
+        setEndLocation(location);
+        setEndAddress(address);
+      };
+
+    const toggleDateModal = () => {
+        setDateModalVisible(!isDateModalVisible);
+      };
+    
+    const toggleNumPeopleModal = () => {
+        setNumPeopleModalVisible(!isNumPeopleModalVisible);
+      };
+
     const handleSearch = () => {
         // Handle the search logic here (e.g., call an API or perform a search action)
         console.log('Searching with the following data:', {
@@ -63,35 +91,69 @@ function Search(){
           date,
           numPeople,
         });
+        const allTrips = getTrips();
+        console.log(allTrips)
       };
     return (
         <View style={styles.container}>
-        <Text>From</Text>
+          <SearchGoogleAutoComplete
+            styles={{
+              container: { width: 300, zIndex: 9999 },
+              textInputContainer: { width: "100%" },
+              listView: { backgroundColor: "white" },
+            }}
+            notifyChange={handleStartLocationChange}
+          />
+          <SearchGoogleAutoComplete
+            styles={{
+              container: { width: 300, zIndex: 9999 },
+              textInputContainer: { width: "100%" },
+              listView: { backgroundColor: "white" },
+            }}
+            notifyChange={handleEndLocationChange}
+          />
+          <View style={styles.buttonContainer}>
+          <TextInput
+            placeholder="Date"
+            style={styles.input}
+            value={date}
+            onChangeText={text => setDate(text)}
+            />
         <TextInput
-          style={styles.input}
-          value={from}
-          onChangeText={text => setFrom(text)}
+            style={styles.input}
+            value={numPeople}
+            placeholder="Number of riders"
+            onChangeText={text => setNumPeople(text)}
+            keyboardType="numeric"
         />
-        <Text>Destination</Text>
-        <TextInput
-          style={styles.input}
-          value={destination}
-          onChangeText={text => setDestination(text)}
-        />
-        <Text>Date</Text>
-        <TextInput
-          style={styles.input}
-          value={date}
-          onChangeText={text => setDate(text)}
-        />
-        <Text>Number of People</Text>
-        <TextInput
-          style={styles.input}
-          value={numPeople}
-          onChangeText={text => setNumPeople(text)}
-          keyboardType="numeric"
-        />
+          </View>
         <Button title="Search" onPress={handleSearch} />
+
+      {/* Date Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isDateModalVisible}
+        onRequestClose={toggleDateModal}>
+        {/* Add your date selection UI and close button here */}
+        <View style={styles.modalContainer}>
+          {/* Your date selection UI */}
+          <Button title="Close" onPress={toggleDateModal} />
+        </View>
+      </Modal>
+
+      {/* Number of People Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isNumPeopleModalVisible}
+        onRequestClose={toggleNumPeopleModal}>
+        {/* Add your number of people selection UI and close button here */}
+        <View style={styles.modalContainer}>
+          {/* Your number of people selection UI */}
+          <Button title="Close" onPress={toggleNumPeopleModal} />
+        </View>
+      </Modal>
       </View>
     )
 };
@@ -106,5 +168,10 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       padding: 10,
     },
+    buttonContainer:{
+        flexDirection: "row",
+        alignItems: "center"
+        
+    }
   });
 export default Search;
