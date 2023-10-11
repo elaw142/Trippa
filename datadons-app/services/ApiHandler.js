@@ -24,23 +24,28 @@ function post(path, data) {
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then(async (res) => {
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return res.json();
-      } else {
-        return res.text();
-      }
-    })
-    .then((response) => {
-      console.log("Raw Response from POST:", response);
-      return response;
-    })
-    .catch((error) => {
-      console.error("Error in POST:", error);
-      throw error;
-    });
+  }).then(async (res) => {
+    const rawResponse = await res.text();
+    console.log("Raw Response from POST:", rawResponse);
+
+    if (!res.ok) {
+      throw new Error(
+        `HTTP error! Status: ${res.status}. Response: ${rawResponse}`
+      );
+    }
+
+
+    try {
+      const jsonResponse = res.json(); 
+      console.log("Raw Response from POST:", jsonResponse); 
+      return jsonResponse;
+    } catch {
+      console.warn("Response was not JSON. Returning as-is:", res); 
+      return res;
+    } finally {
+      console.log("returned data");
+    }
+  });
 }
 
 function getVersion() {

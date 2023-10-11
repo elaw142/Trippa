@@ -114,26 +114,17 @@ function AddTripScreen() {
         StartLocation: startAddress,
         EndLocation: endAddress,
       };
-
       const addedTripResponse = await AddTrip(newTrip);
-      console.log("addedTripResponse:", addedTripResponse);
       if (addedTripResponse && addedTripResponse.id) {
         const preferencePayload = {
           ...preferences,
           TripId: addedTripResponse.id,
         };
-        const preferenceResponse = await AddPreferenceToTrip(preferencePayload);
 
-        if (
-          typeof preferenceResponse === "string" &&
-          preferenceResponse.includes("Failed")
-        ) {
-          alert("Failed to set preferences for the trip.");
-        }
-      } else {
-        console.log(
-          "Condition for AddPreferenceToTrip was not met. Check addedTripResponse and its id property."
-        );
+        console.log("Sending preferences to backend:", preferencePayload);
+
+        const preferenceResponse = await AddPreferenceToTrip(preferencePayload);
+        console.log("Response after sending preferences:", preferenceResponse);
       }
 
       navigationRef.current?.navigate("Home");
