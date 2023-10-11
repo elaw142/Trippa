@@ -218,9 +218,9 @@ namespace Data
             _repo.Trips.Update(newTrip);
             _repo.SaveChanges();
         }
-        public void AddTrip(TripDto tripDto)
+        public TripDto AddTrip(TripDto tripDto)
         {
-            Trip newTrip = new Trip
+            TripDto newTrip = new TripDto
             {
                 DriverID = tripDto.DriverID,
                 DateTime = tripDto.DateTime,
@@ -242,6 +242,7 @@ namespace Data
             };
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
+            return newTrip;
         }
         public Driver GetDriver(long driverId)
         {
