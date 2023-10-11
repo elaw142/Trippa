@@ -392,7 +392,7 @@ namespace Controllers
                 return BadRequest("DetourRange is required");
             }
             _repo.AddTrip(trip);
-            return Ok("Success");
+            return Ok(trip);
         }
 
         // PUT api/UpdateTrip - update a trip
