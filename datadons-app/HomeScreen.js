@@ -124,14 +124,7 @@ function MyMapComponent({ startLocation, endLocation }) {
   );
 }
 
-
-function getFormattedAddress(address) {
-  if (address === undefined) {
-    return null;
-  }
-  return JSON.parse(address).results[0].formatted_address;
-}
-
+//* address functionality
 function convertAddressApiJson(start, end) {
   // this was interesting to code...
   // FIXME: bit of a hacky way to do this, but it works
@@ -141,20 +134,22 @@ function convertAddressApiJson(start, end) {
   function findHighestMismatchElement(list1, list2) {
     let index = -1;
     for (let i = list1.length - 1; i >= 0; i--) {
-      if (list1[i].long_name !== list2[i].long_name) {
+      if (list1[i] !== list2[i]) {
         index = i;
         break;
       }
     }
     return index;
   }
-
-  var startComp = JSON.parse(start).results[0].address_components;
-  var endComp = JSON.parse(end).results[0].address_components;
+  // console.log(start);
+  var startComp = start.split(",");
+  var endComp = end.split(",");
 
   var index = findHighestMismatchElement(startComp, endComp);
 
-  return [startComp[index].short_name, endComp[index].short_name];
+  // return [startComp[index], endComp[index]];
+  // TODO: change this to return index, just need to split the 2nd index, split off the post code...
+  return startComp[0]
 }
 
 function HomeScreen() {
@@ -225,7 +220,7 @@ const modalContentRef = useRef();
       console.log(trips.length + " Trip(s) fetched");
       setTripsData(trips);
     });
-  }, "20000");
+  }, "2000");
 
   return (
     <View style={styles.container}>
@@ -271,14 +266,14 @@ const modalContentRef = useRef();
                     <Text style={styles.price}>${item.price}</Text>
                     <Text style={styles.location}>
                       {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
-                      {item.startLocation}
+                      {convertAddressApiJson(item.startLocation,item.endLocation)}
                       <AntDesign
                         name="arrowright"
                         size={13}
                         color={highlight_color}
                       />
                       {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
-                      {item.endLocation}
+                      {convertAddressApiJson(item.endLocation,item.startLocation)}
                     </Text>
                   </View>
                 </View>
@@ -331,8 +326,8 @@ const modalContentRef = useRef();
                     <View style={ModelStyles.tripDetails}>
                       {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
                   <Text>To: {getFormattedAddress(selectedItem.endLocation)}</Text> */}
-                      <Text>From: {selectedItem.startLocation}</Text>
-                      <Text>To: {selectedItem.endLocation}</Text>
+                      <Text>From: {(selectedItem.startLocation)}</Text>
+                      <Text>To: {(selectedItem.endLocation)}</Text>
                       <Text>Time: {formatDateTime(selectedItem.dateTime)}</Text>
                       <Text>Price: ${selectedItem.price}</Text>
                       <Text>Duration: Approx. 2hrs</Text>
@@ -374,6 +369,7 @@ const modalContentRef = useRef();
           </Modal>
         </>
       ) : (
+        // TODO: add a loading stuff
         <Text>Loading Trips...</Text>
       )}
     </View>
