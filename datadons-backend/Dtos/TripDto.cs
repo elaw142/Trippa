@@ -2,6 +2,8 @@ namespace Dtos
 {
     public class TripDto
     {
+        public long TripID { get; set; }
+
         public long DriverID { get; set; }
         public DateTime DateTime { get; set; }
         public long MaxRiders { get; set; }
@@ -14,7 +16,8 @@ namespace Dtos
         public string startLocation { get; set; }
         public string endLocation { get; set; }
     }
-    public class TripOutDto{
+    public class TripOutDto
+    {
         public long TripID { get; set; }
         public long DriverID { get; set; }
         public DateTime DateTime { get; set; }
