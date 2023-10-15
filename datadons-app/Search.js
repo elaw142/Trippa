@@ -12,11 +12,11 @@ import {
   Button
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import { getAllTrips } from "./services/ApiHandler";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { ScrollView } from "react-native-gesture-handler";
 import { ForeignObject } from "react-native-svg";
@@ -130,6 +130,7 @@ function getDaySuffix(day) {
   }
 }
 
+
 function SearchGoogleAutoComplete(props) {
 
     return (
@@ -214,9 +215,11 @@ function Search(){
     const [endAddress, setEndAddress] = useState("");
     const [isDateModalVisible, setDateModalVisible] = useState(false);
     const [isNumPeopleModalVisible, setNumPeopleModalVisible] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [isModalVisible, setModalVisible] = useState(false);
+    const [dateTime, setDateTime] = useState(new Date()); // this will preset it to "today's" date
+    const [isDateTimePickerVisible, setDateTimePickerVisible] = useState(false);
     const [sortedTrips, setsortedTrips] = useState([]);
+
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const toggleModal = () => {
       setModalVisible(!isModalVisible);
@@ -292,6 +295,9 @@ function Search(){
       };
     return (
         <View style={styles.container}>
+
+      <View style={styles.locationContainer}>
+          <Text>Start Location:</Text>
           <SearchGoogleAutoComplete
             styles={{
               container: { width: 300, zIndex: 9999 },
@@ -300,6 +306,9 @@ function Search(){
             }}
             notifyChange={handleStartLocationChange}
           />
+        </View>
+        <View style={styles.locationContainer1}>
+          <Text>End Location:</Text>
           <SearchGoogleAutoComplete
             styles={{
               container: { width: 300, zIndex: 9999 },
@@ -308,27 +317,14 @@ function Search(){
             }}
             notifyChange={handleEndLocationChange}
           />
-          <View style={styles.buttonContainer}>
-          <TextInput
-            placeholder="Date"
-            style={styles.input}
-            value={date}
-            onChangeText={text => setDate(text)}
-            />
-        <TextInput
-            style={styles.input}
-            value={numPeople}
-            placeholder="Number of riders"
-            onChangeText={text => setNumPeople(text)}
-            keyboardType="numeric"
-        />
-          </View>
-        <Button title="Search" onPress={handleSearch} />
+        </View>
+          {/* <View style={styles.buttonContainer}> */}
+
         <Modal
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
-        // onRequestClose={toggleModal}
+        onRequestClose={toggleModal}
       >
         <View style={styles.modalContainer}>
           {/* FlatList inside the modal */}
@@ -386,38 +382,43 @@ function Search(){
                     />
           ) : (
             <Text>No trips found</Text>
-          )}
-
-          <Button title="Search" onPress={toggleModal} />
+          )}      
         </View>
       </Modal>
-
-      {/* Date Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isDateModalVisible}
-        onRequestClose={toggleDateModal}>
-        {/* Add your date selection UI and close button here */}
-        <View style={styles.modalContainer}>
-          {/* Your date selection UI */}
-          <Button title="Close" onPress={toggleDateModal} />
+          {/* Date time picker */}
+          <View style={styles.dateTimeContainer}>
+            <Text>Select Date</Text>
+            <TouchableOpacity onPress={() => setDateTimePickerVisible(true)}>
+              <Text style={styles.dateEmoji}>&#128198;</Text>
+            </TouchableOpacity>
+            {isDateTimePickerVisible && (
+                <DateTimePicker
+                value={dateTime}
+                mode="datetime"
+                is24Hour={false}
+                display="default"
+                onChange={(event, selectedDate) => {
+                    setDateTimePickerVisible(false); // Hide the picker after selecting a date
+                    const currentDate = selectedDate || dateTime;
+                    setDateTime(currentDate);
+                }}
+                />
+            )}
         </View>
-      </Modal>
-
-      {/* Number of People Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isNumPeopleModalVisible}
-        onRequestClose={toggleNumPeopleModal}>
-        {/* Add your number of people selection UI and close button here */}
-        <View style={styles.modalContainer}>
-          {/* Your number of people selection UI */}
-          <Button title="Close" onPress={toggleNumPeopleModal} />
+        {/* number of riders*/}
+        <View style={styles.numRidersContainer}>
+          <Text>Number of passengers</Text>
+        <TextInput
+            style={styles.inputRiders}
+            value={numPeople}
+            onChangeText={text => setNumPeople(text)}
+            keyboardType="numeric"
+        />
+          </View>
+          <TouchableOpacity onPress={handleSearch} style={styles.button}>
+          <Text style={styles.buttonText}>Search</Text>
+        </TouchableOpacity>
         </View>
-      </Modal>
-      </View>
     )
 };
 const paddingValue = 3;
@@ -426,27 +427,81 @@ const highlight_color = "#007c3e";
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      alignItems: "center",
+      paddingTop: 20,
+      backgroundColor: "#f2f2f2",
+    },
+    dateEmoji:{
+      fontSize: 50
+    },
+    buttonText: {
+      color: "white",
+      fontSize: 16,
+      textAlign: "center",
     },
     input: {
+      width: 300,
+      height: 40,
+      borderColor: "#ddd",
       borderWidth: 1,
-      borderColor: 'gray',
+      paddingHorizontal: 10,
       marginBottom: 10,
-      padding: 10,
+      borderRadius: 5,
+      backgroundColor: "white",
+      fontSize: 16,
     },
-    buttonContainer:{
-        flexDirection: "row",
-        alignItems: "center"
-        
-    },
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      width: "100%",
+    inputRiders: {
+      width: 40,
+      height: 40,
+      borderColor: "#ddd",
       borderWidth: 1,
-      borderColor: "#ccc",
-      paddingTop: 50,
+      paddingHorizontal: 10,
+      marginBottom: 10,
+      borderRadius: 5,
+      backgroundColor: "white",
+      fontSize: 30,
+    },
+    button:{
+      backgroundColor: highlight_color,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      marginTop: 20,
+      elevation: 2,
+      shadowOffset: { width: 1, height: 1 },
+      shadowColor: "#333",
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      width: "50%",
+      alignSelf: "center", 
+    },
+    dateTimeContainer: {
+      width: "100%",
+      alignItems: "center",
+      marginTop: 300,
+    },
+    numRidersContainer: {
+      width: "100%",
+      alignItems: "center",
+      marginTop: 30,
+    },
+    locationContainer: {
+      width: "100%",
+      overflow: "visible",
+      alignItems: "center",
+      marginTop: 150,
+      zIndex: 9999,
+      position: "absolute",
+    },
+  
+    locationContainer1: {
+      width: "100%",
+      overflow: "visible",
+      alignItems: "center",
+      marginTop: 250,
+  
+      zIndex: 9998,
+      position: "absolute",
     },
     tripCard: {
       backgroundColor: "white",
@@ -483,36 +538,10 @@ const styles = StyleSheet.create({
       padding: 4,
       fontSize: 12,
     },
-    location: {
-      position: "absolute",
-      bottom: paddingValue,
-      left: paddingValue,
-      overflow: "hidden",
-      backgroundColor: "white",
-      borderWidth: 0.6,
-      borderColor: "#ccc",
-      borderRadius: 8,
-      color: "black",
-      padding: 4,
-      fontSize: 12,
-    },
     riderInfo: {
       position: "absolute",
       bottom: paddingValue,
       right: paddingValue,
-      overflow: "hidden",
-      backgroundColor: "white",
-      borderWidth: 0.6,
-      borderColor: "#ccc",
-      borderRadius: 8,
-      color: "black",
-      padding: 4,
-      fontSize: 12,
-    },
-    dateTime: {
-      position: "absolute",
-      top: paddingValue,
-      left: paddingValue,
       overflow: "hidden",
       backgroundColor: "white",
       borderWidth: 0.6,
