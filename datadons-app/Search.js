@@ -223,7 +223,7 @@ function Search(){
     };
 
     const handleStartLocationChange = (location, address) => {
-        StartLocation(location);
+          StartLocation(location);
         setStartAddress(address);
       };
     
