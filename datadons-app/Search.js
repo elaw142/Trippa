@@ -16,6 +16,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import { getAllTrips } from "./services/ApiHandler";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 // * MAP FUNCTIONALITY * //
@@ -174,6 +175,9 @@ function Search(){
     const [endAddress, setEndAddress] = useState("");
     const [isDateModalVisible, setDateModalVisible] = useState(false);
     const [isNumPeopleModalVisible, setNumPeopleModalVisible] = useState(false);
+    const [dateTime, setDateTime] = useState(new Date()); // this will preset it to "today's" date
+    const [isDateTimePickerVisible, setDateTimePickerVisible] = useState(false);
+
 
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -239,12 +243,26 @@ function Search(){
             notifyChange={handleEndLocationChange}
           />
           <View style={styles.buttonContainer}>
-          <TextInput
-            placeholder="Date"
-            style={styles.input}
-            value={date}
-            onChangeText={text => setDate(text)}
-            />
+        {/* Date time picker */}
+        <View style={styles.dateTimeContainer}>
+            <Text>Select DateTime:</Text>
+            <TouchableOpacity onPress={() => setDateTimePickerVisible(true)}>
+                <Text>{formatDateTime(dateTime)}</Text>
+            </TouchableOpacity>
+            {isDateTimePickerVisible && (
+                <DateTimePicker
+                value={dateTime}
+                mode="datetime"
+                is24Hour={true}
+                display="default"
+                onChange={(event, selectedDate) => {
+                    setDateTimePickerVisible(false); // Hide the picker after selecting a date
+                    const currentDate = selectedDate || dateTime;
+                    setDateTime(currentDate);
+                }}
+                />
+            )}
+        </View>
         <TextInput
             style={styles.input}
             value={numPeople}
@@ -322,31 +340,6 @@ function Search(){
         </View>
       </Modal>
 
-      {/* Date Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isDateModalVisible}
-        onRequestClose={toggleDateModal}>
-        {/* Add your date selection UI and close button here */}
-        <View style={styles.modalContainer}>
-          {/* Your date selection UI */}
-          <Button title="Close" onPress={toggleDateModal} />
-        </View>
-      </Modal>
-
-      {/* Number of People Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isNumPeopleModalVisible}
-        onRequestClose={toggleNumPeopleModal}>
-        {/* Add your number of people selection UI and close button here */}
-        <View style={styles.modalContainer}>
-          {/* Your number of people selection UI */}
-          <Button title="Close" onPress={toggleNumPeopleModal} />
-        </View>
-      </Modal>
       </View>
     )
 };
