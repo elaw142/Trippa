@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -172,37 +172,43 @@ function SearchGoogleAutoComplete(props) {
     var difflon = (long-passenger.lng) * (Math.PI/180); // Radian difference (longitudes)
 
     var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
-    console.log(d)
     return d;
   }
 
 
-function algorithmToSortArray(arrayToBeSorted, referenceArray) {
-  console.log(arrayToBeSorted)
-  const changeHistory = []
-  for(let i = 0; i < referenceArray.length; i++) {
-      number = referenceArray[i]
-
-      for(let j = 0; j < changeHistory.length; j++) {
-          if(changeHistory[j][0] === number) {
-              number = changeHistory[j][1]
-          } else if (changeHistory[j][1] === number) {
-              number = changeHistory[j][0]
+function algorithmToSortArray(primArr,arr, compare = defaultCompare) {
+  const { length } = arr;
+  let minIndex;
+  for (let i = 0; i < length - 1; i++) {
+      minIndex = i;
+      for (let j = i; j < length; j++) {
+          if (compare(arr[minIndex], arr[j]) === Compare.BIGGER_THAN) {
+              minIndex = j;
           }
       }
-
-      if (i !== number) {  // this avoid some unnecessary swaps
-          swapItems(i, number, arrayToBeSorted)
+      if (i !== minIndex) {
+          swap(arr, i, minIndex);
+          swap(primArr, i, minIndex)
       }
-      changeHistory[i] = [i, number]
   }
-
-  return arrayToBeSorted
+  return primArr;
 }
-function swapItems(a, b, arrayToBeSorted) {
-  var temp = arrayToBeSorted[a];
-  arrayToBeSorted[a] = arrayToBeSorted[b];
-  arrayToBeSorted[b] = temp;
+
+function swap(arr, a, b) {
+  const temp = arr[a];
+  arr[a] = arr[b];
+  arr[b] = temp;
+}
+const Compare = {
+  LESS_THAN: -1,
+  BIGGER_THAN: 1
+};
+
+function defaultCompare(a, b) {
+  if (a === b) {
+      return 0;
+  }
+  return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
 }
 
 function Search(){
@@ -218,15 +224,24 @@ function Search(){
     const [dateTime, setDateTime] = useState(new Date()); // this will preset it to "today's" date
     const [isDateTimePickerVisible, setDateTimePickerVisible] = useState(false);
     const [sortedTrips, setsortedTrips] = useState([]);
-
     const [isModalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+      // This code will run when the component is mounted (similar to componentDidMount in class components)
+      getTrips();
+    }, []);
 
     const toggleModal = () => {
       setModalVisible(!isModalVisible);
     };
+    const toggleModalClose = () => {
+      handleEndLocationChange(null, null);
+      handleStartLocationChange(null, null);
+      setModalVisible(!isModalVisible);
+    };
 
     const handleStartLocationChange = (location, address) => {
-          StartLocation(location);
+        setStartLocation(location);
         setStartAddress(address);
       };
     
@@ -234,62 +249,50 @@ function Search(){
         setEndLocation(location);
         setEndAddress(address);
       };
-
-    const toggleDateModal = () => {
-        setDateModalVisible(!isDateModalVisible);
-      };
-    
-    const toggleNumPeopleModal = () => {
-        setNumPeopleModalVisible(!isNumPeopleModalVisible);
-      };
     const handleItemPress = (item) => {
         // setSelectedItem(item);
       };
 
     function getTrips(){
 
-      getAllTrips().then((trips) => {
-        // if(tripsData.length != trips.length){
-        // }
+        getAllTrips().then((trips) => {
         console.log(trips.length + " Trip(s) fetched");
-        // setTripsData(trips);
-        toggleModal();
+        setTripsData(trips);
       });
     }
     function sortTrips(trips){
       const distList = [];
       const tripList = [];
-      console.log(startLocation)
+      const d = new Date(dateTime);
+      const date = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
       trips.forEach(trip => {
-        // check date is correct, check driver has space for passengers.
-        const dStart = haversine_distance(startLocation, trip.startLatitude, trip.startLongitude);
-        const dEnd = haversine_distance(endLocation, trip.endLatitude, trip.endLongitude);
+        const dt = new Date(trip.dateTime);
+        const dateT = dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate();
+        if (numPeople <= trip.maxRiders && date === dateT){
+          // check date is correct, check driver has space for passengers.
+          const dStart = haversine_distance(startLocation, trip.startLatitude, trip.startLongitude);
+          const dEnd = haversine_distance(endLocation, trip.endLatitude, trip.endLongitude);
 
-        if (trip.detourRange / 1000 > dStart && trip.detourRange /1000 > dEnd){
-          tripList.push(trip)
-          distList.push(d)
+          if ((trip.detourRange / 1000) > dStart && trip.detourRange /1000 > dEnd){
+            tripList.push(trip)
+            distList.push(dStart + dEnd)
+          }
         }
         
       });
-      // console.log(distList)
-      // console.log(tripList)
       const sortedTrips = algorithmToSortArray(tripList, distList)
-      // console.log(sortedTrips)
       return sortedTrips
     }
     const handleSearch = () => {
-        // Handle the search logic here (e.g., call an API or perform a search action)
-        AsyncStorage.clear();
-        console.log('Searching with the following data:', {
-          date,
-          numPeople,
-        });
-        getTrips();
-        // console.log(startLocation)
-        setsortedTrips(sortTrips(tripsData))
-        setTripsData(sortedTrips)
-        console.log(tripsData)
-        setModalVisible(!isModalVisible)
+        // getTrips();
+        if (startLocation != null && endLocation != null){
+            const sort = sortTrips(tripsData);
+            console.log(sort);
+            setsortedTrips(sort);
+            console.log(sortedTrips);
+            toggleModal();
+        }
+
       };
     return (
         <View style={styles.container}>
@@ -320,15 +323,15 @@ function Search(){
 
         <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={isModalVisible}
         onRequestClose={toggleModal}
       >
         <View style={styles.modalContainer}>
           {/* FlatList inside the modal */}
-          {tripsData.length > 0 ? (
+          {sortedTrips.length > 0 ? (
                       <FlatList
-                      data={tripsData}
+                      data={sortedTrips}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           key={item.tripID}
@@ -380,9 +383,12 @@ function Search(){
                     />
           ) : (
             <Text>No trips found</Text>
-          )}      
-        </View>
-      </Modal>
+          )} 
+          <TouchableOpacity onPress={toggleModalClose} style={styles.button}>
+            <Text style={styles.buttonText}>Close</Text>
+          </TouchableOpacity>   
+          </View>
+          </Modal>
           {/* Date time picker */}
           <View style={styles.dateTimeContainer}>
             <Text>Select Date</Text>
@@ -411,9 +417,11 @@ function Search(){
             value={numPeople}
             onChangeText={text => setNumPeople(text)}
             keyboardType="numeric"
+            maxLength={1}
+            defaultValue="1"
         />
           </View>
-          <TouchableOpacity onPress={handleSearch} style={styles.button}>
+        <TouchableOpacity onPress={handleSearch} style={styles.button}>
           <Text style={styles.buttonText}>Search</Text>
         </TouchableOpacity>
         </View>
@@ -427,6 +435,10 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: "center",
       paddingTop: 20,
+      backgroundColor: "#f2f2f2",
+    },
+    modalContainer:{
+      flex: 1,
       backgroundColor: "#f2f2f2",
     },
     dateEmoji:{
