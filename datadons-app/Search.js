@@ -261,12 +261,10 @@ function Search(){
       const tripList = [];
       console.log(startLocation)
       trips.forEach(trip => {
-        // console.log(trip)
+        // check date is correct, check driver has space for passengers.
         const dStart = haversine_distance(startLocation, trip.startLatitude, trip.startLongitude);
         const dEnd = haversine_distance(endLocation, trip.endLatitude, trip.endLongitude);
-        // console.log(trip.detourRange)
-        // console.log(d)
-        // console.log(trip.detourRange)
+
         if (trip.detourRange / 1000 > dStart && trip.detourRange /1000 > dEnd){
           tripList.push(trip)
           distList.push(d)
