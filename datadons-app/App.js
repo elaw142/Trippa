@@ -7,6 +7,8 @@ import { Video } from "expo-av";
 import HomeScreen from "./HomeScreen";
 import AccountScreen from "./AccountScreen";
 import AddTripScreen from "./AddTripScreen";
+import MessageScreen from './MessageScreen'; // Import your ChatScreen component
+
 import LoginRegister from "./auth";
 import Search from "./Search";
 import { StyleSheet, View, Animated } from "react-native";
@@ -135,52 +137,60 @@ export default function App() {
             //     tabBarIcon: ({ focused, color, size }) => {
             //       let iconName;
 
-            //       if (route.name === "Home") {
-            //         iconName = focused ? "ios-home-sharp" : "ios-home-outline";
-            //       } else if (route.name === "Account") {
-            //         iconName = focused
-            //           ? "person-circle-sharp"
-            //           : "person-circle-outline";
-            //       } else if (route.name === "AddTrip") {
-            //         iconName = focused ? "add-circle" : "add-circle-outline";
-            //       }
+                  if (route.name === "Home") {
+                    iconName = focused ? "ios-home-sharp" : "ios-home-outline";
+                  } else if (route.name === "Account") {
+                    iconName = focused
+                      ? "person-circle-sharp"
+                      : "person-circle-outline";
+                  } else if (route.name === "AddTrip") {
+                    iconName = focused ? "add-circle" : "add-circle-outline";
 
-            //       return (
-            //         <Ionicons
-            //           name={iconName}
-            //           size={size}
-            //           color={color}
-            //           style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
-            //         />
-            //       );
-            //     },
-            //     tabBarActiveTintColor: "#357A48",
-            //     tabBarInactiveTintColor: "black",
-            //     tabBarStyle: {
-            //       display: "flex",
-            //       paddingTop: 5, //. remove this line (or change for spacing)
-            //     },
-            //     tabBarLabel: "", //. remove this line
-            //   })}
-            // >
-            //   <Tab.Screen
-            //     name="Home"
-            //     component={HomeScreen}
-            //     options={{ headerShown: false }}
-            //   />
-            //   <Tab.Screen
-            //     name="AddTrip"
-            //     component={AddTripScreen}
-            //     options={{ headerShown: false }}
-            //   />
-            //   <Tab.Screen
-            //     name="Account"
-            //     component={AccountScreen}
-            //     options={{ headerShown: false }}
-            //   />
-            // </Tab.Navigator>
+                  } else if  (route.name === "Messages") {
+                    iconName = focused ? "chatbubble-sharp" : "chatbubble-outline";
+                  }
+                  
 
-            <Search/>
+
+                  return (
+                    <Ionicons
+                      name={iconName}
+                      size={size}
+                      color={color}
+                      style={{ marginBottom: -10, fontSize: 30 }} //. remove this line --- Jamies nav edit, change to change all //. to change back
+                    />
+                  );
+                },
+                tabBarActiveTintColor: "#357A48",
+                tabBarInactiveTintColor: "black",
+                tabBarStyle: {
+                  display: "flex",
+                  paddingTop: 5, //. remove this line (or change for spacing)
+                },
+                tabBarLabel: "", //. remove this line
+              })}
+            >
+              <Tab.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ headerShown: false }}
+              />
+              <Tab.Screen
+                name="AddTrip"
+                component={AddTripScreen}
+                options={{ headerShown: false }}
+              />
+                <Tab.Screen
+                name = "Messages"
+                component={MessageScreen}
+                options= {{headerShown:false}}
+                />
+              <Tab.Screen
+                name="Account"
+                component={AccountScreen}
+                options={{ headerShown: false }}
+              />
+            </Tab.Navigator>
           )}
         </NavigationContainer>
       )}
