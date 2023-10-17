@@ -101,7 +101,7 @@ export default function App() {
               isMuted={true}
               resizeMode={"cover"}
               shouldPlay
-              style={styles.videoStyle}
+              style={styles.videoStyle} 
               onPlaybackStatusUpdate={(status) => {
                 if (status.didJustFinish) {
                   Animated.timing(fadeInWhite, {
@@ -132,10 +132,10 @@ export default function App() {
           {!isUserLoggedIn ? (
             <LoginRegister onLoginSuccess={handleLoginSuccess} />
           ) : (
-            // <Tab.Navigator
-            //   screenOptions={({ route }) => ({
-            //     tabBarIcon: ({ focused, color, size }) => {
-            //       let iconName;
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
 
                   if (route.name === "Home") {
                     iconName = focused ? "ios-home-sharp" : "ios-home-outline";
@@ -180,16 +180,16 @@ export default function App() {
                 component={AddTripScreen}
                 options={{ headerShown: false }}
               />
-                <Tab.Screen
-                name = "Messages"
-                component={MessageScreen}
-                options= {{headerShown:false}}
-                />
               <Tab.Screen
                 name="Account"
                 component={AccountScreen}
                 options={{ headerShown: false }}
               />
+            <Tab.Screen
+            name="Search"
+            component={Search}
+            options={{headerShown: false}}
+            />
             </Tab.Navigator>
           )}
         </NavigationContainer>
