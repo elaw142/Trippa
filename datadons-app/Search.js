@@ -234,11 +234,7 @@ function Search(){
     const toggleModal = () => {
       setModalVisible(!isModalVisible);
     };
-    const toggleModalClose = () => {
-      handleEndLocationChange(null, null);
-      handleStartLocationChange(null, null);
-      setModalVisible(!isModalVisible);
-    };
+
 
     const handleStartLocationChange = (location, address) => {
         setStartLocation(location);
@@ -268,11 +264,14 @@ function Search(){
       trips.forEach(trip => {
         const dt = new Date(trip.dateTime);
         const dateT = dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate();
-        if (numPeople <= trip.maxRiders && date === dateT){
+        console.log(numPeople <= trip.maxRiders && date == dateT)
+        if (numPeople <= trip.maxRiders && date == dateT){
           // check date is correct, check driver has space for passengers.
           const dStart = haversine_distance(startLocation, trip.startLatitude, trip.startLongitude);
           const dEnd = haversine_distance(endLocation, trip.endLatitude, trip.endLongitude);
-
+          console.log(startLocation, trip.startLatitude, trip.startLongitude);
+          console.log(endLocation, trip.endLatitude, trip.endLongitude);
+          console.log(dStart, dEnd)
           if ((trip.detourRange / 1000) > dStart && trip.detourRange /1000 > dEnd){
             tripList.push(trip)
             distList.push(dStart + dEnd)
@@ -284,12 +283,10 @@ function Search(){
       return sortedTrips
     }
     const handleSearch = () => {
-        // getTrips();
+
         if (startLocation != null && endLocation != null){
             const sort = sortTrips(tripsData);
-            console.log(sort);
             setsortedTrips(sort);
-            console.log(sortedTrips);
             toggleModal();
         }
 
@@ -382,9 +379,11 @@ function Search(){
                       showsVerticalScrollIndicator={false}
                     />
           ) : (
-            <Text>No trips found</Text>
+            <View style={styles.noTripContainer}>
+              <Text style={styles.noTrip}>No trips found</Text>
+            </View>
           )} 
-          <TouchableOpacity onPress={toggleModalClose} style={styles.button}>
+          <TouchableOpacity onPress={toggleModal} style={styles.button}>
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>   
           </View>
@@ -401,17 +400,18 @@ function Search(){
                 mode="datetime"
                 is24Hour={false}
                 display="default"
-                onChange={(event, selectedDate) => {
-                    setDateTimePickerVisible(false); // Hide the picker after selecting a date
-                    const currentDate = selectedDate || dateTime;
-                    setDateTime(currentDate);
+                onChange={(event, selectedDate)=>{
+                  setDateTimePickerVisible(false); // Hide the picker after selecting a date
+                  const currentDate = selectedDate || dateTime;
+                  console.log(currentDate);
+                  setDateTime(currentDate);
                 }}
                 />
             )}
         </View>
         {/* number of riders*/}
         <View style={styles.numRidersContainer}>
-          <Text>Number of passengers</Text>
+          <Text>No. of Riders</Text>
         <TextInput
             style={styles.inputRiders}
             value={numPeople}
@@ -419,6 +419,7 @@ function Search(){
             keyboardType="numeric"
             maxLength={1}
             defaultValue="1"
+            placeholder="1"
         />
           </View>
         <TouchableOpacity onPress={handleSearch} style={styles.button}>
@@ -443,6 +444,14 @@ const styles = StyleSheet.create({
     },
     dateEmoji:{
       fontSize: 50
+    },
+    noTripContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    noTrip: {
+      fontSize: 18,
     },
     buttonText: {
       color: "white",
