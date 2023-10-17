@@ -353,7 +353,7 @@ namespace Controllers
 
         // POST api/AddTrip - create a new trip
         [HttpPost("AddTrip")]
-        public ActionResult<TripDto> AddTrip(TripDto trip)
+        public ActionResult<long> AddTrip(TripDto trip)
         {
             if (trip.DriverID == 0)
             {
@@ -391,8 +391,9 @@ namespace Controllers
             {
                 return BadRequest("DetourRange is required");
             }
-            _repo.AddTrip(trip);
-            return Ok(trip);
+            long tripId = _repo.AddTrip(trip);
+
+            return Ok(tripId);
         }
 
         // PUT api/UpdateTrip - update a trip

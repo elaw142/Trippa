@@ -17,6 +17,7 @@ import {
   AddTrip,
   GetDriverIdByUserId,
   AddPreferenceToTrip,
+  getAllTrips,
 } from "./services/ApiHandler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { navigationRef } from "./NavigationService";
@@ -114,17 +115,19 @@ function AddTripScreen() {
         StartLocation: startAddress,
         EndLocation: endAddress,
       };
+
       const addedTripResponse = await AddTrip(newTrip);
-      if (addedTripResponse && addedTripResponse.id) {
+      if (addedTripResponse && addedTripResponse.TripID) {
+        console.log("Trip added with ID:", addedTripResponse.TripID);
         const preferencePayload = {
           ...preferences,
-          TripId: addedTripResponse.id,
+          TripId: addedTripResponse.TripID,
         };
-
-        console.log("Sending preferences to backend:", preferencePayload);
-
-        const preferenceResponse = await AddPreferenceToTrip(preferencePayload);
-        console.log("Response after sending preferences:", preferenceResponse);
+        await AddPreferenceToTrip(preferencePayload);
+      } else {
+        console.log(
+          "Condition for AddPreferenceToTrip was not met. Check addedTripResponse and its TripID property."
+        );
       }
 
       navigationRef.current?.navigate("Home");
