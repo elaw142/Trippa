@@ -148,6 +148,9 @@ export default function App() {
 
                   } else if  (route.name === "Messages") {
                     iconName = focused ? "chatbubble-sharp" : "chatbubble-outline";
+                  } 
+                  else if (route.name === "Search"){
+                    iconName = focused ? "search-sharp":"search-outline";
                   }
                   
 
@@ -185,11 +188,11 @@ export default function App() {
                 component={AccountScreen}
                 options={{ headerShown: false }}
               />
-            <Tab.Screen
-            name="Search"
-            component={Search}
-            options={{headerShown: false}}
-            />
+              <Tab.Screen
+              name="Search"
+              component={Search}
+              options={{headerShown: false}}
+              />
             </Tab.Navigator>
           )}
         </NavigationContainer>
