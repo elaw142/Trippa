@@ -1,5 +1,6 @@
 {
     "dotnet.defaultSolution": "datadons-backend/datadons-backend.sln",
     "appService.defaultWebAppToDeploy": "/subscriptions/31e4fd4e-d870-40bf-b438-5043cf91e544/resourceGroups/datadons_group/providers/Microsoft.Web/sites/datadons",
-    "appService.deploySubpath": "datadons-backend/publish"
+    "appService.deploySubpath": "datadons-backend/publish",
+    "git-blame.gitWebUrl": ""
 }

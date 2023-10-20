@@ -89,7 +89,18 @@ function AddDriver(userId, driver) {
 }
 
 function AddTrip(trip) {
-  return post("AddTrip", trip);
+  return post("AddTrip", trip).then((response) => {
+    // If the response is a number, it's likely the TripID.
+    if (typeof response === "number") {
+      return response;
+    } else if (response && response.TripID) {
+      // If it's an object with a TripID property, return that property.
+      return response.TripID;
+    } else {
+      // If neither, throw an error.
+      throw new Error("Unexpected response format from AddTrip");
+    }
+  });
 }
 
 function getDriverByUserId(userId) {
@@ -119,6 +130,16 @@ function AddPreferenceToTrip(preference) {
   return post("addPrefToTrip", preference);
 }
 
+async function GetPreferences(tripId) {
+  const response = await fetch(`${baseUrl}getPrefForTrip/${tripId}`);
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  } else {
+    throw new Error("Failed to fetch trip preferences");
+  }
+}
+
 export {
   getJson,
   post,
@@ -132,4 +153,5 @@ export {
   getDriverByUserId,
   GetDriverIdByUserId,
   AddPreferenceToTrip,
+  GetPreferences,
 };

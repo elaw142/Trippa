@@ -115,18 +115,19 @@ function AddTripScreen() {
         StartLocation: startAddress,
         EndLocation: endAddress,
       };
+      console.log("the new trip being added - " + newTrip);
+      const addedTripID = await AddTrip(newTrip); // This will directly receive the TripID as a number
 
-      const addedTripResponse = await AddTrip(newTrip);
-      if (addedTripResponse && addedTripResponse.TripID) {
-        console.log("Trip added with ID:", addedTripResponse.TripID);
+      if (typeof addedTripID === "number") {
+        console.log("Trip added with ID:", addedTripID);
         const preferencePayload = {
           ...preferences,
-          TripId: addedTripResponse.TripID,
+          TripId: addedTripID,
         };
         await AddPreferenceToTrip(preferencePayload);
       } else {
         console.log(
-          "Condition for AddPreferenceToTrip was not met. Check addedTripResponse and its TripID property."
+          "Condition for AddPreferenceToTrip was not met. Check the value of addedTripID."
         );
       }
 
