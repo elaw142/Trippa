@@ -2,28 +2,26 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
-  Platform,
   Modal,
   TouchableOpacity,
-  Image,
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  Switch,
 } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getUserName,
   AddTrip,
-  IsDriver,
-  getUserId,
-  getDriverByUserId,
   GetDriverIdByUserId,
+  AddPreferenceToTrip,
+  getAllTrips,
 } from "./services/ApiHandler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { navigationRef } from "./NavigationService";
+import { BlurView } from "@react-native-community/blur";
 
 const GOOGLE_MAPS_APIKEY = "AAIzaSyDrwiWWzU9dTML6CrMVHgEx8ZrcRFunoa8";
 
@@ -69,6 +67,15 @@ function AddTripScreen() {
   const [detourRange, setDetourRange] = useState("");
   const [dateTime, setDateTime] = useState(new Date()); // this will preset it to "today's" date
   const [maxRiders, setMaxRiders] = useState("");
+  const [preferences, setPreferences] = useState({
+    NoPets: false,
+    NoLuggage: false,
+    NoFood: false,
+    NoDrinks: false,
+    NoSmoking: false,
+  });
+  const [isPreferencesModalVisible, setPreferencesModalVisible] =
+    useState(false);
 
   const handleStartLocationChange = (location, address) => {
     setStartLocation(location);
@@ -79,20 +86,21 @@ function AddTripScreen() {
     setEndLocation(location);
     setEndAddress(address);
   };
+  const formatPreferenceText = (text) => {
+    return text.replace(/([A-Z])/g, " $1").trim();
+  };
 
   const handleSubmit = async () => {
+    console.log("handleSubmit invoked");
     try {
-      console.log(startLocation, endLocation);
       const startLat = startLocation.lat;
       const startLng = startLocation.lng;
       const endLat = endLocation.lat;
       const endLng = endLocation.lng;
       const user = await AsyncStorage.getItem("user");
-      console.log(user + " hehehehe");
-      var username = await getUserName(user); // good
-      var userid = username.id; // good
+      var username = await getUserName(user);
+      var userid = username.id;
       var driverId = await GetDriverIdByUserId(userid);
-      console.log("driverId:", driverId);
 
       const newTrip = {
         DriverId: Number(driverId),
@@ -106,28 +114,33 @@ function AddTripScreen() {
         DetourRange: parseFloat(detourRange),
         StartLocation: startAddress,
         EndLocation: endAddress,
-      
-    };
-    console.log(newTrip);
-    console.log("Start Location:", startLocation);
-    console.log("End Location:", endLocation);
-    console.log("Price:", price);
-    console.log("DetourRange:", detourRange);
-    console.log("startAddress", startAddress);
-    console.log("endAddress", endAddress);
-    await AddTrip(newTrip);
-    navigationRef.current?.navigate("Home");
-  } catch (error) {
-    if (error.message === "Network response was not ok") {
-      // Handle the specific error here
-      alert("You must be a driver to add a trip");
-      // You can display an error message to the user or perform other error-handling tasks.
-    } else {
-      // Handle other errors
-      console.error("An unexpected error occurred:", error);
+      };
+      console.log("the new trip being added - " + newTrip);
+      const addedTripID = await AddTrip(newTrip); // This will directly receive the TripID as a number
+
+      if (typeof addedTripID === "number") {
+        console.log("Trip added with ID:", addedTripID);
+        const preferencePayload = {
+          ...preferences,
+          TripId: addedTripID,
+        };
+        await AddPreferenceToTrip(preferencePayload);
+      } else {
+        console.log(
+          "Condition for AddPreferenceToTrip was not met. Check the value of addedTripID."
+        );
+      }
+
+      navigationRef.current?.navigate("Home");
+    } catch (error) {
+      if (error.message === "Network response was not ok") {
+        alert("You must be a driver to add a trip");
+      } else {
+        console.error("An unexpected error occurred:", error);
+      }
     }
-  }
   };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View>
@@ -215,6 +228,48 @@ function AddTripScreen() {
             value={detourRange.toString()}
           />
         </View>
+        {/* Preferences Dropdown */}
+        <View style={styles.preferenceContainer}>
+          <TouchableOpacity
+            style={styles.preferenceButton}
+            onPress={() => setPreferencesModalVisible(true)}
+          >
+            <Text style={styles.buttonText}>Set Preferences</Text>
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isPreferencesModalVisible}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                {["NoPets", "NoLuggage", "NoFood", "NoDrinks", "NoSmoking"].map(
+                  (preference) => (
+                    <View key={preference} style={styles.preferenceOption}>
+                      <Text>{formatPreferenceText(preference)}</Text>
+                      <Switch
+                        value={preferences[preference]}
+                        onValueChange={(newValue) =>
+                          setPreferences((prev) => ({
+                            ...prev,
+                            [preference]: newValue,
+                          }))
+                        }
+                      />
+                    </View>
+                  )
+                )}
+                <TouchableOpacity
+                  style={{ ...styles.button, marginTop: 20 }}
+                  onPress={() => setPreferencesModalVisible(false)}
+                >
+                  <Text style={styles.buttonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
+
         {/* Submit Button */}
         <TouchableOpacity onPress={handleSubmit} style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -246,7 +301,7 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "visible",
     alignItems: "center",
-    marginTop: 250,
+    marginTop: 225,
 
     zIndex: 9998,
     position: "absolute",
@@ -254,24 +309,24 @@ const styles = StyleSheet.create({
   dateTimeContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 160,
+    marginTop: 125,
   },
 
   maxRidersContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 20,
   },
 
   priceContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 10,
   },
   detourContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 10,
   },
   header: {
     fontSize: 40,
@@ -316,6 +371,59 @@ const styles = StyleSheet.create({
   toggleText: {
     marginTop: 10,
     color: highlight_color,
+  },
+  preferenceContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 15,
+  },
+  preferenceButton: {
+    backgroundColor: highlight_color,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    elevation: 2,
+    shadowOffset: { width: 1, height: 1 },
+    shadowColor: "#333",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    width: "60%",
+    alignSelf: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: "90%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    alignItems: "center",
+  },
+  preferenceOption: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 8,
+    width: "100%",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
 

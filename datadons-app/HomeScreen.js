@@ -7,6 +7,7 @@ import {
   Platform,
   Modal,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Image,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,6 +16,7 @@ import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllTrips } from "./services/ApiHandler";
+import { GetPreferences } from "./services/ApiHandler";
 
 // * DATE TIME FUNCTIONALITY * //
 function formatDateTime(dateTimeString) {
@@ -32,12 +34,11 @@ function format12HourTime(date) {
     return null;
   }
   const hour = date.getHours();
-  const minute = date.getMinutes().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, "0");
   const ampm = hour >= 12 ? "PM" : "AM";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   return `${formattedHour}:${minute}${ampm}`;
 }
-
 
 // Helper function to get the day suffix (e.g., "st", "nd", "rd", "th")
 function getDaySuffix(day) {
@@ -149,7 +150,7 @@ function convertAddressApiJson(start, end) {
 
   // return [startComp[index], endComp[index]];
   // TODO: change this to return index, just need to split the 2nd index, split off the post code...
-  return startComp[0]
+  return startComp[0];
 }
 
 function HomeScreen() {
@@ -157,8 +158,18 @@ function HomeScreen() {
 
   const [riderCount, setRiderCount] = useState(1);
 
-  const handleItemPress = (item) => {
+  const [tripPreferences, setTripPreferences] = useState({});
+
+  const handleItemPress = async (item) => {
     setSelectedItem(item);
+    try {
+      const preferences = await GetPreferences(item.tripID);
+      setTripPreferences(preferences);
+    } catch (error) {
+      console.error("Error fetching trip preferences:", error);
+      // Set defaults or handle this appropriately
+      setTripPreferences({});
+    }
   };
 
   const handleIncreaseRiders = () => {
@@ -175,7 +186,7 @@ function HomeScreen() {
     }
   };
 
-const modalContentRef = useRef();
+  const modalContentRef = useRef();
 
   const closeModal = () => {
     setSelectedItem(null);
@@ -183,24 +194,23 @@ const modalContentRef = useRef();
   };
 
   const onModalContainerPress = (event) => {
-    event.persist(); 
+    event.persist();
 
-    modalContentRef.current.measureInWindow((contentX, contentY, contentWidth, contentHeight) => {
+    modalContentRef.current.measureInWindow(
+      (contentX, contentY, contentWidth, contentHeight) => {
         const { locationX, locationY } = event.nativeEvent;
 
         if (
-            locationX < contentX ||
-            locationX > contentX + contentWidth ||
-            locationY < contentY ||
-            locationY > contentY + contentHeight
+          locationX < contentX ||
+          locationX > contentX + contentWidth ||
+          locationY < contentY ||
+          locationY > contentY + contentHeight
         ) {
-            closeModal();
+          closeModal();
         }
-    });
-};
-
-
-
+      }
+    );
+  };
 
   const makeTrip = () => {
     alert("Trip has been made");
@@ -209,7 +219,6 @@ const modalContentRef = useRef();
   const addToTrip = () => {
     alert("Your trip has been added");
   };
-
 
   const [tripsData, setTripsData] = useState([]);
 
@@ -266,14 +275,20 @@ const modalContentRef = useRef();
                     <Text style={styles.price}>${item.price}</Text>
                     <Text style={styles.location}>
                       {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
-                      {convertAddressApiJson(item.startLocation,item.endLocation)}
+                      {convertAddressApiJson(
+                        item.startLocation,
+                        item.endLocation
+                      )}
                       <AntDesign
                         name="arrowright"
                         size={13}
                         color={highlight_color}
                       />
                       {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
-                      {convertAddressApiJson(item.endLocation,item.startLocation)}
+                      {convertAddressApiJson(
+                        item.endLocation,
+                        item.startLocation
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -294,77 +309,95 @@ const modalContentRef = useRef();
               style={ModelStyles.modalContainer}
               onPress={closeModal}
             >
-              <View style={ModelStyles.modalContent}>
-                {/* popup Display */}
-                {selectedItem && (
-                  <View style={ModelStyles.viewBox}>
-                    <TouchableOpacity
-                      style={ModelStyles.closeButton}
-                      onPress={() => setSelectedItem(null)}
-                    >
-                      <FontAwesome
-                        style={ModelStyles.closeButtonIcon}
-                        name="close"
-                        size={27}
+              {/* Content of the modal */}
+              <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+                <View style={ModelStyles.modalContent}>
+                  {/* popup Display */}
+                  {selectedItem && (
+                    <View style={ModelStyles.viewBox}>
+                      <TouchableOpacity
+                        style={ModelStyles.closeButton}
+                        onPress={() => setSelectedItem(null)}
+                      >
+                        <FontAwesome
+                          style={ModelStyles.closeButtonIcon}
+                          name="close"
+                          size={27}
+                        />
+                      </TouchableOpacity>
+
+                      {/* Displaying Driver Info */}
+
+                      <Image
+                        source={require("./assets/testUser.png")}
+                        style={ModelStyles.profileImage}
                       />
-                    </TouchableOpacity>
+                      <Text style={ModelStyles.driverName}>
+                        {selectedItem.driverName}
+                      </Text>
 
-                    {/* Displaying Driver Info */}
+                      <Text>{selectedItem.startLocation}</Text>
+                      <Text>{selectedItem.endLocation}</Text>
 
-                    <Image
-                      source={require("./assets/testUser.png")}
-                      style={ModelStyles.profileImage}
-                    />
-                    <Text style={ModelStyles.driverName}>
-                      {selectedItem.driverName}
-                    </Text>
-
-                    <Text>{selectedItem.startLocation}</Text>
-                    <Text>{selectedItem.endLocation}</Text>
-
-                    {/* Trip details */}
-                    <View style={ModelStyles.tripDetails}>
-                      {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
+                      {/* Trip details */}
+                      <View style={ModelStyles.tripDetails}>
+                        {/* <Text>From: {getFormattedAddress(selectedItem.startLocation)}</Text>
                   <Text>To: {getFormattedAddress(selectedItem.endLocation)}</Text> */}
-                      <Text>From: {(selectedItem.startLocation)}</Text>
-                      <Text>To: {(selectedItem.endLocation)}</Text>
-                      <Text>Time: {formatDateTime(selectedItem.dateTime)}</Text>
-                      <Text>Price: ${selectedItem.price}</Text>
-                      <Text>Duration: Approx. 2hrs</Text>
-                      <Text>Distance: 150km</Text>
-                      <Text>Amenities: WiFi, Charging</Text>
-                    </View>
+                        <Text>From: {selectedItem.startLocation}</Text>
+                        <Text>To: {selectedItem.endLocation}</Text>
+                        <Text>
+                          Time: {formatDateTime(selectedItem.dateTime)}
+                        </Text>
+                        <Text>Price: ${selectedItem.price}</Text>
+                      </View>
 
-                    {/* Displaying Riders Info and buttons to increase or decrease riders */}
-                    <View style={ModelStyles.riderBooking}>
-                      <Text style={ModelStyles.riderText}>
-                        Number of seats:
+                      {/* Displaying Riders Info and buttons to increase or decrease riders */}
+                      <View style={ModelStyles.riderBooking}>
+                        <Text style={ModelStyles.riderText}>
+                          Number of seats:
+                        </Text>
+                        <TouchableOpacity
+                          onPress={handleDecreaseRiders}
+                          style={ModelStyles.riderButton}
+                        >
+                          <Text>-</Text>
+                        </TouchableOpacity>
+                        <Text style={ModelStyles.riderCount}>{riderCount}</Text>
+                        <TouchableOpacity
+                          onPress={handleIncreaseRiders}
+                          style={ModelStyles.riderButton}
+                        >
+                          <Text>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                      {/* Preference */}
+                      <Text style={ModelStyles.preferenceHeader}>
+                        Preference(s):
+                      </Text>
+                      <Text style={ModelStyles.preferenceText}>
+                        {tripPreferences
+                          ? Object.keys(tripPreferences)
+                              .filter(
+                                (key) =>
+                                  tripPreferences[key] === true &&
+                                  key !== "tripId"
+                              )
+                              .map((key) => key.replace("no", "No "))
+                              .join(", ") || "No preferences set."
+                          : "Preference data unavailable."}
                       </Text>
                       <TouchableOpacity
-                        onPress={handleDecreaseRiders}
-                        style={ModelStyles.riderButton}
+                        style={ModelStyles.paymentButton}
+                        onPress={addToTrip}
                       >
-                        <Text>-</Text>
-                      </TouchableOpacity>
-                      <Text style={ModelStyles.riderCount}>{riderCount}</Text>
-                      <TouchableOpacity
-                        onPress={handleIncreaseRiders}
-                        style={ModelStyles.riderButton}
-                      >
-                        <Text>+</Text>
+                        <Text style={ModelStyles.buttonText}>
+                          Proceed to Payment
+                        </Text>
                       </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                      style={ModelStyles.paymentButton}
-                      onPress={addToTrip}
-                    >
-                      <Text style={ModelStyles.buttonText}>
-                        Proceed to Payment
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
+                  )}
+                </View>
+              </TouchableWithoutFeedback>
             </TouchableOpacity>
           </Modal>
         </>
@@ -375,7 +408,6 @@ const modalContentRef = useRef();
     </View>
   );
 }
-
 
 // * STYLE CONSTANTS * //
 const paddingValue = 3;
@@ -596,6 +628,15 @@ const ModelStyles = StyleSheet.create({
     borderRadius: 8,
     paddingBottom: 20,
     width: "80%",
+  },
+  preferenceHeader: {
+    fontWeight: "bold",
+    fontSize: 16,
+    
+  },
+  preferenceText: {
+    fontSize: 14,
+    marginTop: 5,
   },
   paymentButtonContainer: {
     flex: 1,

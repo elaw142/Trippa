@@ -44,8 +44,8 @@ export default function App() {
     const checkUserLoggedIn = async () => {
       const user = await AsyncStorage.getItem("user");
       setIsUserLoggedIn(user !== null); // Set to true if 'user' is found
-      if(isUserLoggedIn){
-        console.log("USER IS LOGGED IN")
+      if (isUserLoggedIn) {
+        console.log("USER IS LOGGED IN");
       }
       console.log(user);
     };

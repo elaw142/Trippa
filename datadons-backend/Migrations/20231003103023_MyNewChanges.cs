@@ -174,6 +174,9 @@ namespace datadonsbackend.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     NoPets = table.Column<bool>(type: "INTEGER", nullable: false),
                     NoLuggage = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NoFood = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NoDrinks = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NoSmoking = table.Column<bool>(type: "INTEGER", nullable: false),
                     TripId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

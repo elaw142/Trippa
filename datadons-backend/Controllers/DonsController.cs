@@ -353,7 +353,7 @@ namespace Controllers
 
         // POST api/AddTrip - create a new trip
         [HttpPost("AddTrip")]
-        public ActionResult<TripDto> AddTrip(TripDto trip)
+        public ActionResult<long> AddTrip(TripDto trip)
         {
             if (trip.DriverID == 0)
             {
@@ -391,8 +391,9 @@ namespace Controllers
             {
                 return BadRequest("DetourRange is required");
             }
-            _repo.AddTrip(trip);
-            return Ok("Success");
+            long tripId = _repo.AddTrip(trip);
+
+            return Ok(tripId);
         }
 
         // PUT api/UpdateTrip - update a trip
@@ -510,6 +511,9 @@ namespace Controllers
             {
                 NoPets = preferenceDto.NoPets,
                 NoLuggage = preferenceDto.NoLuggage,
+                NoFood = preferenceDto.NoFood,
+                NoDrinks = preferenceDto.NoDrinks,
+                NoSmoking = preferenceDto.NoSmoking,
                 TripId = preferenceDto.TripId
             };
             var tripId = preferenceDto.TripId;
@@ -587,6 +591,9 @@ namespace Controllers
             {
                 NoPets = preferenceForTripDTO.NoPets,
                 NoLuggage = preferenceForTripDTO.NoLuggage,
+                NoFood = preferenceForTripDTO.NoFood,
+                NoDrinks = preferenceForTripDTO.NoDrinks,
+                NoSmoking = preferenceForTripDTO.NoSmoking,
                 TripId = preferenceForTripDTO.TripId
             };
             if (preference == null)

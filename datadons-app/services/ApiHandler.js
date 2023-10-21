@@ -1,5 +1,5 @@
 // const baseUrl = "http://localhost:5107/api/";
-const baseUrl = "https://datadons.azurewebsites.net/api/";
+const baseUrl = "https://datadons2.azurewebsites.net/api/";
 
 function getJson(path) {
   return fetch(baseUrl + path)
@@ -10,11 +10,7 @@ function getJson(path) {
           `HTTP error! Status: ${res.status}. Response: ${responseText}`
         );
       }
-      try {
-        return res.json();
-      } catch (error) {
-        throw new Error(`JSON parsing error: ${error.message}`);
-      }
+      return res.json();
     })
     .catch((error) => {
       throw new Error(`Network error: ${error.message}`);
@@ -30,22 +26,20 @@ function post(path, data) {
     },
   })
     .then(async (res) => {
-      if (!res.ok) {
-        const responseText = await res.text();
-        throw new Error(
-          `HTTP error! Status: ${res.status}. Response: ${responseText}`
-        );
-      }
-      try {
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
         return res.json();
-      } catch {
-        return res;
-      } finally {
-        console.log("returned data");
+      } else {
+        return res.text();
       }
     })
+    .then((response) => {
+      console.log("Raw Response from POST:", response);
+      return response;
+    })
     .catch((error) => {
-      throw new Error(`Network error: ${error.message}`);
+      console.error("Error in POST:", error);
+      throw error;
     });
 }
 
@@ -63,7 +57,7 @@ function getUserName(userName) {
     })
     .catch((error) => {
       console.error("Error fetching user:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     });
 }
 
@@ -78,7 +72,7 @@ function getUserId(userName) {
 
     .catch((error) => {
       console.error("Error fetching user:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     });
 }
 
@@ -95,7 +89,18 @@ function AddDriver(userId, driver) {
 }
 
 function AddTrip(trip) {
-  return post("AddTrip", trip);
+  return post("AddTrip", trip).then((response) => {
+    // If the response is a number, it's likely the TripID.
+    if (typeof response === "number") {
+      return response;
+    } else if (response && response.TripID) {
+      // If it's an object with a TripID property, return that property.
+      return response.TripID;
+    } else {
+      // If neither, throw an error.
+      throw new Error("Unexpected response format from AddTrip");
+    }
+  });
 }
 
 function getDriverByUserId(userId) {
@@ -105,19 +110,34 @@ function getDriverByUserId(userId) {
 function GetDriverIdByUserId(userId) {
   return fetch(baseUrl + "GetDriverIdByUserId/" + userId)
     .then(async (response) => {
-      console.log("response:", response);
+      // console.log("response:", response);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const responseData = await response.json();
-      console.log("responseData:", responseData);
+      // console.log("responseData:", responseData);
       return responseData;
     })
     .catch((error) => {
-      console.error("Error fetching driver ID:", error);
+      // console.error("Error fetching driver ID:", error);
       throw error;
     });
+}
+
+function AddPreferenceToTrip(preference) {
+  console.log("Sending preferences:", preference);
+  return post("addPrefToTrip", preference);
+}
+
+async function GetPreferences(tripId) {
+  const response = await fetch(`${baseUrl}getPrefForTrip/${tripId}`);
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  } else {
+    throw new Error("Failed to fetch trip preferences");
+  }
 }
 
 export {
@@ -132,4 +152,6 @@ export {
   AddTrip,
   getDriverByUserId,
   GetDriverIdByUserId,
+  AddPreferenceToTrip,
+  GetPreferences,
 };

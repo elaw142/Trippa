@@ -63,7 +63,7 @@ namespace Data
         public Driver GetDriverByUserId(long userId)
         {
             return _repo.Drivers
-                .Include(d => d.Car) 
+                .Include(d => d.Car)
                 .FirstOrDefault(d => d.UserId == userId);
         }
 
@@ -218,10 +218,11 @@ namespace Data
             _repo.Trips.Update(newTrip);
             _repo.SaveChanges();
         }
-        public void AddTrip(TripDto tripDto)
+        public long AddTrip(TripDto tripDto)
         {
             Trip newTrip = new Trip
             {
+                TripID = tripDto.TripID,
                 DriverID = tripDto.DriverID,
                 DateTime = tripDto.DateTime,
                 MaxRiders = tripDto.MaxRiders,
@@ -242,6 +243,7 @@ namespace Data
             };
             _repo.Trips.Add(newTrip);
             _repo.SaveChanges();
+            return newTrip.TripID;
         }
         public Driver GetDriver(long driverId)
         {
@@ -260,6 +262,9 @@ namespace Data
             {
                 NoPets = preference.NoPets,
                 NoLuggage = preference.NoLuggage,
+                NoDrinks = preference.NoDrinks,
+                NoFood = preference.NoFood,
+                NoSmoking = preference.NoSmoking,
                 TripId = tripId
             };
             return newPrefDto;
@@ -276,6 +281,9 @@ namespace Data
             {
                 NoPets = p.NoPets,
                 NoLuggage = p.NoLuggage,
+                NoDrinks = p.NoDrinks,
+                NoFood = p.NoFood,
+                NoSmoking = p.NoSmoking,
                 TripId = p.TripId
             }).ToList();
         }
@@ -301,6 +309,9 @@ namespace Data
                 {
                     NoPets = preference.NoPets,
                     NoLuggage = preference.NoLuggage,
+                    NoDrinks = preference.NoDrinks,
+                    NoFood = preference.NoFood,
+                    NoSmoking = preference.NoSmoking,
                     TripId = tripId
                 };
                 return newPrefDto;
@@ -317,6 +328,9 @@ namespace Data
                 {
                     NoPets = preference.NoPets,
                     NoLuggage = preference.NoLuggage,
+                    NoDrinks = preference.NoDrinks,
+                    NoFood = preference.NoFood,
+                    NoSmoking = preference.NoSmoking,
                     TripId = preference.TripId
                 };
                 return newPrefDto;

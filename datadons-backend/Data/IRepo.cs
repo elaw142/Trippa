@@ -31,7 +31,7 @@ namespace Data
         Trip[] GetAllTripsBy(long driverID);
         void DeleteTrip(long id);
         void UpdateTrip(UpdateTripDto trip);
-        void AddTrip(TripDto tripDto);
+        long AddTrip(TripDto tripDto);
         public Driver GetDriver(long driverId);
         public PreferenceForTripDTO GetPreferenceByTripId(int tripId);
         void SetPreferenceForTrip(int driverId, Preference preference);
