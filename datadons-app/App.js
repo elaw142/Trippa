@@ -7,7 +7,7 @@ import { Video } from "expo-av";
 import HomeScreen from "./HomeScreen";
 import AccountScreen from "./AccountScreen";
 import AddTripScreen from "./AddTripScreen";
-import MessageScreen from './MessageScreen'; // Import your ChatScreen component
+import MessageScreen from "./MessageScreen"; // Import your ChatScreen component
 
 import LoginRegister from "./auth";
 import Search from "./Search";
@@ -101,7 +101,7 @@ export default function App() {
               isMuted={true}
               resizeMode={"cover"}
               shouldPlay
-              style={styles.videoStyle} 
+              style={styles.videoStyle}
               onPlaybackStatusUpdate={(status) => {
                 if (status.didJustFinish) {
                   Animated.timing(fadeInWhite, {
@@ -145,15 +145,13 @@ export default function App() {
                       : "person-circle-outline";
                   } else if (route.name === "AddTrip") {
                     iconName = focused ? "add-circle" : "add-circle-outline";
-
-                  } else if  (route.name === "Messages") {
-                    iconName = focused ? "chatbubble-sharp" : "chatbubble-outline";
-                  } 
-                  else if (route.name === "Search"){
-                    iconName = focused ? "search-sharp":"search-outline";
+                  } else if (route.name === "Messages") {
+                    iconName = focused
+                      ? "chatbubble-sharp"
+                      : "chatbubble-outline";
+                  } else if (route.name === "Search") {
+                    iconName = focused ? "search-sharp" : "search-outline";
                   }
-                  
-
 
                   return (
                     <Ionicons
@@ -184,14 +182,19 @@ export default function App() {
                 options={{ headerShown: false }}
               />
               <Tab.Screen
-                name="Account"
-                component={AccountScreen}
+                name="Search"
+                component={Search}
                 options={{ headerShown: false }}
               />
               <Tab.Screen
-              name="Search"
-              component={Search}
-              options={{headerShown: false}}
+                name="Messages"
+                component={MessageScreen}
+                options={{ headerShown: false }}
+              />
+              <Tab.Screen
+                name="Account"
+                component={AccountScreen}
+                options={{ headerShown: false }}
               />
             </Tab.Navigator>
           )}
