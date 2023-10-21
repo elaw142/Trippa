@@ -10,6 +10,7 @@ import AddTripScreen from "./AddTripScreen";
 import MessageScreen from './MessageScreen'; // Import your ChatScreen component
 
 import LoginRegister from "./auth";
+import Search from "./Search";
 import { StyleSheet, View, Animated } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
@@ -100,7 +101,7 @@ export default function App() {
               isMuted={true}
               resizeMode={"cover"}
               shouldPlay
-              style={styles.videoStyle}
+              style={styles.videoStyle} 
               onPlaybackStatusUpdate={(status) => {
                 if (status.didJustFinish) {
                   Animated.timing(fadeInWhite, {
@@ -147,6 +148,9 @@ export default function App() {
 
                   } else if  (route.name === "Messages") {
                     iconName = focused ? "chatbubble-sharp" : "chatbubble-outline";
+                  } 
+                  else if (route.name === "Search"){
+                    iconName = focused ? "search-sharp":"search-outline";
                   }
                   
 
@@ -179,15 +183,15 @@ export default function App() {
                 component={AddTripScreen}
                 options={{ headerShown: false }}
               />
-                <Tab.Screen
-                name = "Messages"
-                component={MessageScreen}
-                options= {{headerShown:false}}
-                />
               <Tab.Screen
                 name="Account"
                 component={AccountScreen}
                 options={{ headerShown: false }}
+              />
+              <Tab.Screen
+              name="Search"
+              component={Search}
+              options={{headerShown: false}}
               />
             </Tab.Navigator>
           )}
