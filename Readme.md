@@ -2,7 +2,7 @@
     <img src="datadons-app/assets/logo.png" alt="Toshka Lakes Project">
 </div>
 
-# Datadons-Carpooling
+# TRIPA [Datadons-Carpooling]
 
 This repository contains the source code for the Datadons frontend and backend carpooling system.
 - [x] Name of the project.
