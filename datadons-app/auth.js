@@ -186,7 +186,7 @@ function LoginRegister({ onLoginSuccess }) {
           <View style={styles.container}>
             <Image source={logo} style={styles.logo} />
             <View style={styles.circle}></View>
-            <Text style={styles.headerwelcome}>Welcome to Trippr!</Text>
+            <Text style={styles.headerwelcome}>Welcome to Trippa!</Text>
             <View style={styles.welcomeButtonContainer}>
               <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
                 <Text style={styles.buttonText}>Login</Text>
