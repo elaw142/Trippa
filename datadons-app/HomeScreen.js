@@ -236,7 +236,7 @@ function HomeScreen() {
       <View style={styles.header}>
         {/* <Text style={styles.headerKiwi}>Kiwi</Text>
         <Text style={styles.headerKom}>Kommute</Text> */}
-        <Text style={styles.headerKiwi}>TRIPA</Text>
+        <Text style={styles.headerKiwi}>TRIPPA</Text>
       </View>
 
       {tripsData.length > 0 ? (
