@@ -1,8 +1,9 @@
+# TRIPPA [Datadons-Carpooling]
+
 <div align="center">
     <img src="datadons-app/assets/logo.png" alt="Toshka Lakes Project">
 </div>
 
-# TRIPPA [Datadons-Carpooling]
 
 Travel is expensive, both financially and environmentally. In New Zealand, solo driving is prevalent, resulting in numerous empty seats and a significant environmental impact. Approximately 73% of Kiwis choose to travel alone, collectively spending around 150 million hours on the road annually. As a result, transport emissions have become the fastest growing source of greenhouse gas emissions in the country, accounting for 20% of the total emissions produced.
 
