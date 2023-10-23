@@ -336,8 +336,8 @@ function HomeScreen() {
                         {selectedItem.driverName}
                       </Text>
 
-                      <Text>{selectedItem.startLocation}</Text>
-                      <Text>{selectedItem.endLocation}</Text>
+                      {/* <Text>{selectedItem.startLocation}</Text>
+                      <Text>{selectedItem.endLocation}</Text> */}
 
                       {/* Trip details */}
                       <View style={ModelStyles.tripDetails}>
