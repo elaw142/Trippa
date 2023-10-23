@@ -236,7 +236,7 @@ function HomeScreen() {
       <View style={styles.header}>
         {/* <Text style={styles.headerKiwi}>Kiwi</Text>
         <Text style={styles.headerKom}>Kommute</Text> */}
-        <Text style={styles.headerKiwi}>TRIPA</Text>
+        <Text style={styles.headerKiwi}>TRIPPA</Text>
       </View>
 
       {tripsData.length > 0 ? (
@@ -336,8 +336,8 @@ function HomeScreen() {
                         {selectedItem.driverName}
                       </Text>
 
-                      <Text>{selectedItem.startLocation}</Text>
-                      <Text>{selectedItem.endLocation}</Text>
+                      {/* <Text>{selectedItem.startLocation}</Text>
+                      <Text>{selectedItem.endLocation}</Text> */}
 
                       {/* Trip details */}
                       <View style={ModelStyles.tripDetails}>

@@ -2,19 +2,14 @@
     <img src="datadons-app/assets/logo.png" alt="Toshka Lakes Project">
 </div>
 
-# TRIPA [Datadons-Carpooling]
+# TRIPPA [Datadons-Carpooling]
 
-This repository contains the source code for the Datadons frontend and backend carpooling system.
+Travel is expensive, both financially and environmentally. In New Zealand, solo driving is prevalent, resulting in numerous empty seats and a significant environmental impact. Approximately 73% of Kiwis choose to travel alone, collectively spending around 150 million hours on the road annually. As a result, transport emissions have become the fastest growing source of greenhouse gas emissions in the country, accounting for 20% of the total emissions produced.
 
-- [x] Name of the project.
-- [x] A link to your Project Management tool.
-- [x] A short description of what the project is about. (You may put a link to your final report here, after it has been completed).
-- [x] Technologies that are used to build the project (include the languages used, the libraries and their versions).
-- [x] Instructions on how to install and setup the project (specify all dependencies).
-- [ ] Usage Examples (if available).
-- [ ] URL of the website where the project has been deployed (if applicable).
-- [ ] Future Plan (Ideas for future releases)
-- [ ] Acknowledgements (if any) - You can list tutorials used, projects referred to, people consulted etc.
+At DataDons, we recognize the potential to mitigate these issues. While hitch-hiking has been a traditional solution, it lacks efficiency and safety. We aim to streamline this practice and shift the focus towards a more communal approach to travel, reducing both costs and environmental impact.
+
+Introducing Tripa, a community-oriented carpooling app that aims to facilitate existing trips rather than creating new ones, promoting a safer and more sustainable travel culture in New Zealand. Please note that Tripa is distinct from ridesharing apps like Uber and Ola.
+
 
 ## Getting Started
 
@@ -23,6 +18,7 @@ To set up and run the Datadons app and backend on your local machine, follow the
 1. Clone this repository.
 2. Navigate to the `datadons-app` folder and execute `npm install` to install all necessary app dependencies.
 3. Run `npm start` to launch the app.
+
 
 ### Backend
 
@@ -43,13 +39,17 @@ The Datadons application facilitates the following:
 - **Communication**: A live messaging system enabling seamless communication between users.
 - **Search**: Integrated searching functionality, allowing users to find the most suitable trip based on the location criteria.
 
+
 ## Technologies Used
 
 - **Frontend**: React Native-EXPO
 - **Backend**: .NET Core [0.7]
 - **Deployment**: Azure App Service
 
+
 ## Project Mangament
+
+[Github Project page](https://github.com/orgs/uoa-compsci399-s2-2023/projects/1)
 
 [Github Project page](https://github.com/orgs/uoa-compsci399-s2-2023/projects/1)
 
@@ -80,7 +80,7 @@ Within the `src` directory "datadons-app", the organisation is as follows:
 - `services`: Folder containing files related to various services used in our app.
   - `ApiHandler.js`: File for handling API requests and responses.
 
-### backend
+### Backend
 
 Within the `src` directory "datadons-backend", the organisation is as follows:
 
@@ -88,6 +88,7 @@ Within the `src` directory "datadons-backend", the organisation is as follows:
 - `models`: Structures for database interaction.
 - `data`: Utility functions (idk what to write here tbh ).
 - `dtos`: Functions assisting in data manipulation and shaping, as needed.
+
 
 ## Future Plans
 
