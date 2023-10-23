@@ -175,6 +175,32 @@ function SearchGoogleAutoComplete(props) {
     return d;
   }
 
+//* address functionality
+function convertAddressApiJson(start, end) {
+  // this was interesting to code...
+  // FIXME: bit of a hacky way to do this, but it works
+  // pass in start and end address json from google api
+  // returns the highest address point, eg auckland to whangari would return auckland to whangari
+  // however auckland to auckland would return address to address
+  function findHighestMismatchElement(list1, list2) {
+    let index = -1;
+    for (let i = list1.length - 1; i >= 0; i--) {
+      if (list1[i] !== list2[i]) {
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }  // console.log(start);
+  var startComp = start.split(",");
+  var endComp = end.split(",");
+
+  var index = findHighestMismatchElement(startComp, endComp);
+
+  // return [startComp[index], endComp[index]];
+  // TODO: change this to return index, just need to split the 2nd index, split off the post code...
+  return startComp[0];
+}
 
 function algorithmToSortArray(primArr,arr, compare = defaultCompare) {
   const { length } = arr;
@@ -328,6 +354,7 @@ function Search(){
           {/* FlatList inside the modal */}
           {sortedTrips.length > 0 ? (
                       <FlatList
+                      style={{marginTop: 50}}
                       data={sortedTrips}
                       renderItem={({ item }) => (
                         <TouchableOpacity
@@ -345,9 +372,9 @@ function Search(){
                                 endLng: item.endLongitude,
                               }}
                             />
-                            <Text style={styles.dateTime}>
+                            {/* <Text style={styles.dateTime}>
                               {formatDateTime(item.dateTime)}
-                            </Text>
+                            </Text> */}
                             <Text style={styles.riderInfo}>
                               <FontAwesome5
                                 name="car-side"
@@ -356,19 +383,25 @@ function Search(){
                               />
                               {item.currentRiders}/{item.maxRiders}
                             </Text>
-          
+
                             <View style={styles.cardLocation}>
                               <Text style={styles.price}>${item.price}</Text>
                               <Text style={styles.location}>
                                 {/* {convertAddressApiJson(item.startLocation, item.endLocation)[0]} */}
-                                {item.startLocation}
+                                {convertAddressApiJson(
+                                  item.startLocation,
+                                  item.endLocation
+                                )}
                                 <AntDesign
                                   name="arrowright"
                                   size={13}
                                   color={highlight_color}
                                 />
                                 {/* {convertAddressApiJson(item.startLocation, item.endLocation)[1]} */}
-                                {item.endLocation}
+                                {convertAddressApiJson(
+                                  item.endLocation,
+                                  item.startLocation
+                                )}
                               </Text>
                             </View>
                           </View>
@@ -383,7 +416,7 @@ function Search(){
               <Text style={styles.noTrip}>No trips found</Text>
             </View>
           )} 
-          <TouchableOpacity onPress={toggleModal} style={styles.button}>
+          <TouchableOpacity onPress={toggleModal} style={[styles.button, styles.closeButton]}>
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>   
           </View>
@@ -512,7 +545,6 @@ const styles = StyleSheet.create({
       zIndex: 9999,
       position: "absolute",
     },
-  
     locationContainer1: {
       width: "100%",
       overflow: "visible",
@@ -521,6 +553,20 @@ const styles = StyleSheet.create({
   
       zIndex: 9998,
       position: "absolute",
+    },
+    location: {
+      position: "absolute",
+      bottom: paddingValue,
+      left: paddingValue,
+  
+      overflow: "hidden",
+      backgroundColor: "white",
+      borderWidth: 0.6,
+      borderColor: "#ccc",
+      borderRadius: 8,
+      color: "black",
+      padding: 4,
+      fontSize: 12,
     },
     tripCard: {
       backgroundColor: "white",
@@ -570,5 +616,8 @@ const styles = StyleSheet.create({
       padding: 4,
       fontSize: 12,
     },
+    closeButton: {
+      marginBottom: 50,
+    }
   });
 export default Search;
